@@ -1,4 +1,7 @@
 from pygame.locals import *
+# NOTE: Ugly namespace polution, but safer than using eval() to
+# associate strings with the right pygame key constant.
+
 class Profile:
     ''' The current profile containing player preferences.'''
 
@@ -31,39 +34,17 @@ class Profile:
         else:
             keys[1] = keys[1].upper()
 
-
         keys = ['K_' + x for x in keys]
         return [locals()[keys[0]], locals()[keys[1]]
 
-    def get_forward_keys(self):
-        keys = self._control['forward']
+    def get_keys(self, action):
+        assert action in self._control, 'The specified action is not defined.'
 
+        keys = self._control['action']
         return _convert_to_pygame_keys(keys)
 
-    def get_backward_keys(self):
-        keys = self._control['backward']
+    def set_keys(self, action, keys)
+        assert action in self._control, 'The specified action is not defined.'
+        assert len(keys) == 2, 'You must supply two values for the action.'
 
-        return _convert_to_pygame_keys(keys)
-
-    def get_right_keys(self):
-        keys = self._control['right']
-
-        return _convert_to_pygame_keys(keys)
-    
-    def get_left_keys(self):
-        keys = self._control['left']
-
-        return _convert_to_pygame_keys(keys)
-
-    # TODO: Finish setters, write unit tests
-    def set_forward_keys(self, keys):
-        return 'a'
-
-    def set_backward_keys(self, keys):
-        return 'a'
-
-    def set_right_keys(self, keys):
-        return 'a'
-    
-    def set_left_keys(self, keys):
-        return 'a'
+        self._control['action'] = keys
