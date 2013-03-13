@@ -25,7 +25,7 @@ control:
     - SPACE
     -
   menu:
-    - ESC
+    - ESCAPE
     -
 
   mouse_sensitivity: 0.3
