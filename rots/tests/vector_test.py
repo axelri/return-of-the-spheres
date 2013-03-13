@@ -1,6 +1,6 @@
 import unittest
 import math
-from vector import *
+from ..vector import Vector # relative import - good thingie!
 
 class TestVector(unittest.TestCase):
 
@@ -65,7 +65,6 @@ class TestVector(unittest.TestCase):
 
     def test_vector_subtraction(self):
         self.assertEqual([2, -2, 0], (self.v1 - self.v2).value)
-
 
 if __name__ == '__main__':
     unittest.main()

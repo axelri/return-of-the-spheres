@@ -35,7 +35,7 @@ class Profile:
             keys[1] = keys[1].upper()
 
         keys = ['K_' + x for x in keys]
-        return [locals()[keys[0]], locals()[keys[1]]
+        return [locals()[keys[0]], locals()[keys[1]]]
 
     def get_keys(self, action):
         assert action in self._control, 'The specified action is not defined.'
@@ -43,7 +43,7 @@ class Profile:
         keys = self._control['action']
         return _convert_to_pygame_keys(keys)
 
-    def set_keys(self, action, keys)
+    def set_keys(self, action, keys):
         assert action in self._control, 'The specified action is not defined.'
         assert len(keys) == 2, 'You must supply two values for the action.'
 

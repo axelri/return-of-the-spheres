@@ -6,6 +6,7 @@ def main():
 
     while true:
         # do main routine
+        break
 
 if __name__ == '__main__':
     try:
