@@ -109,3 +109,6 @@ class Profile:
     def set_debugging(self, option):
         assert isinstance(option, bool)
         self._debug['debug_mode'] = option
+
+    def __repr__(self):
+        return self._main.__str__()
