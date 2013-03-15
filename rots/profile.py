@@ -17,19 +17,18 @@ class Profile:
             "The supplied configuration file must have all the needed \
                 information"
 
-        self._main = configDict
-        self._visual = configDict['visual']
-        self._control = configDict['control']
-        self._debug = configDict['debug']
+        self._main = configDict.copy()
+        self._visual = self._main['visual']
+        self._control = self._main['control']
+        self._debug = self._main['debug']
 
         assert isinstance(self._visual, dict), "The config file is faulty"
         assert isinstance(self._control, dict), "The config file is faulty"
         assert isinstance(self._debug, dict), "The config file is faulty"
-
    
     def _convert_to_pygame_keys(self, key_list):
         ''' Format according to the pygame constant naming.
-        The fetch the actual constant value from the local variable pool.'''
+        Then fetch the actual constant value from the local variable pool.'''
         # single letter keys are denoted 'K_<letter>', whereas all
         # the other keys are denoted 'K_<KEY_NAME>'
         keys = key_list[:]
@@ -43,15 +42,33 @@ class Profile:
                 keys[i] = globals()['K_' + keys[i].upper()]
 
         return keys
+    
+    def __eq__(self, profile):
+        return self._main == profile._main
+
+    def __ne__(self, profile):
+        return self._main != profile._main
 
     def get_keys(self, action):
         assert action in self._control, 'The specified action is not defined.'
+        assert isinstance(self._control[action], list), \
+                'The keys must be defined in a list' 
 
-        keys = self._control[action]
-        return self._convert_to_pygame_keys(keys)
+        if len(self._control[action]) == 1:
+            self._control[action].append(None)
+
+        return self._control[action]
+
+    def get_pygame_keys(self, action):
+        ''' Return the primary and secondary keys for the given action in
+        pygame key constant form. Returns None if the key(s) are undefined'''
+
+        return self._convert_to_pygame_keys(self.get_keys(action))
 
     def set_keys(self, action, keys):
         assert action in self._control, 'The specified action is not defined.'
+        assert isinstance(self._control[action], list), \
+                'The keys must be defined in a list' 
         assert len(keys) == 2, 'You must supply two values for the action.'
 
         self._control[action] = keys
@@ -111,4 +128,4 @@ class Profile:
         self._debug['debug_mode'] = option
 
     def __repr__(self):
-        return self._main.__str__()
+        return self._main.__repr__()
