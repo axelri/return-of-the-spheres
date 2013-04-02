@@ -25,7 +25,7 @@ class TestVector(unittest.TestCase):
         self.assertEqual(9, self.v1.dot(self.v2))
 
     def test_cross(self):
-            self.assertEqual([-6, -6, 4], self.v1.cross(self.v2).value)
+        self.assertEqual([-6, -6, 4], self.v1.cross(self.v2).value)
 
     def test_project(self):
         expected = [0, 18.0/13.0, 27.0/13.0]

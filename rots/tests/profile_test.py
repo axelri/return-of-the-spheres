@@ -1,5 +1,4 @@
 import unittest
-import yaml
 from pygame.locals import *
 from ..profile import Profile
 

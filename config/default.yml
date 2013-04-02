@@ -1,5 +1,5 @@
- # Configuration file for the player written in YAML. Loadable to a
- # python dictionary (hash table) using yaml.load(file) with PyYAML.
+# Configuration file for the player written in YAML. Loadable to a
+# python dictionary (hash table) using yaml.load(file) with PyYAML.
 
 visual:
   fullscreen: false
