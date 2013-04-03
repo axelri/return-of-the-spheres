@@ -1,7 +1,7 @@
 import vectors
 import simplices
 import supports
-import gauss
+import matrices
 import numbers
 import shapes
 
@@ -312,7 +312,7 @@ def pointOfCollision_2(simplex):
         matrix.append(outvec)
             
 
-    barCoord = gauss.solve(matrix, [1.0, 0.0, 0.0, 0.0])
+    barCoord = matrices.solve(matrix, [1.0, 0.0, 0.0, 0.0])
     if barCoord:
         collisionPoint = vectors.Vector()
 
