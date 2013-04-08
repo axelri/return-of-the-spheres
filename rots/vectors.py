@@ -60,6 +60,8 @@ class Vector:
             return None
 
         n = self.norm()
+        if n < 0.0000001:
+            return None     # To avoid float division by zero
         out = []
         for component in self.value:
             out.append(component / n)

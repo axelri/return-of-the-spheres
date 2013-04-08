@@ -4,7 +4,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import shapes
-
+# TODO: Add smart culling to fasten up the drawing process.
 #def render(game, collisionInfo):
 def render(game):
     ''' Draws the player and all other entities at their current position '''
@@ -27,21 +27,23 @@ def render(game):
                'sceneList must be a list of Shape objects'
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-    
-    glLoadIdentity()
-    #gluLookAt(pos[0], pos[1] + 4, pos[2] + 10,     # A point of reference is
-    #          pos[0], pos[1], pos[2],              # needed, otherwise this 
-    #          0, 1, 0)                             # is pointless.
 
-    gluLookAt(0, 10, 20,
-              0, 0, 0,
-              0, 1, 0)
+    pos = player.get_pos().value
+
+    glLoadIdentity()
+    gluLookAt(pos[0], pos[1] + 4, pos[2] + 10,     # A point of reference is
+              pos[0], pos[1], pos[2],              # needed, otherwise this 
+              0, 1, 0)                             # is pointless.
+
+    #gluLookAt(0, 10, 20,
+    #          0, 0, 0,
+    #          0, 1, 0)
 
     #gluLookAt(0, 2, 4,
     #          0, 0, 0,
     #          0, 1, 0)
 
-    pos = player.get_pos().value
+    
     
     glPushMatrix()
     glTranslatef(pos[0], pos[1], pos[2])

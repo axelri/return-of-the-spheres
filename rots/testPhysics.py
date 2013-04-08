@@ -75,8 +75,8 @@ player = sphere
 #sceneList = []
 
 objectList = []
-sceneList = [plane1, plane2, plane3, plane4, plane5]
-
+#sceneList = [plane1, plane2, plane3, plane4, plane5]
+sceneList = [plane1]
 
 game = games.Game(player, objectList, sceneList)
 
