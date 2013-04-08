@@ -3,6 +3,14 @@ import quaternions
 import supports
 import numbers
 import draw
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+
+# TODO: Right now there is some redundance in the code since the
+# create_displaylist_index() functions are almost identical in all
+# shapes. However, I find it somewhat ugly to solve this like in
+# fluffy, are there any better ways?
 
 class Shape(object):
 
@@ -11,7 +19,7 @@ class Shape(object):
         # Linear motion
         self._pos = vectors.Vector()
         self._velocity = vectors.Vector()
-        self._mass = float('inf')      # Makes it "immobile"
+        self._mass = float('inf')               # Makes it immobile
         self._force = vectors.Vector()
 
         # Angular motion
@@ -19,7 +27,7 @@ class Shape(object):
         self._angularVelocity = vectors.Vector()
         self._invInertia = [[0.0, 0.0, 0.0],
                             [0.0, 0.0, 0.0],
-                            [0.0, 0.0, 0.0]]   # Makes it unable to rotate
+                            [0.0, 0.0, 0.0]]    # Makes it unable to rotate
         self._torque = vectors.Vector()
 
         self._color = None
@@ -111,8 +119,16 @@ class Sphere(Shape):
         self._invInertia = [[I, 0.0, 0.0],
                             [0.0, I, 0.0],
                             [0.0, 0.0, I]]
+        self._displayListIndex = self.create_displaylist_index()
         #self._orientation = quaternions.axis_angle_to_quat(Vector([1.0, 0.0, 0.0]), 0.0)
         #self._orientation = quaternions.Quaternion([1.0, 0.0, 0.0, 0.0]) #This is equivalent, maybe better?
+
+    def create_displaylist_index(self):
+        displayListIndex = glGenLists(1)
+        glNewList(displayListIndex, GL_COMPILE)
+        draw.sphere(self)
+        glEndList()
+        return displayListIndex
 
     def support_func(self, direction):
         return supports.sphere(self, direction)
@@ -125,8 +141,13 @@ class Sphere(Shape):
     def get_radius(self):
         return self._radius
 
+    def get_bounding_radius(self):
+        ''' Returns a radius that encapsules the sphere, slightly
+            bigger than the sphere's radius.'''
+        return self._radius*1.1
+
     def draw(self):
-        draw.sphere(self)
+        glCallList(self._displayListIndex)
         
         
         
@@ -154,12 +175,25 @@ class Cube(Shape):
         self._side = side
         self._mass = mass
         self._color = color
+        self._displayListIndex = self.create_displaylist_index()
+
+    def create_displaylist_index(self):
+        displayListIndex = glGenLists(1)
+        glNewList(displayListIndex, GL_COMPILE)
+        draw.cube(self)
+        glEndList()
+        return displayListIndex
 
     def support_func(self, direction):
         #return supports.cube(self, direction)
         return supports.polyhedron(self, direction)
 
     def get_side(self):
+        return self._side
+
+    def get_bounding_radius(self):
+        ''' Returns a radius that encapsules the cube, slightly
+            bigger than the distance from the center to a corner.'''
         return self._side
 
     def get_points(self):
@@ -207,7 +241,7 @@ class Cube(Shape):
                 return vectors.Vector([0.0, 0.0, -1.0])
 
     def draw(self):
-        draw.cube(self)
+        glCallList(self._displayListIndex)
 
 
 class Surface(Shape):
@@ -238,6 +272,14 @@ class Surface(Shape):
         self._points = points
         self._color = color
         self._normal = (points[0] - points[1]).cross(points[3] - points[1]).normalize()
+        self._displayListIndex = self.create_displaylist_index()
+
+    def create_displaylist_index(self):
+        displayListIndex = glGenLists(1)
+        glNewList(displayListIndex, GL_COMPILE)
+        draw.plane(self)
+        glEndList()
+        return displayListIndex
 
     def support_func(self, direction):
         return supports.polyhedron(self, direction)
@@ -245,8 +287,8 @@ class Surface(Shape):
     def get_points(self):
         return self._points
 
-    def get_normal(self, point):
+    def get_normal(self, point = vectors.Vector()):
         return self._normal
 
     def draw(self):
-        draw.plane(self)
+        glCallList(self._displayListIndex)

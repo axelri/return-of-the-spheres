@@ -42,10 +42,18 @@ def cube(cube):
 
 def plane(plane):
     assert isinstance(plane, shapes.Surface), 'Input must be a Surface object'
+    points = plane.get_points()
     glColor3fv(plane.get_color())
     glBegin(GL_QUADS)
-    for point in plane.get_points():
+    for point in points:
         glVertex3fv(point.value)
+    glEnd()
+
+    glColor3f(0.0, 0.0, 0.0)
+    glBegin(GL_LINES)
+    for i in range(len(points)):
+        glVertex3fv(points[i].value)
+        glVertex3fv(points[(i+1)%len(points)].value)
     glEnd()
 
 def sphere(sphere):

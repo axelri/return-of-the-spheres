@@ -3,9 +3,12 @@ import collisions
 import shapes
 import numbers
 import games
+import broadphase
+import narrowphase
+#import time
 
 GRAVITY = vectors.Vector([0.0, -10.0, 0.0])
-dt = 0.0005
+dt = 0.005
 
 #                                (1+e)(relv.norm)
 #j =------------------------------------------------------------------------------
@@ -25,6 +28,10 @@ def collision_response(shape1, shape2, collisionInfo):
            'Input must be a vector'
     assert isinstance(depth, numbers.Number), \
            'Input must be a number'
+
+    # TODO: There is a bug causing the shapes to be considered as moving apart
+    # even though they are not, thus returning without applying any impulse.
+    # This causes the shapes to fall through eachother.
 
     if normal.dot(shape1.get_pos() - shape2.get_pos()) < 0:
         # It's pointing the wrong way
@@ -56,6 +63,16 @@ def collision_response(shape1, shape2, collisionInfo):
     # If the shapes are moving away from eachother we don't need to apply an impulse
     relMov = - relVel.dot(normal)
     if relMov < -0.01:
+##        print 'Moving apart'
+##        print 'Normal:', normal
+##        print 'relVel:', relVel
+##        print 'relMov:', relMov
+##        print 'v1:', v1
+##        print 'r1:', r1
+##        print 'angVel:', shape1.get_angular_velocity()
+##        print 'colPoint:', collisionPoint
+##        print 'pos:', shape1.get_pos()
+##        print ''
         return
 
     # NORMAL Impulse
@@ -159,29 +176,48 @@ def update_physics(game):
     assert isinstance(game, games.Game), 'Input must be a game object'
     # TODO: Make it have an input called dt, which gives it the
     # timestep it should simulate
-
+    # TODO: Add broadphase collision detection, for example
+    # check_collision = collisions.broadphase(shape1, shape2)
+    # if check_collision:
+    #     collided, collisionInfo = collisions.GJK(shape1, shape2)
+    # broadphase should return a boolean; True if the shapes should be
+    # passed on to narrowphase, False otherwise.
+    # NOTE: Broadphase added
+    #print 'Entered loop at', time.clock()
     player, objectList, sceneList = game.get_objects()
     #print ''
     for item in objectList:
         #print 'Checking collision with item:', item
 
-        collided, collisionInfo = collisions.GJK(player, item)
+        check_collision = broadphase.shape_shape(player, item)
+        if check_collision:
+            collided, collisionInfo = collisions.GJK(player, item)
+        else:
+            collided, collisionInfo = False, None
 
         if collided:
             #print 'Player collided with item'
             collision_response(player, item, collisionInfo)
 
-        for thing in sceneList:
-            collided, collisionInfo = collisions.GJK(item, thing)
+        for elem in sceneList:
+            check_collision = broadphase.shape_surface(item, elem)
+            if check_collision:
+                collided, collisionInfo = collisions.GJK(item, elem)
+            else:
+                collided, collisionInfo = False, None
 
             if collided:
                 #print 'Item collided with scene'
-                collision_response(item, thing, collisionInfo)
+                collision_response(item, elem, collisionInfo)
 
     for item in sceneList:
         #print 'Checking collision with scene:', item
-
-        collided, collisionInfo = collisions.GJK(player, item)
+        check_collision = broadphase.shape_surface(player, item)
+        if check_collision:
+            #collided, collisionInfo = collisions.GJK(player, item)
+            collided, collisionInfo = narrowphase.sphere_surface(player, item)
+        else:
+            collided, collisionInfo = False, None
 
         if collided:
             #print 'Player collided with scene'
@@ -195,3 +231,4 @@ def update_physics(game):
     for item in objectList:
         item.add_velocity(GRAVITY*dt)
         item.add_pos(item.get_velocity())
+    #print ''

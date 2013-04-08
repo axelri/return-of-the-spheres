@@ -67,13 +67,23 @@ class Vector:
 
     def __eq__(self, v2):
         ''' Checks if two vectors have the same value, overloads "==" '''
-        assert isinstance(v2, Vector), 'Input must be a vector'
-        return self.value == v2.value
+        #assert isinstance(v2, Vector), 'Input must be a vector'
+        # NOTE: We must be able to compare vectors with other
+        # objects, such as None.
+        if isinstance(v2, Vector):
+            return self.value == v2.value
+        else:
+            return False
 
     def __ne__(self, v2):
         ''' Checks if two vectors do not have the same value, overloads "!=" '''
-        assert isinstance(v2, Vector), 'Input must be a vector'
-        return self.value != v2.value
+        #assert isinstance(v2, Vector), 'Input must be a vector'
+        # NOTE: We must be able to compare vectors with other
+        # objects, such as None.
+        if isinstance(v2, Vector):
+            return self.value != v2.value
+        else:
+            return True
 
     def __mul__(self, scalar):
         ''' Returns the vector multiplied with the given scalar '''

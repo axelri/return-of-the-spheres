@@ -4,6 +4,7 @@ import supports
 import matrices
 import numbers
 import shapes
+import time
 
 def GJK(shape1, shape2):
     ''' Calculates whether shape1 has collided with shape2. It uses Minkowski
@@ -22,6 +23,8 @@ def GJK(shape1, shape2):
     '''
     assert isinstance(shape1, shapes.Shape), 'Input must be a Shape object'
     assert isinstance(shape2, shapes.Shape), 'Input must be a Shape object'
+
+    #print 'Entered GJK at', time.clock()
     # Create a Simplex object
     simplex = simplices.Simplex()
 
