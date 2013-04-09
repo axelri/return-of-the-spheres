@@ -3,12 +3,17 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import numbers
 import shapes
+import vectors
 
 CUBE_QUAD_VERTS = ((0, 1, 2, 3), (3, 2, 7, 6), (6, 7, 5, 4),
                    (4, 5, 1, 0), (1, 5, 7, 2), (4, 0, 3, 6))
 
 CUBE_EDGES = ((0,1), (0,3), (0,4), (2,1), (2,3), (2,7),
               (6,3), (6,4), (6,7), (5,1), (5,4), (5,7))
+
+CUBE_NORMALS = ([0.0, 0.0, -1.0], [-1.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0], [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0], [0.0, -1.0, 0.0])
 
 def cube_points(size):
     assert isinstance(size, numbers.Number), 'Input must be a number'
@@ -28,6 +33,7 @@ def cube(cube):
     glColor3fv(cube.get_color())
     glBegin(GL_QUADS)
     for face in CUBE_QUAD_VERTS:
+        glNormal3fv(CUBE_NORMALS[CUBE_QUAD_VERTS.index(face)])
         for vert in face:     
             glVertex3fv(points[vert])
     glEnd()
@@ -45,6 +51,7 @@ def plane(plane):
     points = plane.get_points()
     glColor3fv(plane.get_color())
     glBegin(GL_QUADS)
+    glNormal3fv(plane.get_normal().value)
     for point in points:
         glVertex3fv(point.value)
     glEnd()

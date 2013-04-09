@@ -11,22 +11,10 @@ import render
 import physics
 import games
 import vectors
+import init_graphics
+import lights
 
-
-pygame.init()
-pygame.display.set_mode((640, 480), OPENGL|DOUBLEBUF)
-
-glEnable(GL_DEPTH_TEST)
-#glEnable(GL_LIGHTING)
-#glEnable(GL_LIGHT0)
-
-glClearColor(0.0, 0.0, 0.0, 0.0)
-
-glMatrixMode(GL_PROJECTION)
-
-gluPerspective(45.0, 640.0/480.0, 0.1, 100.0)
-glMatrixMode(GL_MODELVIEW)
-glLoadIdentity()
+init_graphics.init_window()
 
 PLANE_POINTS1 = [vectors.Vector([-10.0, 0.0, -10.0]),
                 vectors.Vector([10.0, 0.0, -10.0]),
@@ -68,6 +56,10 @@ plane4 = shapes.Surface(points = PLANE_POINTS3,
 plane5 = shapes.Surface(points = PLANE_POINTS3,
                         pos = vectors.Vector([-10.0, 1.0, 0.0]))
 
+glEnable(GL_LIGHT0)
+
+light1 = lights.Light(GL_LIGHT0, vectors.Vector([0.0, 10.0, 4.0]))
+
 player = sphere
 #player = cube
 
@@ -75,10 +67,12 @@ player = sphere
 #sceneList = []
 
 objectList = []
-#sceneList = [plane1, plane2, plane3, plane4, plane5]
-sceneList = [plane1]
+sceneList = [plane1, plane2, plane3, plane4, plane5]
+#sceneList = [plane1]
 
-game = games.Game(player, objectList, sceneList)
+lightList = [light1]
+
+game = games.Game(player, objectList, sceneList, lightList)
 
 run = True
 
