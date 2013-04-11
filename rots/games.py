@@ -1,5 +1,5 @@
 import shapes
-import lights
+from graphics import lights
 
 class Game():
     ''' A class containing all the objects in the game '''

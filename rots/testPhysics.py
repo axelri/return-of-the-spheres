@@ -7,12 +7,11 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 import shapes
-import render
-import physics
 import games
-import vectors
-import init_graphics
-import lights
+from graphics import render, init_graphics, lights
+from physics_engine import physics
+from tensors import vectors
+
 
 init_graphics.init_window()
 

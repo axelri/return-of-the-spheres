@@ -1,5 +1,5 @@
 import shapes
-import vectors
+from tensors import vectors
 import numbers
 
 # TODO: More functions: cube-plane, sphere-cube

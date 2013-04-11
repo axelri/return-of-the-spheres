@@ -1,11 +1,13 @@
-import vectors
-import collisions
-import shapes
 import numbers
-import games
+#import time
+
 import broadphase
 import narrowphase
-#import time
+import collisions
+import shapes
+import games
+from tensors import vectors
+
 
 GRAVITY = vectors.Vector([0.0, -10.0, 0.0])
 dt = 0.005

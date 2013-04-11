@@ -1,9 +1,11 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+
 import numbers
+
 import shapes
-import vectors
+from tensors import vectors
 
 CUBE_QUAD_VERTS = ((0, 1, 2, 3), (3, 2, 7, 6), (6, 7, 5, 4),
                    (4, 5, 1, 0), (1, 5, 7, 2), (4, 0, 3, 6))

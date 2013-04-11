@@ -1,10 +1,11 @@
-import vectors
+import numbers
+import time
+
 import simplices
 import supports
-import matrices
-import numbers
 import shapes
-import time
+from tensors import vectors, matrices
+
 
 def GJK(shape1, shape2):
     ''' Calculates whether shape1 has collided with shape2. It uses Minkowski

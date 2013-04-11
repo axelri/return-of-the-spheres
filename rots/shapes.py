@@ -1,11 +1,13 @@
-import vectors
-import quaternions
-import supports
-import numbers
-import draw
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+
+import numbers
+
+from tensors import vectors, quaternions
+from physics_engine import supports
+from graphics import draw
+
 
 # TODO: Right now there is some redundance in the code since the
 # create_displaylist_index() functions are almost identical in all
