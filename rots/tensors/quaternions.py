@@ -1,6 +1,6 @@
 import vectors
 import numbers
-from math import cos, sin
+from math import cos, sin, sqrt
 
 class Quaternion:
     ''' A quaternion class for rotation handling.
@@ -21,26 +21,26 @@ class Quaternion:
 
     def normalize(self):
         out = [0]*4
-        n = norm(self)
+        n = self.norm()
         for i in range(len(self.value)):
             out[i] = self.value[i]/n
 
-        return out
+        return Quaternion(out)
 
     def convert_to_matrix(self):
         ''' Converts the quaternion to a rotation matrix of OpenGL standard. '''
 
-        xx = self._value[1]*self._value[1]
-        xy = self._value[1]*self._value[2]
-        xz = self._value[1]*self._value[3]
-        xw = self._value[1]*self._value[0]
+        xx = self.value[1]*self.value[1]
+        xy = self.value[1]*self.value[2]
+        xz = self.value[1]*self.value[3]
+        xw = self.value[1]*self.value[0]
 
-        yy = self._value[2]*self._value[2]
-        yz = self._value[2]*self._value[3]
-        yw = self._value[2]*self._value[0]
+        yy = self.value[2]*self.value[2]
+        yz = self.value[2]*self.value[3]
+        yw = self.value[2]*self.value[0]
 
-        zz = self._value[3]*self._value[3]
-        zw = self._value[3]*self._value[0]
+        zz = self.value[3]*self.value[3]
+        zw = self.value[3]*self.value[0]
 
         matrix = [1 - 2*yy - 2*zz, 2*xy + 2*zw, 2*xz - 2*yw, 0,
                   2*xy - 2*zw, 1 - 2*xx - 2*zz, 2*yz - 2*xw, 0,

@@ -6,7 +6,7 @@ import narrowphase
 import collisions
 import shapes
 import games
-from tensors import vectors
+from tensors import vectors, quaternions
 
 
 GRAVITY = vectors.Vector([0.0, -10.0, 0.0])
@@ -17,7 +17,7 @@ dt = 0.005
 #    norm.norm(1/Mass0 + 1/Mass1) + (sqr(r0 x norm) / Inertia0) + (sqr(r1 x norm) / Inertia1)
 
 def collision_response(shape1, shape2, collisionInfo):
-    print 'Entered collision response'
+    #print 'Entered collision response'
     assert isinstance(shape1, shapes.Shape), 'Input must be a Shape object'
     assert isinstance(shape2, shapes.Shape), 'Input must be a Shape object'
     assert isinstance(collisionInfo, tuple), 'Input must be a tuple'
@@ -36,11 +36,11 @@ def collision_response(shape1, shape2, collisionInfo):
     # even though they are not, thus returning without applying any impulse.
     # This causes the shapes to fall through eachother.
 
-    print 'Normal before:', normal
+    #print 'Normal before:', normal
     if normal.dot(shape1.get_pos() - shape2.get_pos()) < 0:
         # It's pointing the wrong way
         normal *= -1.0
-    print 'Normal after:', normal
+    #print 'Normal after:', normal
 
     # The inverted inertia matrices of the two shapes
     invInertia1 = shape1.get_invInertia()
@@ -52,7 +52,7 @@ def collision_response(shape1, shape2, collisionInfo):
 
     if invMass1 + invMass2 == 0.0:
         # Both objects are immobile
-        print 'Immobile'
+        #print 'Immobile'
         return
 
     # The vectors from the collision point to the respective centra of the shapes
@@ -73,19 +73,19 @@ def collision_response(shape1, shape2, collisionInfo):
     # therefore the point of collision is moving upwards, despite the
     # fact that the sphere is moving downwards. Fix.
     relMov = - relVel.dot(normal)
-    print 'relVel:', relVel
-    print 'relMov:', relMov 
+    #print 'relVel:', relVel
+    #print 'relMov:', relMov 
     if relMov < -0.01:
-        print 'Moving apart'
-        print 'Normal:', normal
-        print 'relVel:', relVel
-        print 'relMov:', relMov
-        print 'v1:', v1
-        print 'r1:', r1
-        print 'angVel:', shape1.get_angular_velocity()
-        print 'colPoint:', collisionPoint
-        print 'pos:', shape1.get_pos()
-        print ''
+        #print 'Moving apart'
+        #print 'Normal:', normal
+        #print 'relVel:', relVel
+        #print 'relMov:', relMov
+        #print 'v1:', v1
+        #print 'r1:', r1
+        #print 'angVel:', shape1.get_angular_velocity()
+        #print 'colPoint:', collisionPoint
+        #print 'pos:', shape1.get_pos()
+        #print ''
         return
 
     # NORMAL Impulse
@@ -100,28 +100,28 @@ def collision_response(shape1, shape2, collisionInfo):
     
 
     # Hack fix to stop sinking
-    print 'Normal impulse before', normalImpulse
+    #print 'Normal impulse before', normalImpulse
     normalImpulse += depth*1.0
-    print 'Normal impulse after', normalImpulse
+    #print 'Normal impulse after', normalImpulse
 
-    print 'Velocity before for {shape} : {value}'\
-          .format(shape = shape1.__class__.__name__,
-                  value = shape1.get_velocity())
-    print 'Velocity before for {shape} : {value}'\
-          .format(shape = shape2.__class__.__name__,
-                  value = shape2.get_velocity())
+    #print 'Velocity before for {shape} : {value}'\
+    #      .format(shape = shape1.__class__.__name__,
+    #              value = shape1.get_velocity())
+    #print 'Velocity before for {shape} : {value}'\
+    #      .format(shape = shape2.__class__.__name__,
+    #              value = shape2.get_velocity())
 
     shape1.add_velocity(normal * normalImpulse * invMass1)
     shape2.add_velocity(normal * normalImpulse * invMass2 * -1.0)
 
-    print 'Velocity after for {shape} : {value}'\
-          .format(shape = shape1.__class__.__name__,
-                  value = shape1.get_velocity())
-    print 'Velocity after for {shape} : {value}'\
-          .format(shape = shape2.__class__.__name__,
-                  value = shape2.get_velocity())
+    #print 'Velocity after for {shape} : {value}'\
+    #      .format(shape = shape1.__class__.__name__,
+    #              value = shape1.get_velocity())
+    #print 'Velocity after for {shape} : {value}'\
+    #      .format(shape = shape2.__class__.__name__,
+    #              value = shape2.get_velocity())
 
-    print ''
+    #print ''
 
     shape1.add_angular_velocity(r1.cross(normal*normalImpulse).\
                                 left_matrix_mult(invInertia1))
@@ -261,8 +261,24 @@ def update_physics(game):
     
     player.add_velocity(GRAVITY*dt)
     player.add_pos(player.get_velocity())
+    
+    angVel = player.get_angular_velocity()
+    angle = angVel.norm()
+    axis = angVel.normalize()
+    if axis == None:
+        axis = vectors.Vector([1.0, 0.0, 0.0])  #Dummy variable
+    rotQuat = quaternions.axis_angle_to_quat(axis, angle)
+    player.add_orientation(rotQuat)
 
     for item in objectList:
         item.add_velocity(GRAVITY*dt)
         item.add_pos(item.get_velocity())
+        
+        angVel = item.get_angular_velocity()
+        angle = angVel.norm()
+        axis = angVel.normalize()
+        if axis == None:
+            axis = vectors.Vector([1.0, 0.0, 0.0])  #Dummy variable
+        rotQuat = quaternions.axis_angle_to_quat(axis, angle)
+        item.add_orientation(rotQuat)
     #print ''

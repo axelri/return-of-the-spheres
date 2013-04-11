@@ -57,6 +57,9 @@ def render(game):
     
     glPushMatrix()
     glTranslatef(pos[0], pos[1], pos[2])
+    #print 'Orientation:', player.get_orientation()
+    rotMatrix = player.get_orientation().convert_to_matrix()
+    glMultMatrixf(rotMatrix)
     player.draw()
     glPopMatrix()
 
@@ -64,6 +67,8 @@ def render(game):
         pos = item.get_pos().value
         glPushMatrix()
         glTranslatef(pos[0], pos[1], pos[2])
+        rotMatrix = item.get_orientation().convert_to_matrix()
+        glMultMatrixf(rotMatrix)
         item.draw()
         glPopMatrix()
 
@@ -72,6 +77,8 @@ def render(game):
         pos = item.get_pos().value
         glPushMatrix()
         glTranslatef(pos[0], pos[1], pos[2])
+        rotMatrix = item.get_orientation().convert_to_matrix()
+        glMultMatrixf(rotMatrix)
         item.draw()
         glPopMatrix()
 

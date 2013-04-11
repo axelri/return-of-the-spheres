@@ -68,4 +68,4 @@ def plane(plane):
 def sphere(sphere):
     assert isinstance(sphere, shapes.Sphere), 'Input must be a sphere object'
     glColor3fv(sphere.get_color())
-    glutSolidSphere(sphere.get_radius(), 20, 20)
+    glutSolidSphere(sphere.get_radius(), 10, 10)

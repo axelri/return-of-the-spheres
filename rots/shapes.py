@@ -26,6 +26,7 @@ class Shape(object):
 
         # Angular motion
         self._orientation = quaternions.Quaternion()
+        print 'Made an orientation:', self._orientation
         self._angularVelocity = vectors.Vector()
         self._invInertia = [[0.0, 0.0, 0.0],
                             [0.0, 0.0, 0.0],
@@ -44,6 +45,17 @@ class Shape(object):
     def add_velocity(self, velocity):
         assert isinstance(velocity, vectors.Vector), 'Velocity must be a vector'
         self._velocity += velocity
+    
+    def get_pos(self):
+        return self._pos
+
+    def set_pos(self, pos):
+        assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
+        self._pos = pos
+
+    def add_pos(self, pos):
+        assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
+        self._pos += pos
 
     def get_angular_velocity(self):
         return self._angularVelocity
@@ -56,6 +68,31 @@ class Shape(object):
         assert isinstance(velocity, vectors.Vector), 'Velocity must be a vector'
         self._angularVelocity += velocity
 
+    def get_orientation(self):
+        #print 'get_orientation', self._orientation
+        return self._orientation
+
+    def set_orientation(self, orientation):
+        assert isinstance(orientation, quaternions.Quaternion), \
+               'Input must be a quaternion'
+        assert abs(orientation.norm() - 1.0) < 0.00001, \
+               'Input must be a quaternion of unit length'
+        #print 'set_orientation before', self._orientation
+        self._orientation = orientation
+        #print 'set_orientation after', self._orientation
+        
+
+    def add_orientation(self, orientation):
+        assert isinstance(orientation, quaternions.Quaternion), \
+               'Input must be a quaternion'
+        assert abs(orientation.norm() - 1.0) < 0.00001, \
+               'Input must be a quaternion of unit length'
+        #print 'add_orientation before', self._orientation
+        self._orientation = orientation.q_mult(self._orientation)
+        #print 'add_orientation middle', self._orientation
+        self._orientation = self._orientation.normalize()
+        #print 'add_orientation after', self._orientation
+
     def get_mass(self):
         return self._mass
 
@@ -66,17 +103,6 @@ class Shape(object):
 
     def get_invInertia(self):
         return self._invInertia
-
-    def get_pos(self):
-        return self._pos
-
-    def set_pos(self, pos):
-        assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
-        self._pos = pos
-
-    def add_pos(self, pos):
-        assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
-        self._pos += pos
 
     def get_color(self):
         return self._color
