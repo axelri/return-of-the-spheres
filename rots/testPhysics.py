@@ -13,7 +13,7 @@ import shapes
 import games
 from graphics import render, init_graphics, lights
 from physics_engine import physics
-from tensors import vectors
+from math_classes import vectors
 
 def main():
     init_graphics.init_window()

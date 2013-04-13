@@ -6,7 +6,7 @@ import narrowphase
 import collisions
 import shapes
 import games
-from tensors import vectors, quaternions
+from math_classes import vectors, quaternions
 
 
 GRAVITY = vectors.Vector([0.0, -10.0, 0.0])

@@ -1,5 +1,5 @@
 from OpenGL.GL import *
-from tensors import vectors
+from math_classes import vectors
 
 # TODO: Add other attributes to the light, such as color, direction,
 # angle of the spreading light etc.

@@ -4,7 +4,7 @@ from OpenGL.GLUT import *
 
 import numbers
 
-from tensors import vectors, quaternions
+from math_classes import vectors, quaternions
 from physics_engine import supports
 from graphics import draw
 
@@ -26,7 +26,7 @@ class Shape(object):
 
         # Angular motion
         self._orientation = quaternions.Quaternion()
-        print 'Made an orientation:', self._orientation
+        #print 'Made an orientation:', self._orientation
         self._angularVelocity = vectors.Vector()
         self._invInertia = [[0.0, 0.0, 0.0],
                             [0.0, 0.0, 0.0],

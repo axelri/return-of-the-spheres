@@ -1,4 +1,4 @@
-from tensors import vectors
+from math_classes import vectors
 
 def support(shape1, shape2, direction):
     ''' Calculates a point in Minkowski space that is on the edge of

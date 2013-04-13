@@ -4,7 +4,7 @@ import time
 import simplices
 import supports
 import shapes
-from tensors import vectors, matrices
+from math_classes import vectors, matrices
 
 
 def GJK(shape1, shape2):
