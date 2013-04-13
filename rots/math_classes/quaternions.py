@@ -27,6 +27,21 @@ class Quaternion:
 
         return Quaternion(out)
 
+    def is_unit(self):
+        ''' Checks if the quaternion is of unit length, returns True
+            if it is close enough, False otherwise. '''
+        v = self.value
+        sqNorm = v[0]*v[0] + v[1]*v[1] + v[2]*v[2]+ v[3]*v[3]
+        return abs(sqNorm - 1.0) < 0.00001
+
+    def check_normalize(self):
+        ''' Checks if the quaternion is of unit length, if not it normalizes
+            the quaternion. '''
+        if not self.is_unit():
+            return self.normalize()
+        else:
+            return self
+
     def convert_to_matrix(self):
         ''' Converts the quaternion to a rotation matrix of OpenGL standard. '''
 
@@ -49,20 +64,26 @@ class Quaternion:
 
         return matrix
 
-    def q_mult(self, quaternion):
-        ''' Multiplies self with the given quaternion '''
+    def __mul__(self, quaternion):
+        ''' Multiplies self with the given quaternion, overloads * '''
         assert isinstance(quaternion, Quaternion)
-        quat1 = self.value
-        quat2 = quaternion.value
+        q1 = self.value
+        q2 = quaternion.value
 
-        v0 = vectors.Vector(quat1[1:])
-        v1 = vectors.Vector(quat2[1:])
+        #v0 = vectors.Vector(quat1[1:])
+        #v1 = vectors.Vector(quat2[1:])
 
-        w = quat1[0]*quat2[0] - v0.dot(v1)
+        #w = quat1[0]*quat2[0] - v0.dot(v1)
 
-        v = v1*quat1[0] + v0*quat2[0] + v0.cross(v1)
+        #v = v1*quat1[0] + v0*quat2[0] + v0.cross(v1)
 
-        out = [w]+v.value
+        #out = [w]+v.value
+        out = [0,0,0,0]
+        out[0] = q1[0]*q2[0] - q1[1]*q2[1] - q1[2]*q2[2] - q1[3]*q2[3]
+        out[1] = q1[0]*q2[1] + q1[1]*q2[0] + q1[2]*q2[3] - q1[3]*q2[2]
+        out[2] = q1[0]*q2[2] - q1[1]*q2[3] + q1[2]*q2[0] + q1[3]*q2[1]
+        out[3] = q1[0]*q2[3] + q1[1]*q2[2] - q1[2]*q2[1] + q1[3]*q2[0]
+        
         return Quaternion(out)
 
     def conjugate(self):
@@ -72,6 +93,10 @@ class Quaternion:
         y = value[2]
         z = value[3]
         return Quaternion([w, -x, -y, -z])
+
+    def __str__(self):
+        ''' Returns the string representation of the quaternion.'''
+        return self.value.__str__()
 
 
 def matrix_to_quat(m):
@@ -114,9 +139,9 @@ def axis_angle_to_quat(axis, angle):
     assert axis.dim() == 3, 'The rotation axis must be a vector of length 3'
     assert isinstance(angle, numbers.Number), 'Angle must be a number'
     axis = axis.normalize().value
-    w = cos(angle/2)
-    x = axis[0]*sin(angle/2)
-    y = axis[1]*sin(angle/2)
-    z = axis[2]*sin(angle/2)
+    w = cos(angle/2.0)
+    x = axis[0]*sin(angle/2.0)
+    y = axis[1]*sin(angle/2.0)
+    z = axis[2]*sin(angle/2.0)
 
     return Quaternion([w, x, y, z])

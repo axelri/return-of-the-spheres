@@ -123,10 +123,18 @@ def collision_response(shape1, shape2, collisionInfo):
 
     #print ''
 
+    print 'Angular velocity before normal for {shape} : {value}'\
+          .format(shape = shape1.__class__.__name__,
+                  value = shape1.get_angular_velocity())
+
     shape1.add_angular_velocity(r1.cross(normal*normalImpulse).\
                                 left_matrix_mult(invInertia1))
     shape2.add_angular_velocity(r2.cross(normal*normalImpulse).\
                                 left_matrix_mult(invInertia2))
+
+    print 'Angular velocity after normal for {shape} : {value}'\
+          .format(shape = shape1.__class__.__name__,
+                  value = shape1.get_angular_velocity())
 
     # TANGENT Impulse Code
 
@@ -146,10 +154,19 @@ def collision_response(shape1, shape2, collisionInfo):
     shape1.add_velocity(normal * tangentImpulse * invMass1)
     shape2.add_velocity(normal * tangentImpulse * invMass2 * -1.0)
 
+    print 'Angular velocity before tangent for {shape} : {value}'\
+          .format(shape = shape1.__class__.__name__,
+                  value = shape1.get_angular_velocity())
+
     shape1.add_angular_velocity(r1.cross(tangent*tangentImpulse).\
                                 left_matrix_mult(invInertia1))
     shape2.add_angular_velocity(r2.cross(tangent*tangentImpulse).\
                                 left_matrix_mult(invInertia2))
+
+    print 'Angular velocity after tangent for {shape} : {value}'\
+          .format(shape = shape1.__class__.__name__,
+                  value = shape1.get_angular_velocity())
+    print ''
 
 
 
@@ -265,10 +282,14 @@ def update_physics(game):
     angVel = player.get_angular_velocity()
     angle = angVel.norm()
     axis = angVel.normalize()
+    print 'Angle: {angle}, Axis: {axis}'.format(angle = angle, axis = axis)
     if axis == None:
         axis = vectors.Vector([1.0, 0.0, 0.0])  #Dummy variable
     rotQuat = quaternions.axis_angle_to_quat(axis, angle)
     player.add_orientation(rotQuat)
+    print 'rotQuat: {rotQuat}, Orientation: {orientation}'\
+          .format(rotQuat = rotQuat, orientation = player.get_orientation())
+    print ''
 
     for item in objectList:
         item.add_velocity(GRAVITY*dt)

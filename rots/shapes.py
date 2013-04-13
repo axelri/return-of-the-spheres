@@ -75,7 +75,7 @@ class Shape(object):
     def set_orientation(self, orientation):
         assert isinstance(orientation, quaternions.Quaternion), \
                'Input must be a quaternion'
-        assert abs(orientation.norm() - 1.0) < 0.00001, \
+        assert orientation.is_unit(), \
                'Input must be a quaternion of unit length'
         #print 'set_orientation before', self._orientation
         self._orientation = orientation
@@ -85,12 +85,12 @@ class Shape(object):
     def add_orientation(self, orientation):
         assert isinstance(orientation, quaternions.Quaternion), \
                'Input must be a quaternion'
-        assert abs(orientation.norm() - 1.0) < 0.00001, \
+        assert orientation.is_unit(), \
                'Input must be a quaternion of unit length'
         #print 'add_orientation before', self._orientation
-        self._orientation = orientation.q_mult(self._orientation)
+        self._orientation = orientation * self._orientation
         #print 'add_orientation middle', self._orientation
-        self._orientation = self._orientation.normalize()
+        self._orientation = self._orientation.check_normalize()
         #print 'add_orientation after', self._orientation
 
     def get_mass(self):

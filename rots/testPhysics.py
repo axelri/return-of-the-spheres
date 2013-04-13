@@ -93,6 +93,7 @@ def main():
         zDir = keyState[K_s] - keyState[K_w]
 
         direction = vectors.Vector([xDir, yDir, zDir])
+        print 'direction:', direction
 
         if not direction.is_zero():
             direction = direction.normalize()
