@@ -1,11 +1,13 @@
 import shapes
+import players
 from graphics import lights
 
 class Game():
     ''' A class containing all the objects in the game '''
     def __init__(self, player, objectList, sceneList, lightList):
         # TODO: Use the Player object from fluffy instead?
-        assert isinstance(player, shapes.Shape), 'Input must be a Shape object'
+        assert isinstance(player, players.Player), \
+               'Input must be a Player object'
         assert isinstance(objectList, list), 'Input must be a list'
         assert isinstance(sceneList, list), 'Input must be a list'
         assert isinstance(lightList, list), 'Input must be a list'

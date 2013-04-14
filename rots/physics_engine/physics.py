@@ -6,6 +6,7 @@ import narrowphase
 import collisions
 import shapes
 import games
+import players
 from math_classes import vectors, quaternions, matrices
 
 
@@ -123,18 +124,18 @@ def collision_response(shape1, shape2, collisionInfo):
 
     #print ''
 
-    print 'Angular velocity before normal for {shape} : {value}'\
-          .format(shape = shape1.__class__.__name__,
-                  value = shape1.get_angular_velocity())
+    #print 'Angular velocity before normal for {shape} : {value}'\
+    #      .format(shape = shape1.__class__.__name__,
+    #              value = shape1.get_angular_velocity())
 
     shape1.add_angular_velocity(r1.cross(normal*normalImpulse).\
                                 left_matrix_mult(invInertia1))
     shape2.add_angular_velocity(r2.cross(normal*normalImpulse).\
                                 left_matrix_mult(invInertia2))
 
-    print 'Angular velocity after normal for {shape} : {value}'\
-          .format(shape = shape1.__class__.__name__,
-                  value = shape1.get_angular_velocity())
+    #print 'Angular velocity after normal for {shape} : {value}'\
+    #      .format(shape = shape1.__class__.__name__,
+    #              value = shape1.get_angular_velocity())
 
     # TANGENT Impulse Code
 
@@ -154,19 +155,19 @@ def collision_response(shape1, shape2, collisionInfo):
     shape1.add_velocity(normal * tangentImpulse * invMass1)
     shape2.add_velocity(normal * tangentImpulse * invMass2 * -1.0)
 
-    print 'Angular velocity before tangent for {shape} : {value}'\
-          .format(shape = shape1.__class__.__name__,
-                  value = shape1.get_angular_velocity())
+    #print 'Angular velocity before tangent for {shape} : {value}'\
+    #      .format(shape = shape1.__class__.__name__,
+    #              value = shape1.get_angular_velocity())
 
     shape1.add_angular_velocity(r1.cross(tangent*tangentImpulse).\
                                 left_matrix_mult(invInertia1))
     shape2.add_angular_velocity(r2.cross(tangent*tangentImpulse).\
                                 left_matrix_mult(invInertia2))
 
-    print 'Angular velocity after tangent for {shape} : {value}'\
-          .format(shape = shape1.__class__.__name__,
-                  value = shape1.get_angular_velocity())
-    print ''
+    #print 'Angular velocity after tangent for {shape} : {value}'\
+    #      .format(shape = shape1.__class__.__name__,
+    #              value = shape1.get_angular_velocity())
+    #print ''
 
 
 
@@ -237,18 +238,20 @@ def update_physics(game):
     #print 'Entered loop at', time.clock()
     player, objectList, sceneList, lightList = game.get_objects()
     #print ''
+    player.collided = False
     for item in objectList:
         #print 'Checking collision with item:', item
 
-        check_collision = broadphase.shape_shape(player, item)
+        check_collision = broadphase.shape_shape(player.get_shape(), item)
         if check_collision:
-            collided, collisionInfo = collisions.GJK(player, item)
+            collided, collisionInfo = collisions.GJK(player.get_shape(), item)
         else:
             collided, collisionInfo = False, None
 
         if collided:
             #print 'Player collided with item'
-            collision_response(player, item, collisionInfo)
+            collision_response(player.get_shape(), item, collisionInfo)
+            player.collided = True
 
         for elem in sceneList:
             check_collision = broadphase.shape_surface(item, elem)
@@ -263,36 +266,57 @@ def update_physics(game):
 
     for item in sceneList:
         #print 'Checking collision with scene:', item
-        check_collision = broadphase.shape_surface(player, item)
+        check_collision = broadphase.shape_surface(player.get_shape(), item)
         if check_collision:
             #collided, collisionInfo = collisions.GJK(player, item)
-            collided, collisionInfo = narrowphase.sphere_surface(player, item)
+            collided, collisionInfo = narrowphase.\
+                                      sphere_surface(player.get_shape(), item)
         else:
             collided, collisionInfo = False, None
 
         if collided:
             #print 'Player collided with scene'
-            collision_response(player, item, collisionInfo)
+            collision_response(player.get_shape(), item, collisionInfo)
+            player.collided = True
     
     # TODO: switch to semi-implicit Euler integration
+
+    # Friction
+    if player.collided:
+        player.get_shape().add_velocity(player.get_shape()\
+                                        .get_velocity()*-0.05)
+        if player.get_shape().get_velocity().norm() < 0.001:
+            player.get_shape().set_velocity(vectors.Vector())
+        player.get_shape().add_angular_velocity(player.get_shape()\
+                                        .get_angular_velocity()*-0.05)
+        if player.get_shape().get_angular_velocity().norm() < 0.001:
+            player.get_shape().set_angular_velocity(vectors.Vector())
+        
+    player.get_shape().add_velocity(GRAVITY*dt)
+    player.get_shape().add_pos(player.get_shape().get_velocity())
     
-    player.add_velocity(GRAVITY*dt)
-    player.add_pos(player.get_velocity())
-    
-    angVel = player.get_angular_velocity()
+    angVel = player.get_shape().get_angular_velocity()
     angle = angVel.norm()
     axis = angVel.normalize()
-    print 'Angle: {angle}, Axis: {axis}'.format(angle = angle, axis = axis)
+    #print 'Angle: {angle}, Axis: {axis}'.format(angle = angle, axis = axis)
     if axis == None:
         axis = vectors.Vector([1.0, 0.0, 0.0])  #Dummy variable
     #rotQuat = quaternions.axis_angle_to_quat(axis, angle)
     rotQuat = matrices.generate_rotation_matrix(axis, angle)
-    player.add_orientation(rotQuat)
-    print 'rotQuat: {rotQuat}, Orientation: {orientation}'\
-          .format(rotQuat = rotQuat, orientation = player.get_orientation())
-    print ''
+    player.get_shape().add_orientation(rotQuat)
+    #print 'rotQuat: {rotQuat}, Orientation: {orientation}'\
+    #      .format(rotQuat = rotQuat, orientation = player.get_orientation())
+    #print ''
 
     for item in objectList:
+        # Friction
+        item.add_velocity(item.get_velocity() *-0.05)
+        if item.get_velocity().norm() < 0.001:
+            item.set_velocity(vectors.Vector())
+        item.add_angular_velocity(item.get_angular_velocity() *-0.05)
+        if item.get_angular_velocity().norm() < 0.001:
+            item.set_angular_velocity(vectors.Vector())
+
         item.add_velocity(GRAVITY*dt)
         item.add_pos(item.get_velocity())
         

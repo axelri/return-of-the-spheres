@@ -57,7 +57,7 @@ def shape_shape(shape1, shape2):
     assert not isinstance(shape2, shapes.Surface), \
            'Input must not be a surface object'
 
-    distance = shape.get_pos() - plane.get_pos()
+    distance = shape1.get_pos() - shape2.get_pos()
     boundingDistance = shape1.get_bounding_radius() +\
                        shape2.get_bounding_radius()
     if distance.norm() < boundingDistance:

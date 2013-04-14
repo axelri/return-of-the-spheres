@@ -53,6 +53,11 @@ class Vector:
         ''' Calculates the norm of the vector '''
         return sqrt((self.dot(self)))
 
+    def square_norm(self):
+        ''' Calculates the squared norm of the vector
+            (cheaper than using sqrt()) '''
+        return self.dot(self)
+
     def normalize(self):
         ''' Returns a normaliszed version of the the vector. 
         Returns None if the vector is the zero vector.'''

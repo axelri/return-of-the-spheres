@@ -11,6 +11,7 @@ import sys
 
 import shapes
 import games
+import players
 from graphics import render, init_graphics, lights
 from physics_engine import physics
 from math_classes import vectors
@@ -62,7 +63,7 @@ def main():
 
     light1 = lights.Light(GL_LIGHT0, vectors.Vector([0.0, 10.0, 4.0]))
 
-    player = sphere
+    player = players.Player(sphere)
     #player = cube
 
     #objectList = [cube]
@@ -85,33 +86,17 @@ def main():
             if event.type == QUIT or \
                 (event.type == KEYDOWN and event.key == K_ESCAPE):
                 run = False
-
         keyState = pygame.key.get_pressed()
 
         xDir = keyState[K_d] - keyState[K_a]
         yDir = keyState[K_SPACE] - keyState[K_LSHIFT]
         zDir = keyState[K_s] - keyState[K_w]
 
-        direction = vectors.Vector([xDir, yDir, zDir])
-        print 'direction:', direction
+        direction = vectors.Vector([xDir, yDir, zDir]).normalize()
+        if direction == None:
+            direction = vectors.Vector()
 
-        if not direction.is_zero():
-            direction = direction.normalize()
-
-        # NOTE: A primitive version of friction
-
-        projVel = player.get_velocity().dot(direction)
-        if projVel < speed:
-            if projVel > 0:
-                player.add_velocity(direction * (speed - projVel)*0.3)
-            else:
-                player.add_velocity(direction * speed*0.3)
-        if direction.is_zero():
-            player.set_velocity(player.get_velocity()*0.9)
-        perpVel = player.get_velocity() - direction * projVel
-        if not perpVel.is_zero():
-            player.add_velocity(perpVel*-0.3)
-            
+        player.update_velocity(direction)            
 
         physics.update_physics(game)
         render.render(game)
