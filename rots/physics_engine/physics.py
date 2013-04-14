@@ -6,7 +6,7 @@ import narrowphase
 import collisions
 import shapes
 import games
-from math_classes import vectors, quaternions
+from math_classes import vectors, quaternions, matrices
 
 
 GRAVITY = vectors.Vector([0.0, -10.0, 0.0])
@@ -285,7 +285,8 @@ def update_physics(game):
     print 'Angle: {angle}, Axis: {axis}'.format(angle = angle, axis = axis)
     if axis == None:
         axis = vectors.Vector([1.0, 0.0, 0.0])  #Dummy variable
-    rotQuat = quaternions.axis_angle_to_quat(axis, angle)
+    #rotQuat = quaternions.axis_angle_to_quat(axis, angle)
+    rotQuat = matrices.generate_rotation_matrix(axis, angle)
     player.add_orientation(rotQuat)
     print 'rotQuat: {rotQuat}, Orientation: {orientation}'\
           .format(rotQuat = rotQuat, orientation = player.get_orientation())
@@ -300,6 +301,7 @@ def update_physics(game):
         axis = angVel.normalize()
         if axis == None:
             axis = vectors.Vector([1.0, 0.0, 0.0])  #Dummy variable
-        rotQuat = quaternions.axis_angle_to_quat(axis, angle)
+        #rotQuat = quaternions.axis_angle_to_quat(axis, angle)
+        rotQuat = matrices.generate_rotation_matrix(axis, angle)
         item.add_orientation(rotQuat)
     #print ''

@@ -4,7 +4,7 @@ from OpenGL.GLUT import *
 
 import numbers
 
-from math_classes import vectors, quaternions
+from math_classes import vectors, quaternions, matrices
 from physics_engine import supports
 from graphics import draw
 
@@ -25,7 +25,8 @@ class Shape(object):
         self._force = vectors.Vector()
 
         # Angular motion
-        self._orientation = quaternions.Quaternion()
+        #self._orientation = quaternions.Quaternion()
+        self._orientation = matrices.identity()
         #print 'Made an orientation:', self._orientation
         self._angularVelocity = vectors.Vector()
         self._invInertia = [[0.0, 0.0, 0.0],
@@ -73,24 +74,38 @@ class Shape(object):
         return self._orientation
 
     def set_orientation(self, orientation):
-        assert isinstance(orientation, quaternions.Quaternion), \
-               'Input must be a quaternion'
-        assert orientation.is_unit(), \
-               'Input must be a quaternion of unit length'
+        #assert isinstance(orientation, quaternions.Quaternion), \
+        #       'Input must be a quaternion'
+        #assert orientation.is_unit(), \
+        #       'Input must be a quaternion of unit length'
+        assert isinstance(orientation, list), 'Input must be a matrix'
+        assert len(orientation) == 16, 'Input must be a 4x4 matrix'
+        if __debug__:
+            for item in orientation:
+                assert isinstance(item, numbers.Number),\
+                       'All elements in the matrix must be numbers'
         #print 'set_orientation before', self._orientation
         self._orientation = orientation
         #print 'set_orientation after', self._orientation
         
 
     def add_orientation(self, orientation):
-        assert isinstance(orientation, quaternions.Quaternion), \
-               'Input must be a quaternion'
-        assert orientation.is_unit(), \
-               'Input must be a quaternion of unit length'
+        #assert isinstance(orientation, quaternions.Quaternion), \
+        #       'Input must be a quaternion'
+        #assert orientation.is_unit(), \
+        #       'Input must be a quaternion of unit length'
+        assert isinstance(orientation, list), 'Input must be a matrix'
+        assert len(orientation) == 16, 'Input must be a 4x4 matrix'
+        if __debug__:
+            for item in orientation:
+                assert isinstance(item, numbers.Number),\
+                       'All elements in the matrix must be numbers'
+        self._orientation = matrices.matrix_mult(orientation, self._orientation)
+
         #print 'add_orientation before', self._orientation
-        self._orientation = orientation * self._orientation
+        #self._orientation = orientation * self._orientation
         #print 'add_orientation middle', self._orientation
-        self._orientation = self._orientation.check_normalize()
+        #self._orientation = self._orientation.check_normalize()
         #print 'add_orientation after', self._orientation
 
     def get_mass(self):
