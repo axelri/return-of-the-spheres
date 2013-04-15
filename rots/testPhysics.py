@@ -70,8 +70,8 @@ def main():
     #sceneList = []
 
     objectList = []
-    sceneList = [plane1, plane2, plane3, plane4, plane5]
-    #sceneList = [plane1]
+    #sceneList = [plane1, plane2, plane3, plane4, plane5]
+    sceneList = [plane1]
 
     lightList = [light1]
 

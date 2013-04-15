@@ -30,6 +30,7 @@ class Player:
 
 
     def update_velocity(self, direction):
+        # TODO: You get a small boost when changing direction, fix
         # set the velocity we want according to the input
         self._inputVelocity = direction * self._speed
 
@@ -57,12 +58,12 @@ class Player:
                     #print 'Right direction'
                     # we're mowing in the right direction
                     self._shape.add_velocity(direction * \
-                                      (self._speed - projVel)*0.3)
+                                      (self._speed - projVel)*0.5)
                     #print 'After:', self._inputVelocity
                 else:
                     #print 'Wrong direction'
                     # we're moving in the wrong direction
                     # (this is added to avoid extreme acceleration
                     # when moving in the wrong direction)
-                    self._shape.add_velocity(direction * self._speed*0.3)
+                    self._shape.add_velocity(direction * self._speed*0.5)
                     #print 'After:', self._inputVelocity

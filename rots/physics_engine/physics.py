@@ -17,6 +17,9 @@ dt = 0.005
 #j =------------------------------------------------------------------------------
 #    norm.norm(1/Mass0 + 1/Mass1) + (sqr(r0 x norm) / Inertia0) + (sqr(r1 x norm) / Inertia1)
 
+# TODO: There is a bug in the first bounces, causing the sphere to bounce
+# unnaturally. Fix.
+
 def collision_response(shape1, shape2, collisionInfo):
     #print 'Entered collision response'
     assert isinstance(shape1, shapes.Shape), 'Input must be a Shape object'
@@ -32,10 +35,6 @@ def collision_response(shape1, shape2, collisionInfo):
            'Input must be a vector'
     assert isinstance(depth, numbers.Number), \
            'Input must be a number'
-
-    # TODO: There is a bug causing the shapes to be considered as moving apart
-    # even though they are not, thus returning without applying any impulse.
-    # This causes the shapes to fall through eachother.
 
     #print 'Normal before:', normal
     if normal.dot(shape1.get_pos() - shape2.get_pos()) < 0:
@@ -68,25 +67,9 @@ def collision_response(shape1, shape2, collisionInfo):
     relVel = v1 - v2
 
     # If the shapes are moving away from eachother we don't need to apply an impulse
-    # TODO: There is a bug when rolling over edges that causes the shapes
-    # to be considered as moving apart, even though they are not. This is
-    # probably because the sphere is rolling and falling at the same time, and
-    # therefore the point of collision is moving upwards, despite the
-    # fact that the sphere is moving downwards. Fix.
     relMov = - relVel.dot(normal)
-    #print 'relVel:', relVel
-    #print 'relMov:', relMov 
+
     if relMov < -0.01:
-        #print 'Moving apart'
-        #print 'Normal:', normal
-        #print 'relVel:', relVel
-        #print 'relMov:', relMov
-        #print 'v1:', v1
-        #print 'r1:', r1
-        #print 'angVel:', shape1.get_angular_velocity()
-        #print 'colPoint:', collisionPoint
-        #print 'pos:', shape1.get_pos()
-        #print ''
         return
 
     # NORMAL Impulse
@@ -101,41 +84,16 @@ def collision_response(shape1, shape2, collisionInfo):
     
 
     # Hack fix to stop sinking
-    #print 'Normal impulse before', normalImpulse
     normalImpulse += depth*1.0
-    #print 'Normal impulse after', normalImpulse
-
-    #print 'Velocity before for {shape} : {value}'\
-    #      .format(shape = shape1.__class__.__name__,
-    #              value = shape1.get_velocity())
-    #print 'Velocity before for {shape} : {value}'\
-    #      .format(shape = shape2.__class__.__name__,
-    #              value = shape2.get_velocity())
 
     shape1.add_velocity(normal * normalImpulse * invMass1)
     shape2.add_velocity(normal * normalImpulse * invMass2 * -1.0)
 
-    #print 'Velocity after for {shape} : {value}'\
-    #      .format(shape = shape1.__class__.__name__,
-    #              value = shape1.get_velocity())
-    #print 'Velocity after for {shape} : {value}'\
-    #      .format(shape = shape2.__class__.__name__,
-    #              value = shape2.get_velocity())
-
-    #print ''
-
-    #print 'Angular velocity before normal for {shape} : {value}'\
-    #      .format(shape = shape1.__class__.__name__,
-    #              value = shape1.get_angular_velocity())
 
     shape1.add_angular_velocity(r1.cross(normal*normalImpulse).\
                                 left_matrix_mult(invInertia1))
     shape2.add_angular_velocity(r2.cross(normal*normalImpulse).\
                                 left_matrix_mult(invInertia2))
-
-    #print 'Angular velocity after normal for {shape} : {value}'\
-    #      .format(shape = shape1.__class__.__name__,
-    #              value = shape1.get_angular_velocity())
 
     # TANGENT Impulse Code
 
@@ -155,19 +113,10 @@ def collision_response(shape1, shape2, collisionInfo):
     shape1.add_velocity(normal * tangentImpulse * invMass1)
     shape2.add_velocity(normal * tangentImpulse * invMass2 * -1.0)
 
-    #print 'Angular velocity before tangent for {shape} : {value}'\
-    #      .format(shape = shape1.__class__.__name__,
-    #              value = shape1.get_angular_velocity())
-
     shape1.add_angular_velocity(r1.cross(tangent*tangentImpulse).\
                                 left_matrix_mult(invInertia1))
     shape2.add_angular_velocity(r2.cross(tangent*tangentImpulse).\
                                 left_matrix_mult(invInertia2))
-
-    #print 'Angular velocity after tangent for {shape} : {value}'\
-    #      .format(shape = shape1.__class__.__name__,
-    #              value = shape1.get_angular_velocity())
-    #print ''
 
 
 

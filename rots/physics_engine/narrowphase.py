@@ -42,6 +42,7 @@ def sphere_surface(sphere, surface):
         distance = distVec.dot(normal)
         if abs(distance) <= sphere.get_radius():
             # Collision with face
+##            print 'Collision with face'
             collided = True
 
             if distance < 0:
@@ -49,7 +50,8 @@ def sphere_surface(sphere, surface):
 
             point = projDist + surface.get_pos()
             depth = sphere.get_radius() - abs(distance)
-
+##            print 'Point:', point
+##            print 'Pos:', sphere.get_pos()
             assert isinstance(collided, bool), 'Collided must be a boolean'
             assert isinstance(point, vectors.Vector), 'Point must be a vector'
             assert isinstance(normal, vectors.Vector), 'Normal must be a vector'
@@ -59,6 +61,7 @@ def sphere_surface(sphere, surface):
             return collided, (point, normal, depth)
         else:
             # No collision
+##            print 'No collision'
             collided = False
             normal = None
             point = None
@@ -66,7 +69,7 @@ def sphere_surface(sphere, surface):
     
             return collided, (point, normal, depth)
     else:
-        print 'Might have hit an edge or corner'
+##        print 'Might have hit an edge or corner'
         # Might have hit an edge or corner
         # TODO: A lot of redundance, handle this?
         if abs(projDist.dot(normVec1)) < surfVec1.norm()*0.5:
@@ -78,22 +81,23 @@ def sphere_surface(sphere, surface):
                 distEdge = dist - dist.projected(normVec1)
                 if distEdge.norm() < sphere.get_radius():
                     # Collision with edge 1
-                    print 'Hit edge 1'
+##                    print 'Hit edge 1'
                     collided = True
                     normal = distEdge.normalize()
                     if normal == None:
                         # The center of the sphere hit the edge, pick a normal
                         normal = surface.get_normal()
 
-                    point = dist.projected(normVec1) + surface.get_pos()
+                    point = dist.projected(normVec1) + surface.get_pos() + points[0]
                     depth = sphere.get_radius() - distEdge.norm()
 
-                    print 'Collision info:'
-                    print '\tCollided:', collided
-                    print '\tPoint:', point
-                    print '\tNormal:', normal
-                    print '\tDepth:', depth
-                    print ''
+##                    print 'Collision info:'
+##                    print '\tCollided:', collided
+##                    print '\tPoint:', point
+##                    print '\tPos:', sphere.get_pos()
+##                    print '\tNormal:', normal
+##                    print '\tDepth:', depth
+##                    print ''
 
                     assert isinstance(collided, bool), \
                            'Collided must be a boolean'
@@ -109,7 +113,7 @@ def sphere_surface(sphere, surface):
                     return collided, (point, normal, depth)
                 else:
                     # No collision
-                    print 'No collision'
+##                    print 'No collision'
                     collided = False
                     normal = None
                     point = None
@@ -123,21 +127,22 @@ def sphere_surface(sphere, surface):
                 distEdge = dist - dist.projected(normVec1)
                 if distEdge.norm() < sphere.get_radius():
                     # Collision with edge 3
-                    print 'Hit edge 3'
+##                    print 'Hit edge 3'
                     collided = True
                     normal = distEdge.normalize()
                     if normal == None:
                         # The center of the sphere hit the edge, pick a normal
                         normal = surface.get_normal()
 
-                    point = dist.projected(normVec1) + surface.get_pos()
+                    point = dist.projected(normVec1) + surface.get_pos() + points[3]
                     depth = sphere.get_radius() - distEdge.norm()
-                    print 'Collision info:'
-                    print '\tCollided:', collided
-                    print '\tPoint:', point
-                    print '\tNormal:', normal
-                    print '\tDepth:', depth
-                    print ''
+##                    print 'Collision info:'
+##                    print '\tCollided:', collided
+##                    print '\tPoint:', point
+##                    print '\tPos:', sphere.get_pos()
+##                    print '\tNormal:', normal
+##                    print '\tDepth:', depth
+##                    print ''
 
                     assert isinstance(collided, bool), \
                            'Collided must be a boolean'
@@ -153,7 +158,7 @@ def sphere_surface(sphere, surface):
                     return collided, (point, normal, depth)
                 else:
                     # No collision
-                    print 'No collision'
+##                    print 'No collision'
                     collided = False
                     normal = None
                     point = None
@@ -170,21 +175,22 @@ def sphere_surface(sphere, surface):
                 distEdge = dist - dist.projected(normVec2)
                 if distEdge.norm() < sphere.get_radius():
                     # Collision with edge 4
-                    print 'Hit edge 4'
+##                    print 'Hit edge 4'
                     collided = True
                     normal = distEdge.normalize()
                     if normal == None:
                         # The center of the sphere hit the edge, pick a normal
                         normal = surface.get_normal()
 
-                    point = dist.projected(normVec2) + surface.get_pos()
+                    point = dist.projected(normVec2) + surface.get_pos() + points[0]
                     depth = sphere.get_radius() - distEdge.norm()
-                    print 'Collision info:'
-                    print '\tCollided:', collided
-                    print '\tPoint:', point
-                    print '\tNormal:', normal
-                    print '\tDepth:', depth
-                    print ''
+##                    print 'Collision info:'
+##                    print '\tCollided:', collided
+##                    print '\tPoint:', point
+##                    print '\tPos:', sphere.get_pos()
+##                    print '\tNormal:', normal
+##                    print '\tDepth:', depth
+##                    print ''
 
                     assert isinstance(collided, bool), \
                            'Collided must be a boolean'
@@ -201,7 +207,7 @@ def sphere_surface(sphere, surface):
                 
                 else:
                     # No collision
-                    print 'No collision'
+##                    print 'No collision'
                     collided = False
                     normal = None
                     point = None
@@ -216,21 +222,22 @@ def sphere_surface(sphere, surface):
                 distEdge = dist - dist.projected(normVec2)
                 if distEdge.norm() < sphere.get_radius():
                     # Collision with edge 2
-                    print 'Hit edge 2'
+##                    print 'Hit edge 2'
                     collided = True
                     normal = distEdge.normalize()
                     if normal == None:
                         # The center of the sphere hit the edge, pick a normal
                         normal = surface.get_normal()
 
-                    point = dist.projected(normVec2) + surface.get_pos()
+                    point = dist.projected(normVec2) + surface.get_pos() + points[1]
                     depth = sphere.get_radius() - distEdge.norm()
-                    print 'Collision info:'
-                    print '\tCollided:', collided
-                    print '\tPoint:', point
-                    print '\tNormal:', normal
-                    print '\tDepth:', depth
-                    print ''
+##                    print 'Collision info:'
+##                    print '\tCollided:', collided
+##                    print '\tPoint:', point
+##                    print '\tPos:', sphere.get_pos()
+##                    print '\tNormal:', normal
+##                    print '\tDepth:', depth
+##                    print ''
 
                     assert isinstance(collided, bool), \
                            'Collided must be a boolean'
@@ -247,7 +254,7 @@ def sphere_surface(sphere, surface):
                 
                 else:
                     # No collision
-                    print 'No collision'
+##                    print 'No collision'
                     collided = False
                     normal = None
                     point = None
@@ -264,7 +271,7 @@ def sphere_surface(sphere, surface):
                     distCorn = sphere.get_pos() - points[0]
                     if distCorn.norm() < sphere.get_radius():
                         # Collision with corner 0
-                        print 'Hit corner 0'
+##                        print 'Hit corner 0'
                         collision = True
                         normal = distCorn.normalize()
                         if normal == None:
@@ -272,12 +279,13 @@ def sphere_surface(sphere, surface):
                             normal = surface.get_normal()
                         point = points[0] + surface.get_pos()
                         depth = sphere.get_radius() - distCorn.norm()
-                        print 'Collision info:'
-                        print '\tCollided:', collided
-                        print '\tPoint:', point
-                        print '\tNormal:', normal
-                        print '\tDepth:', depth
-                        print ''
+##                        print 'Collision info:'
+##                        print '\tCollided:', collided
+##                        print '\tPoint:', point
+##                        print '\tPos:', sphere.get_pos()
+##                        print '\tNormal:', normal
+##                        print '\tDepth:', depth
+##                        print ''
 
                         assert isinstance(collided, bool), \
                            'Collided must be a boolean'
@@ -294,7 +302,7 @@ def sphere_surface(sphere, surface):
                 
                     else:
                         # No collision
-                        print 'No collision'
+##                        print 'No collision'
                         collided = False
                         normal = None
                         point = None
@@ -307,7 +315,7 @@ def sphere_surface(sphere, surface):
                     distCorn = sphere.get_pos() - points[3]
                     if distCorn.norm() < sphere.get_radius():
                         # Collision with corner 3
-                        print 'Hit corner 3'
+##                        print 'Hit corner 3'
                         collision = True
                         normal = distCorn.normalize()
                         if normal == None:
@@ -315,12 +323,13 @@ def sphere_surface(sphere, surface):
                             normal = surface.get_normal()
                         point = points[3] + surface.get_pos()
                         depth = sphere.get_radius() - distCorn.norm()
-                        print 'Collision info:'
-                        print '\tCollided:', collided
-                        print '\tPoint:', point
-                        print '\tNormal:', normal
-                        print '\tDepth:', depth
-                        print ''
+##                        print 'Collision info:'
+##                        print '\tCollided:', collided
+##                        print '\tPoint:', point
+##                        print '\tPos:', sphere.get_pos()
+##                        print '\tNormal:', normal
+##                        print '\tDepth:', depth
+##                        print ''
 
                         assert isinstance(collided, bool), \
                            'Collided must be a boolean'
@@ -337,7 +346,7 @@ def sphere_surface(sphere, surface):
                     
                     else:
                         # No collision
-                        print 'No collision'
+##                        print 'No collision'
                         collided = False
                         normal = None
                         point = None
@@ -352,7 +361,7 @@ def sphere_surface(sphere, surface):
                     distCorn = sphere.get_pos() - points[1]
                     if distCorn.norm() < sphere.get_radius():
                         # Collision with corner 1
-                        print 'Hit corner 1'
+##                        print 'Hit corner 1'
                         collision = True
                         normal = distCorn.normalize()
                         if normal == None:
@@ -360,12 +369,13 @@ def sphere_surface(sphere, surface):
                             normal = surface.get_normal()
                         point = points[1] + surface.get_pos()
                         depth = sphere.get_radius() - distCorn.norm()
-                        print 'Collision info:'
-                        print '\tCollided:', collided
-                        print '\tPoint:', point
-                        print '\tNormal:', normal
-                        print '\tDepth:', depth
-                        print ''
+##                        print 'Collision info:'
+##                        print '\tCollided:', collided
+##                        print '\tPoint:', point
+##                        print '\tPos:', sphere.get_pos()
+##                        print '\tNormal:', normal
+##                        print '\tDepth:', depth
+##                        print ''
 
                         assert isinstance(collided, bool), \
                            'Collided must be a boolean'
@@ -382,7 +392,7 @@ def sphere_surface(sphere, surface):
                     
                     else:
                         # No collision
-                        print 'No collision'
+##                        print 'No collision'
                         collided = False
                         normal = None
                         point = None
@@ -395,7 +405,7 @@ def sphere_surface(sphere, surface):
                     distCorn = sphere.get_pos() - points[2]
                     if distCorn.norm() < sphere.get_radius():
                         # Collision with corner 2
-                        print 'Hit corner 2'
+##                        print 'Hit corner 2'
                         collision = True
                         normal = distCorn.normalize()
                         if normal == None:
@@ -403,12 +413,13 @@ def sphere_surface(sphere, surface):
                             normal = surface.get_normal()
                         point = points[2] + surface.get_pos()
                         depth = sphere.get_radius() - distCorn.norm()
-                        print 'Collision info:'
-                        print '\tCollided:', collided
-                        print '\tPoint:', point
-                        print '\tNormal:', normal
-                        print '\tDepth:', depth
-                        print ''
+##                        print 'Collision info:'
+##                        print '\tCollided:', collided
+##                        print '\tPoint:', point
+##                        print '\tPos:', sphere.get_pos()
+##                        print '\tNormal:', normal
+##                        print '\tDepth:', depth
+##                        print ''
 
                         assert isinstance(collided, bool), \
                            'Collided must be a boolean'
@@ -425,7 +436,7 @@ def sphere_surface(sphere, surface):
                     
                     else:
                         # No collision
-                        print 'No collision'
+##                        print 'No collision'
                         collided = False
                         normal = None
                         point = None
