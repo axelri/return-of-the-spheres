@@ -63,7 +63,8 @@ def main():
 
     light1 = lights.Light(GL_LIGHT0, vectors.Vector([0.0, 10.0, 4.0]))
 
-    player = players.Player(sphere)
+    #player = players.Player(sphere)
+    player = players.Player(cube)
     #player = cube
 
     #objectList = [cube]

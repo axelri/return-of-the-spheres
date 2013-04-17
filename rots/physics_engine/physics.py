@@ -184,6 +184,7 @@ def update_physics(game):
     # TODO: Add octrees/something like that? This broadphase algorithm
     # works, but I think we can enhance it.
     # NOTE: Broadphase added
+    
     #print 'Entered loop at', time.clock()
     player, objectList, sceneList, lightList = game.get_objects()
     #print ''
@@ -193,7 +194,14 @@ def update_physics(game):
 
         check_collision = broadphase.shape_shape(player.get_shape(), item)
         if check_collision:
-            collided, collisionInfo = collisions.GJK(player.get_shape(), item)
+            # NOTE: Only works with Cubes
+            # TODO: Add this?
+            # if item.__class__.__name__ == 'Cube':
+            #     do sphere_cube-algorithm
+            # elif item.__class__.__name__ == 'blah blah':
+            #     do other algorithms
+            collided, collisionInfo = narrowphase.sphere_cube(player.get_shape(), item)
+            #collided, collisionInfo = collisions.GJK(player.get_shape(), item)
         else:
             collided, collisionInfo = False, None
 
@@ -205,7 +213,9 @@ def update_physics(game):
         for elem in sceneList:
             check_collision = broadphase.shape_surface(item, elem)
             if check_collision:
-                collided, collisionInfo = collisions.GJK(item, elem)
+                # NOTE: Only works with cubes, see the proposed solutions above
+                collided, collisionInfo = narrowphase.cube_surface(item, elem)
+                #collided, collisionInfo = collisions.GJK(item, elem)
             else:
                 collided, collisionInfo = False, None
 
@@ -218,8 +228,12 @@ def update_physics(game):
         check_collision = broadphase.shape_surface(player.get_shape(), item)
         if check_collision:
             #collided, collisionInfo = collisions.GJK(player, item)
-            collided, collisionInfo = narrowphase.\
-                                      sphere_surface(player.get_shape(), item)
+            if player.get_shape().__class__.__name__ == 'Sphere':
+                collided, collisionInfo = narrowphase.\
+                                          sphere_surface(player.get_shape(), item)
+            elif player.get_shape().__class__.__name__ == 'Cube':
+                collided, collisionInfo = narrowphase.\
+                                          cube_surface(player.get_shape(), item)
         else:
             collided, collisionInfo = False, None
 
