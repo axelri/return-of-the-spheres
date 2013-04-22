@@ -13,16 +13,17 @@ def render(game):
 
     assert isinstance(game, games.Game), 'Input must be a Game object'
     
-    player, objectList, sceneList, lightList = game.get_objects()
+    player, objectList, sceneList, lightList, camera = game.get_objects()
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
     pos = player.get_shape().get_pos().value
 
     glLoadIdentity()
-    gluLookAt(pos[0], pos[1] + 4, pos[2] + 10,
-              pos[0], pos[1], pos[2],
-              0, 1, 0)
+    #gluLookAt(pos[0], pos[1] + 4, pos[2] + 10,
+    #          pos[0], pos[1], pos[2],
+    #         0, 1, 0)
+    camera.view(player)
 
     for light in lightList:
         glLightfv(light.get_light(), GL_POSITION, light.get_pos().value)

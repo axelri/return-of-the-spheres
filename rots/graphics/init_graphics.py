@@ -7,11 +7,29 @@ from OpenGL.GLUT import *
 def init_window():
     ''' Initiate pygame, initiate OpenGL, create a window, setup OpenGL'''
 
+    HAVE_FULLSCREEN = True
+
     # Initialize a pygame window
     pygame.init()
-    pygame.display.set_mode((640, 480), OPENGL|DOUBLEBUF)
+
+    FULLSCREEN_WIDTH = pygame.display.Info().current_w
+    FULLSCREEN_HEIGHT = pygame.display.Info().current_h
+
+    if HAVE_FULLSCREEN:
+        pygame.display.set_mode((FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT), 
+                OPENGL|DOUBLEBUF|FULLSCREEN)
+    else:
+        pygame.display.set_mode((640, 480), OPENGL|DOUBLEBUF)
+    
     pygame.display.set_caption("testPhysics")
+    # NOTE: Locks all input events to the pygame window, maybe DANGEROUS
+    pygame.event.set_grab(True)
+    width = pygame.display.Info().current_w
+    height = pygame.display.Info().current_h
+
     pygame.mouse.set_visible(0)
+    pygame.mouse.set_pos(width/ 2.0,
+                         height / 2.0)
 
 
     # Initialize OpenGL

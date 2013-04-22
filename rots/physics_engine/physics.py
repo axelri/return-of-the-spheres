@@ -186,7 +186,7 @@ def update_physics(game):
     # NOTE: Broadphase added
     
     #print 'Entered loop at', time.clock()
-    player, objectList, sceneList, lightList = game.get_objects()
+    player, objectList, sceneList, lightList, camera = game.get_objects()
     #print ''
     player.collided = False
     for item in objectList:

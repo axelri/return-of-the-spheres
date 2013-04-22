@@ -29,9 +29,18 @@ class Player:
         self._speed = speed
 
 
-    def update_velocity(self, direction):
+    def update_velocity(self, direction, forwardVector):
         # TODO: You get a small boost when changing direction, fix
         # set the velocity we want according to the input
+
+        leftVector = vectors.Vector([0.0, 1.0, 0.0]).cross(forwardVector)
+
+        xMovement = leftVector * -direction.value[0]
+        #yMovement = direction.value[1]
+        zMovement = forwardVector * -direction.value[2]
+
+        direction = xMovement + zMovement #yMovement
+        
         self._inputVelocity = direction * self._speed
 
 

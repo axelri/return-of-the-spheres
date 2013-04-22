@@ -12,7 +12,7 @@ import sys
 import shapes
 import games
 import players
-from graphics import render, init_graphics, lights
+from graphics import render, init_graphics, lights, cameras
 from physics_engine import physics
 from math_classes import vectors
 
@@ -62,21 +62,22 @@ def main():
     glEnable(GL_LIGHT0)
 
     light1 = lights.Light(GL_LIGHT0, vectors.Vector([0.0, 10.0, 4.0]))
+    camera = cameras.Camera()
 
-    #player = players.Player(sphere)
-    player = players.Player(cube)
+    player = players.Player(sphere)
+    #player = players.Player(cube)
     #player = cube
 
     #objectList = [cube]
     #sceneList = []
 
     objectList = []
-    #sceneList = [plane1, plane2, plane3, plane4, plane5]
-    sceneList = [plane1]
+    sceneList = [plane1, plane2, plane3, plane4, plane5]
+    #sceneList = [plane1]
 
     lightList = [light1]
 
-    game = games.Game(player, objectList, sceneList, lightList)
+    game = games.Game(player, objectList, sceneList, lightList, camera)
 
     run = True
 
@@ -97,7 +98,9 @@ def main():
         if direction == None:
             direction = vectors.Vector()
 
-        player.update_velocity(direction)            
+        forwardVector = camera.update(player)
+
+        player.update_velocity(direction, forwardVector)            
 
         physics.update_physics(game)
         render.render(game)
