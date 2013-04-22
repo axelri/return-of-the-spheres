@@ -4,10 +4,20 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-def init_window():
-    ''' Initiate pygame, initiate OpenGL, create a window, setup OpenGL'''
+def init_window(windowName, HAVE_FULLSCREEN = True):
+    ''' Initiates pygame, creates and sets up the window,
+    sets up OpenGL.
 
-    HAVE_FULLSCREEN = True
+    Input:  windowName: The desired name of the window;
+                what the caption of the window will be
+                set to, a string.
+            HAVE_FULLSCREEN: Whether or not the window
+                should be fullscreen, a boolean. '''
+
+    assert isinstance(windowName, str), \
+           'The name must be a string'
+    assert isinstance(HAVE_FULLSCREEN, bool), \
+           'HAVE_FULLSCREEN must be a boolean'
 
     # Initialize a pygame window
     pygame.init()
@@ -21,7 +31,7 @@ def init_window():
     else:
         pygame.display.set_mode((640, 480), OPENGL|DOUBLEBUF)
     
-    pygame.display.set_caption("testPhysics")
+    pygame.display.set_caption(windowName)
     # NOTE: Locks all input events to the pygame window, maybe DANGEROUS
     pygame.event.set_grab(True)
     width = pygame.display.Info().current_w

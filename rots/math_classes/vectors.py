@@ -5,9 +5,10 @@ class Vector:
     ''' A vector class to simplify calculations on vectors '''
     
     def __init__(self, value = [0.0, 0.0, 0.0]):
+        ''' Initializes the vector, sets its value. '''
+        
         assert isinstance(value, list), \
                 'Input must be a list'
-
         if __debug__:
             for number in value:
                 assert isinstance(number, numbers.Number), \
@@ -16,16 +17,22 @@ class Vector:
         self.value = value
 
     def dim(self):
+        ''' Returns the dimension of the vector. '''
         return len(self.value)
 
     def is_zero(self):
+        ''' Checks whether or not the vector is the zero vector:
+        Returns True if it is, False if it isn't. '''
         return self.value == [0] * self.dim()
 
     def is_not_zero(self):
+        ''' Checks whether or not the vector is the zero vector:
+        Returns False if it is, True if it isn't. '''
         return self.value != [0] * self.dim()
 
     def dot(self, v2):
         ''' Calculates the dot product of the vector and v2 '''
+        
         assert isinstance(v2, Vector), 'Input must be a vector'
         assert self.dim() ==  v2.dim(), \
                 'Vectors must be of the same dimension'
@@ -37,8 +44,9 @@ class Vector:
 
     def cross(self, v):
         ''' Calculates the cross product of the vector and another vector V2.
-            Note that it is calculated as (self x V2), since the cross product
-            isn't commutative '''
+        Note that it is calculated as (self x V2), since the cross product
+        isn't commutative '''
+        
         assert isinstance(v, Vector), 'Input must be a vector'
         assert self.dim() == 3 and v.dim() == 3, \
                 'Cross product is only defined in 3 dimensions.'
@@ -54,12 +62,13 @@ class Vector:
         return sqrt((self.dot(self)))
 
     def square_norm(self):
-        ''' Calculates the squared norm of the vector
-            (cheaper than using sqrt()) '''
+        ''' Calculates the squared norm of the vector.
+        Cheaper than using self.norm() since the expensive
+        sqrt() isn't needed. '''
         return self.dot(self)
 
     def normalize(self):
-        ''' Returns a normaliszed version of the the vector. 
+        ''' Returns a normalized version of the the vector. 
         Returns None if the vector is the zero vector.'''
         if self.is_zero():
             return None
@@ -83,7 +92,8 @@ class Vector:
             return False
 
     def __ne__(self, v2):
-        ''' Checks if two vectors do not have the same value, overloads "!=" '''
+        ''' Checks if two vectors do not have the same value.
+        Overloads "!=". '''
         #assert isinstance(v2, Vector), 'Input must be a vector'
         # NOTE: We must be able to compare vectors with other
         # objects, such as None.
@@ -93,7 +103,8 @@ class Vector:
             return True
 
     def __mul__(self, scalar):
-        ''' Returns the vector multiplied with the given scalar '''
+        ''' Returns the vector multiplied with the given scalar.
+        Overloads "*". '''
         assert isinstance(scalar, numbers.Number), \
             'Input must be a real number.' 
 
@@ -103,11 +114,13 @@ class Vector:
         return Vector(out)
 
     def __neg__(self):
-        '''Returns the vector in negative direction.'''
+        '''Returns the vector in negative direction.
+        Overloads "-". '''
         return self * -1
 
     def __add__(self, v2):
-        ''' Returns the vector added with the given other vector.'''
+        ''' Returns the vector added with the given other vector.
+        Overloads "+". '''
         assert isinstance(v2, Vector), 'Input must be a vector.'
         assert self.dim() == v2.dim(), \
                 'Vectors must be of the same dimension'
@@ -118,6 +131,8 @@ class Vector:
         return Vector(out)
 
     def __sub__(self, v2):
+        ''' Returns the difference between the vector and the
+        given other vector. Overloads "-". '''
         assert isinstance(v2, Vector), 'Input must be a vector.'
         assert self.dim() == v2.dim(), \
                 'Vectors must be of the same dimension'
@@ -143,7 +158,7 @@ class Vector:
     
     def triple_product_1(self, v2, v3):
         ''' Calculates the triple product self x (v2 x v3)
-            in a faster and simpler way.'''
+        in a faster and simpler way.'''
 
         term1 = v2 * self.dot(v3)
         term2 = v3 * -self.dot(v2)
@@ -152,7 +167,7 @@ class Vector:
 
     def triple_product_2(self, v2, v3):
         ''' Calculates the triple product (self x v2) x v3
-            in a faster and simpler way.'''
+        in a faster and simpler way.'''
 
         term1 = self * -v2.dot(v3)
         term2 = v2 * self.dot(v3)
@@ -160,8 +175,15 @@ class Vector:
         return out
 
     def left_matrix_mult(self, matrix):
-        ''' Calculates the vector multiplied with the matrix to the left.
-            (matrix * vector) The matrix should be represented as a list of lists'''
+        ''' Calculates the vector multiplied with the matrix
+        to the left. (matrix * vector)
+
+        Input:  self: The vector
+                matrix: A matrix represented as a list of lists.
+
+        Output: A vector defined by (matrix * vector).
+                (The vector transformed by the matrix)'''
+        
         assert isinstance(matrix, list), \
                'Input must be a matrix, represented as a list of lists'
         if __debug__:

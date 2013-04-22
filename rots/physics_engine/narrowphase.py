@@ -1,15 +1,15 @@
+# Narrowphase collision detection algoritmhs
+
 import shapes
 from math_classes import vectors
 import numbers
-
-# TODO: More functions: cube-plane, sphere-cube
 
 def sphere_surface(sphere, surface):
     '''
     A narrowphase collision detection algorithm for collisions between
     spheres and surfaces.
 
-    Input: A sphere object and a surface object.
+    Input: A Sphere object and a Surface object.
     Output:
             collided: A boolean, True if there is a collision, False otherwise
             point:  A vector describing the best collision point
@@ -172,7 +172,20 @@ def sphere_surface(sphere, surface):
             return collided, (point, normal, depth)
 
 def sphere_cube(sphere, cube):
-    ''' Checks for collision between a sphere and an axis-aligned cube '''
+    '''
+    A narrowphase collision detection algorithm for collisions between
+    spheres and axis-aligned cubes.
+
+    Input: A Sphere object and a Cube object.
+    Output:
+            collided: A boolean, True if there is a collision, False otherwise
+            point:  A vector describing the best collision point
+                    if there is a collision, None otherwise.
+            normal: A vector describing the collision normal if there
+                    is a collision, None otherwise.
+            depth:  A float describing the penetration depth if there is a
+                    collision, None otherwise.
+    '''
     distance = sphere.get_pos() - cube.get_pos()
 
     normals = [vectors.Vector([1.0, 0.0, 0.0]),
@@ -239,8 +252,20 @@ def sphere_cube(sphere, cube):
 
 
 def cube_surface(cube, surface):
-    ''' Checks for collisions between axis-aligned cubes and
-        axis-aligned surfaces '''
+    '''
+    A narrowphase collision detection algorithm for collisions between
+    axis-aligned cubes and axis-aligned surfaces.
+
+    Input: A Cube object and a Surface object.
+    Output:
+            collided: A boolean, True if there is a collision, False otherwise
+            point:  A vector describing the best collision point
+                    if there is a collision, None otherwise.
+            normal: A vector describing the collision normal if there
+                    is a collision, None otherwise.
+            depth:  A float describing the penetration depth if there is a
+                    collision, None otherwise.
+    '''
 
     assert isinstance(cube, shapes.Cube), 'Input must be a Cube object'
     assert isinstance(surface, shapes.Surface), 'Input must be a Surface object'

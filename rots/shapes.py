@@ -320,7 +320,7 @@ class Surface(Shape):
     def create_displaylist_index(self):
         displayListIndex = glGenLists(1)
         glNewList(displayListIndex, GL_COMPILE)
-        draw.plane(self)
+        draw.surface(self)
         glEndList()
         return displayListIndex
 

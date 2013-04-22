@@ -13,19 +13,38 @@ from math_classes import vectors, quaternions, matrices
 GRAVITY = vectors.Vector([0.0, -10.0, 0.0])
 dt = 0.005
 
-#                                (1+e)(relv.norm)
-#j =------------------------------------------------------------------------------
-#    norm.norm(1/Mass0 + 1/Mass1) + (sqr(r0 x norm) / Inertia0) + (sqr(r1 x norm) / Inertia1)
-
 # TODO: There is a bug in the first bounces, causing the sphere to bounce
 # unnaturally. Fix.
 
 def collision_response(shape1, shape2, collisionInfo):
+    '''
+    Takes two Shape objects that have collided, calculates
+    the impulse that should be applied to them and applies it,
+    both to the linear and the angular velocity.
+
+    Input:
+        * shape1 and shape2 are Shape objects
+        
+        * collisionInfo is a tuple containing collision information:
+        The point of collision, the contact normal and the
+        penetration depth
+
+        * collisionPoint is a vector describing the point of collision
+
+        * normal is a vector describing the contact normal
+
+        * depth is a number describing the penetration depth
+    '''
+    
     #print 'Entered collision response'
-    assert isinstance(shape1, shapes.Shape), 'Input must be a Shape object'
-    assert isinstance(shape2, shapes.Shape), 'Input must be a Shape object'
-    assert isinstance(collisionInfo, tuple), 'Input must be a tuple'
-    assert len(collisionInfo) == 3, 'CollisionInfo must be of length 3'
+    assert isinstance(shape1, shapes.Shape), \
+           'Input must be a Shape object'
+    assert isinstance(shape2, shapes.Shape), \
+           'Input must be a Shape object'
+    assert isinstance(collisionInfo, tuple), \
+           'Input must be a tuple'
+    assert len(collisionInfo) == 3, \
+           'CollisionInfo must be of length 3'
 
     collisionPoint, normal, depth = collisionInfo
 
@@ -122,6 +141,25 @@ def collision_response(shape1, shape2, collisionInfo):
 
 
 def linear_collision_response(shape1, shape2, collisionInfo):
+    '''
+    Takes two Shape objects that have collided, calculates
+    the impulse that should be applied to them and applies it
+    to the linear velocity.
+
+    Input:
+        * shape1 and shape2 are Shape objects
+        
+        * collisionInfo is a tuple containing collision information:
+        The point of collision, the contact normal and the
+        penetration depth
+
+        * collisionPoint is a vector describing the point of collision
+
+        * normal is a vector describing the contact normal
+
+        * depth is a number describing the penetration depth
+    '''
+    
     assert isinstance(shape1, shapes.Shape), 'Input must be a Shape object'
     assert isinstance(shape2, shapes.Shape), 'Input must be a Shape object'
     assert isinstance(collisionInfo, tuple), 'Input must be a tuple'
@@ -170,8 +208,9 @@ def linear_collision_response(shape1, shape2, collisionInfo):
 
 def update_physics(game):
     ''' Updates all physics in the game; takes all the objects in
-        the game, calculates collisions etc and moves them to their
-        new locations.'''
+    the game, calculates collisions etc and moves them to their
+    new locations.'''
+    
     assert isinstance(game, games.Game), 'Input must be a game object'
     # TODO: Make it have an input called dt, which gives it the
     # timestep it should simulate
@@ -181,9 +220,9 @@ def update_physics(game):
     #     collided, collisionInfo = collisions.GJK(shape1, shape2)
     # broadphase should return a boolean; True if the shapes should be
     # passed on to narrowphase, False otherwise.
+    # NOTE: Some broadphase added
     # TODO: Add octrees/something like that? This broadphase algorithm
     # works, but I think we can enhance it.
-    # NOTE: Broadphase added
     
     #print 'Entered loop at', time.clock()
     player, objectList, sceneList, lightList, camera = game.get_objects()

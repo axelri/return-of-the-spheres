@@ -1,15 +1,22 @@
 import pygame
 from pygame.locals import *
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+
 import shapes
 import lights
 import games
+
 # TODO: Add smart culling to fasten up the drawing process.
 
 def render(game):
-    ''' Draws the player and all other entities at their current position '''
+    ''' Renders the scene: Clears the screen, sets up the camera
+    and lights, draws the player and all other entities at their
+    current position and flips the buffers.
+
+    Input:  game: A Game object '''
 
     assert isinstance(game, games.Game), 'Input must be a Game object'
     
@@ -20,13 +27,11 @@ def render(game):
     pos = player.get_shape().get_pos().value
 
     glLoadIdentity()
-    #gluLookAt(pos[0], pos[1] + 4, pos[2] + 10,
-    #          pos[0], pos[1], pos[2],
-    #         0, 1, 0)
+
     camera.view(player)
 
     for light in lightList:
-        glLightfv(light.get_light(), GL_POSITION, light.get_pos().value)
+        glLightfv(light.get_lightIndex(), GL_POSITION, light.get_pos().value)
     
     glPushMatrix()
     glTranslatef(pos[0], pos[1], pos[2])

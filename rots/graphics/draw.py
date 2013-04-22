@@ -1,3 +1,5 @@
+# Drawing routines for the objects
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -18,8 +20,17 @@ CUBE_NORMALS = ([0.0, 0.0, -1.0], [-1.0, 0.0, 0.0],
                 [0.0, 1.0, 0.0], [0.0, -1.0, 0.0])
 
 def cube_points(size):
+    ''' Calculates the vertices of a cube of size size.
+
+    Input:  size: The length of the side of the cube,
+                must be a positive number.
+
+    Output: A list containing the vertices of the cube,
+            represented as lists. '''
+    
     assert isinstance(size, numbers.Number), 'Input must be a number'
     assert size > 0, 'Input must be a positive number'
+    
     h = size/2.0
     return [[h, -h, -h],  [h, h, -h],
             [-h, h, -h],  [-h, -h, -h],
@@ -28,7 +39,15 @@ def cube_points(size):
 
 
 def cube(cube):
-    assert isinstance(cube, shapes.Cube), 'Input must be a cube object'
+    ''' The drawing routine for a Cube object.
+
+    Input:  cube: A Cube object
+
+    Calls OpenGL to draw the cube. '''
+    
+    assert isinstance(cube, shapes.Cube), \
+           'Input must be a Cube object'
+
     points = cube_points(cube.get_side())
 
 
@@ -48,12 +67,20 @@ def cube(cube):
             glVertex3fv(points[vert])
     glEnd()
 
-def plane(plane):
-    assert isinstance(plane, shapes.Surface), 'Input must be a Surface object'
-    points = plane.get_points()
-    glColor3fv(plane.get_color())
+def surface(surface):
+    ''' The drawing routine for a Surface object.
+
+    Input:  surface: A Surface object
+
+    Calls OpenGL to draw the surface. '''
+    
+    assert isinstance(surface, shapes.Surface), \
+           'Input must be a Surface object'
+    
+    points = surface.get_points()
+    glColor3fv(surface.get_color())
     glBegin(GL_QUADS)
-    glNormal3fv(plane.get_normal().value)
+    glNormal3fv(surface.get_normal().value)
     for point in points:
         glVertex3fv(point.value)
     glEnd()
@@ -66,6 +93,14 @@ def plane(plane):
     glEnd()
 
 def sphere(sphere):
-    assert isinstance(sphere, shapes.Sphere), 'Input must be a sphere object'
+    ''' The drawing routine for a Sphere object.
+
+    Input:  surface: A Sphere object
+
+    Calls OpenGL to draw the sphere. '''
+    
+    assert isinstance(sphere, shapes.Sphere), \
+           'Input must be a Sphere object'
+    
     glColor3fv(sphere.get_color())
     glutSolidSphere(sphere.get_radius(), 10, 10)

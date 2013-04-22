@@ -1,10 +1,17 @@
+# TODO: Make a Matrix class? We have two different types of matrices
+# (OpenGL and list of lists), which makes it a little harder to have
+# one single matrix class...
+
 import numbers
-from math import cos, sin
+from math import cos, sin, pi
+
+from math_classes import vectors
 
 def gauss_jordan(m, eps = 1.0/(10**10)):
     """ Puts given matrix (2D array) into the Reduced Row Echelon Form.
         Returns True if successful, False if 'm' is singular.
-        NOTE: make sure all the matrix items support fractions! Int matrix will NOT work!
+        NOTE: make sure all the matrix items support fractions!
+        Int matrix will NOT work!
         Written by Jarno Elonen in April 2005, released into Public Domain"""
 
     assert isinstance(m, list), \
@@ -79,7 +86,7 @@ def inv(M):
                        'All elements in the matrix must be numbers'
     
     #clone the matrix and append the identity matrix
-    # [int(i==j) for j in range_M] is nothing but the i(th row of the identity matrix
+    # [int(i==j) for j in range_M] is nothing but the i:th row of the identity matrix
     m2 = [row[:]+[int(i==j) for j in range(len(M) )] for i,row in enumerate(M) ]
     # extract the appended matrix (kind of m2[m:,...]
     return [row[len(M[0]):] for row in m2] if gauss_jordan(m2) else None
@@ -94,9 +101,17 @@ def zeros( s , zero=0):
 
 def OpenGL_to_matrix(matrix):
     ''' Takes a matrix in OpenGL standard (a single list of all elements
-        in column major order, 4x4) and turns it into a matrix represented as
-        a list of lists in row major order. The matrices must be 4x4. '''
-    assert isinstance(matrix, list), 'Input must be a matrix in OpenGl standard'
+    in column major order, 4x4) and turns it into a matrix represented as
+    a list of lists in row major order. The matrices must be 4x4.
+
+    Input:  matrix: A 4x4 matrix in OpenGL standard (a list with
+                all 16 elements in column major order).
+
+    Output: out: A 4x4 matrix represented as a list of lists in
+                row major order. '''
+    
+    assert isinstance(matrix, list), \
+           'Input must be a matrix in OpenGl standard'
     assert len(matrix) == 16, 'Input must be a matrix in OpenGl standard'
     if __debug__:
         for item in matrix:
@@ -111,8 +126,15 @@ def OpenGL_to_matrix(matrix):
     return out
 
 def matrix_to_OpenGL(matrix):
-    ''' Takes a matrix represented as a list of lists and turns it into a
-        matrix in OpenGL standard. The matrices must be 4x4.'''
+    ''' Takes a matrix represented as a list of lists and turns it
+    into a matrix in OpenGL standard. The matrices must be 4x4.
+
+    Input:  matrix: A 4x4 matrix represented as a list of lists in
+                row major order.
+
+    Output: out: A 4x4 matrix in OpenGL standard (a list with
+                all 16 elements in column major order). '''
+    
     assert isinstance(matrix, list), \
            'Input must be a matrix represented as a list of lists'
     assert len(matrix) == 4, 'The matrix must be 4x4'
@@ -122,7 +144,8 @@ def matrix_to_OpenGL(matrix):
                    'Input must be a matrix represented as a list of lists'
             assert len(row) == 4, 'The matrix must be 4x4'
             for elem in row:
-                assert isinstance(elem, numbers.Number), 'All elements must be numbers'
+                assert isinstance(elem, numbers.Number), \
+                       'All elements must be numbers'
 
     copy = matrix[:][:]
     out = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
@@ -133,14 +156,28 @@ def matrix_to_OpenGL(matrix):
 
     return out
 
-def generate_rotation_matrix(vector, angle):
+def generate_rotation_matrix(axis, angle):
     ''' Generates a rotation matrix according to OpenGL standards
-        with a rotation of angle (in radians) and
-        the vector as rotation axis '''
-    v = vector.normalize()
+    with a rotation of angle (in radians) and axis as rotation axis.
+
+    Input:  axis: A vector describing the rotation axis.
+            angle: A number describing the angle of rotation
+                in radians.
+
+    Output: rotation_matrix: A 4x4 matrix in OpenGL standard
+                (a list with all 16 elements in column major
+                order) describing the rotation. '''
+
+    assert isinstance(axis, vectors.Vector), \
+           'The axis must be a vector'
+    assert isinstance(angle, numbers.Number), \
+           'The angle must be a number'
+
+    v = axis.normalize()
 
     if v == None:
-        v = [0, 0, 0] #Dummy variable, will return identity matrix whatever we put here
+        v = [0, 0, 0]   #Dummy variable, will return identity matrix
+                        #whatever we put here
     else:
         v = v.value
     
@@ -166,7 +203,15 @@ def matrix_mult(a, b):
     ''' Multiplies the matrices a and b as (a * b).
         The matrices are given in OpenGL standard, that is,
         a 4x4 matrix written in column-major order, represented
-        as a list. '''
+        as a list.
+
+        Input:  a,b: Matrices in OpenGL standard (a list with
+                    all 16 elements in column major order).
+
+        Output: out: The matrix product of a and b, a matrix
+                    in OpenGL standard (a list with all 16
+                    elements in column major order). '''
+    
     out = [0]*16
     for i in range(4):
         for k in range(4):
@@ -174,7 +219,9 @@ def matrix_mult(a, b):
     return out
             
 def identity():
-    ''' Returns an identity matrix in OpenGL standard. '''
+    ''' Returns an identity matrix in OpenGL standard
+    (a list with all 16 elements in column major order). '''
+    
     return [1.0, 0.0, 0.0, 0.0,
             0.0, 1.0, 0.0, 0.0,
             0.0, 0.0, 1.0, 0.0,

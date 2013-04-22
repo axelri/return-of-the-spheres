@@ -17,7 +17,7 @@ from physics_engine import physics
 from math_classes import vectors
 
 def main():
-    init_graphics.init_window()
+    init_graphics.init_window('testPhysics')
 
     PLANE_POINTS1 = [vectors.Vector([-10.0, 0.0, -10.0]),
                     vectors.Vector([10.0, 0.0, -10.0]),

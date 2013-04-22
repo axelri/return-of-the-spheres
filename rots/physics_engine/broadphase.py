@@ -1,3 +1,5 @@
+# Broadphase collision detection algorithms
+
 import shapes
 
 def shape_surface(shape, surface):
