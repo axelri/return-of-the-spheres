@@ -59,9 +59,9 @@ def main():
     plane5 = shapes.Surface(points = PLANE_POINTS3,
                             pos = vectors.Vector([-10.0, 1.0, 0.0]))
 
-    glEnable(GL_LIGHT0)
+    #glEnable(GL_LIGHT0)
 
-    light1 = lights.Light(GL_LIGHT0, vectors.Vector([0.0, 10.0, 4.0]))
+    light1 = lights.Light(GL_LIGHT0, vectors.Vector([0.0, 5.0, 4.0]))
     camera = cameras.Camera()
 
     player = players.Player(sphere)

@@ -50,8 +50,15 @@ def cube(cube):
 
     points = cube_points(cube.get_side())
 
+    ambient, diffuse, specular, \
+             shininess = cube.get_material_properties()
 
-    glColor3fv(cube.get_color())
+    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient)
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse)
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specular)
+    glMateriali(GL_FRONT, GL_SHININESS, shininess)
+    #glMaterialfv(GL_FRONT, GL_EMISSIVE, emissive)
+    #glColor3fv(cube.get_color())
     glBegin(GL_QUADS)
     for face in CUBE_QUAD_VERTS:
         glNormal3fv(CUBE_NORMALS[CUBE_QUAD_VERTS.index(face)])
@@ -76,15 +83,25 @@ def surface(surface):
     
     assert isinstance(surface, shapes.Surface), \
            'Input must be a Surface object'
+
+    ambient, diffuse, specular, \
+             shininess = surface.get_material_properties()
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient)
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse)
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specular)
+    glMateriali(GL_FRONT, GL_SHININESS, shininess)
+    #glMaterialfv(GL_FRONT, GL_EMISSIVE, emissive)
     
     points = surface.get_points()
-    glColor3fv(surface.get_color())
+    #glColor3fv(surface.get_color())
     glBegin(GL_QUADS)
     glNormal3fv(surface.get_normal().value)
     for point in points:
         glVertex3fv(point.value)
     glEnd()
 
+    # TODO: The lines don't seem to be drawn, why? Fix.
     glColor3f(0.0, 0.0, 0.0)
     glBegin(GL_LINES)
     for i in range(len(points)):
@@ -102,5 +119,14 @@ def sphere(sphere):
     assert isinstance(sphere, shapes.Sphere), \
            'Input must be a Sphere object'
     
-    glColor3fv(sphere.get_color())
+    ambient, diffuse, specular, \
+             shininess = sphere.get_material_properties()
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient)
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse)
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specular)
+    glMateriali(GL_FRONT, GL_SHININESS, shininess)
+    #glMaterialfv(GL_FRONT, GL_EMISSIVE, emissive)
+    
+    #glColor3fv(sphere.get_color())
     glutSolidSphere(sphere.get_radius(), 10, 10)

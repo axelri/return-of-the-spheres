@@ -31,7 +31,7 @@ def render(game):
     camera.view(player)
 
     for light in lightList:
-        glLightfv(light.get_lightIndex(), GL_POSITION, light.get_pos().value)
+        light.move()    # Is this needed every frame?
     
     glPushMatrix()
     glTranslatef(pos[0], pos[1], pos[2])

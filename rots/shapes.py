@@ -22,7 +22,7 @@ class Shape(object):
         self._pos = vectors.Vector()
         self._velocity = vectors.Vector()
         self._mass = float('inf')               # Makes it immobile
-        self._force = vectors.Vector()
+        self._force = vectors.Vector()          # Not used right now
 
         # Angular motion
         #self._orientation = quaternions.Quaternion()
@@ -32,9 +32,35 @@ class Shape(object):
         self._invInertia = [[0.0, 0.0, 0.0],
                             [0.0, 0.0, 0.0],
                             [0.0, 0.0, 0.0]]    # Makes it unable to rotate
-        self._torque = vectors.Vector()
+        self._torque = vectors.Vector()         # Not used right now
 
-        self._color = None
+        self._color = None      # Should be removed when material properties
+                                # work properly
+
+        # Material properties
+        self._ambient = None
+        self._diffuse = None
+        self._specular = None
+        self._shininess = None
+        #self._emissive = None
+
+        # Explanations of the material properties:
+        #   * Ambient and diffuse "define the color" of the material,
+        #     the ambient part is spread over the entire shape
+        #     whereas the diffuse is the part that causes shadows
+        #     on the material. They should be set to the same value
+        #     in case we don't want some fancy special effect.
+        #     They are defined the same way as colors, as lists
+        #     of 3 or 4 elements, all between 0.0 and 1.0.
+        #   * Specular and shininess define the bright spot on the
+        #     material, e.g. making it look like shiny plastic
+        #     (i.e. the shininess). Specular is the color of the spot
+        #     and shininess defines the size of it. Specular is
+        #     defined like colors (se above) and shininess is an
+        #     integer between 0 (no spot) and 128 (big spot)
+        #   * Emissive defines the glow of the material,
+        #     e.g. glow in the dark plastic could have a greenish
+        #     emissive light. Emissive is defined like colors (se above)
 
     def get_velocity(self):
         return self._velocity
@@ -134,6 +160,10 @@ class Shape(object):
                        'Every component of color must be a number between 0 and 1'
         self._color = color
 
+    def get_material_properties(self):
+        return self._ambient, self._diffuse, self._specular,\
+               self._shininess#, self._emissive
+
 class Sphere(Shape):
 
     def __init__(self, pos = vectors.Vector(), radius = 0.5,
@@ -162,6 +192,14 @@ class Sphere(Shape):
         self._invInertia = [[I, 0.0, 0.0],
                             [0.0, I, 0.0],
                             [0.0, 0.0, I]]
+
+        # Material properties
+        self._ambient = [1.0, 0.5, 0.3, 1.0]
+        self._diffuse = [1.0, 0.5, 0.3, 1.0]
+        self._specular = [1.0, 1.0, 1.0, 1.0]
+        self._shininess = 64
+        #self._emissive = [0.0, 0.0, 0.0, 1.0]
+        
         self._displayListIndex = self.create_displaylist_index()
         #self._orientation = quaternions.axis_angle_to_quat(Vector([1.0, 0.0, 0.0]), 0.0)
         #self._orientation = quaternions.Quaternion([1.0, 0.0, 0.0, 0.0]) #This is equivalent, maybe better?
@@ -218,6 +256,14 @@ class Cube(Shape):
         self._side = side
         self._mass = mass
         self._color = color
+        
+        # Material properties
+        self._ambient = [0.8, 0.8, 0.8, 1.0]
+        self._diffuse = [0.8, 0.8, 0.8, 1.0]
+        self._specular = [1.0, 1.0, 1.0, 1.0]
+        self._shininess = 42
+        #self._emissive = [0.0, 0.0, 0.0, 1.0]
+        
         self._displayListIndex = self.create_displaylist_index()
 
     def create_displaylist_index(self):
@@ -314,6 +360,14 @@ class Surface(Shape):
         self._pos = pos
         self._points = points
         self._color = color
+                
+        # Material properties
+        self._ambient = [1.0, 0.0, 1.0, 1.0]
+        self._diffuse = [1.0, 0.0, 1.0, 1.0]
+        self._specular = [1.0, 1.0, 1.0, 1.0]
+        self._shininess = 80
+        #self._emissive = [0.0, 0.0, 0.0, 1.0]
+        
         self._normal = (points[0] - points[1]).cross(points[3] - points[1]).normalize()
         self._displayListIndex = self.create_displaylist_index()
 
