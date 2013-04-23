@@ -130,3 +130,5 @@ def sphere(sphere):
     
     #glColor3fv(sphere.get_color())
     glutSolidSphere(sphere.get_radius(), 10, 10)
+    #glutSolidSphere(sphere.get_radius(), 40, 40)
+    #glutSolidTeapot(sphere.get_radius())

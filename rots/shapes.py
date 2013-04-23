@@ -195,7 +195,9 @@ class Sphere(Shape):
 
         # Material properties
         self._ambient = [1.0, 0.5, 0.3, 1.0]
+        #self._ambient = [0.0, 1.0, 0.0, 1.0]
         self._diffuse = [1.0, 0.5, 0.3, 1.0]
+        #self._diffuse = [1.0, 0.0, 0.0, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
         self._shininess = 64
         #self._emissive = [0.0, 0.0, 0.0, 1.0]

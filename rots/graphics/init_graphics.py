@@ -47,12 +47,10 @@ def init_window(windowName, HAVE_FULLSCREEN = True):
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_LIGHTING)
     glEnable(GL_TEXTURE_2D)
-    glEnable(GL_COLOR_MATERIAL)
     glEnable (GL_BLEND)
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     glShadeModel(GL_SMOOTH)
     glDisable(GL_CULL_FACE)
-    glColorMaterial(GL_FRONT, GL_DIFFUSE) 
 
     glClearColor(0.0, 0.0, 0.0, 0.0)
 
