@@ -8,6 +8,7 @@ from OpenGL.GLUT import *
 
 import traceback
 import sys
+import time
 
 import shapes
 import games
@@ -81,29 +82,61 @@ def main():
 
     run = True
 
+    dt = 0.005
+    # Start timing
+    currentTime = time.clock()
+    accumulator = 0.0
+    counter = 0
+
     while run:
-        currentEvents = pygame.event.get() # cache current events
-        for event in currentEvents:
-            if event.type == QUIT or \
-                (event.type == KEYDOWN and event.key == K_ESCAPE):
-                run = False
-        keyState = pygame.key.get_pressed()
 
-        xDir = keyState[K_d] - keyState[K_a]
-        zDir = keyState[K_s] - keyState[K_w]
+        newTime = time.clock()
+        #print 'NewTime:', newTime
+        frameTime = newTime - currentTime
+        #print 'FrameTime:', frameTime
+        if frameTime > 0.02:
+            frameTime = 0.02    # To avoid to large timesteps
+        currentTime = newTime
+        
+        accumulator += frameTime
+        #print 'Accumulator:', accumulator
+        while accumulator >= dt:
+            
 
-        if keyState[K_SPACE]:
-            player.jump()
+            # TODO: Make an input function instead?
+            currentEvents = pygame.event.get() # cache current events
+            for event in currentEvents:
+                if event.type == QUIT or \
+                    (event.type == KEYDOWN and event.key == K_ESCAPE):
+                    run = False
+            keyState = pygame.key.get_pressed()
 
-        direction = vectors.Vector([xDir, 0.0, zDir]).normalize()
-        if direction == None:
-            direction = vectors.Vector()
-        
-        forwardVector = camera.update(player)
-        
-        player.update_velocity(direction, forwardVector)
-        
-        physics.update_physics(game)
+            xDir = keyState[K_d] - keyState[K_a]
+            zDir = keyState[K_s] - keyState[K_w]
+
+            if keyState[K_SPACE]:
+                player.jump()
+
+            direction = vectors.Vector([xDir, 0.0, zDir]).normalize()
+            if direction == None:
+                direction = vectors.Vector()
+            
+            forwardVector = camera.update(player)
+            
+            player.update_velocity(direction, forwardVector)
+            
+            physics.update_physics(game, dt)
+            accumulator -= dt
+            counter += 1
+
+        #print 'Number of iterations before rendering:', counter
+        #print ''
+        counter = 0
+
+        # TODO: Add linear interpolation and SLERP for
+        # smoother animation
+
+            
         render.render(game)
         #print 'Pos:', player.get_pos().value
 

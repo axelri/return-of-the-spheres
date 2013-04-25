@@ -64,4 +64,4 @@ def render(game):
         glPopMatrix()
 
     pygame.display.flip()
-    pygame.time.wait(10)
+    #pygame.time.wait(10)

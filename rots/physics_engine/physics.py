@@ -11,7 +11,7 @@ from math_classes import vectors, quaternions, matrices
 
 
 GRAVITY = vectors.Vector([0.0, -10.0, 0.0])
-dt = 0.005
+#dt = 0.005
 
 def collision_response(shape1, shape2, collisionInfo):
     '''
@@ -136,7 +136,7 @@ def collision_response(shape1, shape2, collisionInfo):
 
 
 
-def update_physics(game):
+def update_physics(game, dt):
     ''' Updates all physics in the game; takes all the objects in
     the game, calculates collisions etc and moves them to their
     new locations.'''
@@ -144,8 +144,7 @@ def update_physics(game):
     # TODO: Needs A LOT of cleaning, this code is a mess...
     
     assert isinstance(game, games.Game), 'Input must be a game object'
-    # TODO: Make it have an input called dt, which gives it the
-    # timestep it should simulate
+    
     # TODO: Add broadphase collision detection, for example
     # check_collision = collisions.broadphase(shape1, shape2)
     # if check_collision:
