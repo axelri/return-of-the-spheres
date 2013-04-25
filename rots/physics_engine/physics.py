@@ -13,9 +13,6 @@ from math_classes import vectors, quaternions, matrices
 GRAVITY = vectors.Vector([0.0, -10.0, 0.0])
 dt = 0.005
 
-# TODO: There is a bug in the first bounces, causing the sphere to bounce
-# unnaturally. Fix.
-
 def collision_response(shape1, shape2, collisionInfo):
     '''
     Takes two Shape objects that have collided, calculates
@@ -139,77 +136,12 @@ def collision_response(shape1, shape2, collisionInfo):
 
 
 
-
-def linear_collision_response(shape1, shape2, collisionInfo):
-    '''
-    Takes two Shape objects that have collided, calculates
-    the impulse that should be applied to them and applies it
-    to the linear velocity.
-
-    Input:
-        * shape1 and shape2 are Shape objects
-        
-        * collisionInfo is a tuple containing collision information:
-        The point of collision, the contact normal and the
-        penetration depth
-
-        * collisionPoint is a vector describing the point of collision
-
-        * normal is a vector describing the contact normal
-
-        * depth is a number describing the penetration depth
-    '''
-    
-    assert isinstance(shape1, shapes.Shape), 'Input must be a Shape object'
-    assert isinstance(shape2, shapes.Shape), 'Input must be a Shape object'
-    assert isinstance(collisionInfo, tuple), 'Input must be a tuple'
-    assert len(collisionInfo) == 3, 'CollisionInfo must be of length 3'
-
-    collisionPoint, penetrationNormal, penetrationDepth = collisionInfo
-
-    assert isinstance(collisionPoint, vectors.Vector), \
-           'Input must be a vector'
-    assert isinstance(penetrationNormal, vectors.Vector), \
-           'Input must be a vector'
-    assert isinstance(penetrationDepth, numbers.Number), \
-           'Input must be a number'
-
-    if penetrationNormal.dot(shape2.get_pos() - shape1.get_pos()) < 0:
-        # It's pointing the wrong way
-        penetrationNormal *= -1.0
-
-    mass1 = shape1.get_mass()
-    mass2 = shape2.get_mass()
-
-    invMass1 = 1.0/shape1.get_mass()
-    invMass2 = 1.0/shape2.get_mass()
-
-    relativeVel = shape1.get_velocity() - shape2.get_velocity()
-
-    if relativeVel.dot(penetrationNormal) < 0:
-        # They are moving apart, no need to apply an impulse
-        return
-    
-    e = 0.0     # coefficient of elasticity
-
-    v_ab = relativeVel
-    n = penetrationNormal   
-
-    impulse = -(1+e)*v_ab.dot(n)/((invMass1+invMass2)*n.dot(n))
-
-    #print 'impulse before:', impulse
-    # Hack to prevent sinking
-    impulse -= penetrationDepth*1.0
-    #print 'depth:', penetrationDepth
-    #print 'impulse after:', impulse
-    shape1.add_velocity(n*impulse*invMass1)
-    shape2.add_velocity(n*impulse*invMass2*(-1.0))
-
-
 def update_physics(game):
     ''' Updates all physics in the game; takes all the objects in
     the game, calculates collisions etc and moves them to their
     new locations.'''
+
+    # TODO: Needs A LOT of cleaning, this code is a mess...
     
     assert isinstance(game, games.Game), 'Input must be a game object'
     # TODO: Make it have an input called dt, which gives it the
@@ -226,8 +158,9 @@ def update_physics(game):
     
     #print 'Entered loop at', time.clock()
     player, objectList, sceneList, lightList, camera = game.get_objects()
-    #print ''
+
     player.collided = False
+    
     for item in objectList:
         #print 'Checking collision with item:', item
 
@@ -247,7 +180,10 @@ def update_physics(game):
         if collided:
             #print 'Player collided with item'
             collision_response(player.get_shape(), item, collisionInfo)
-            player.collided = True
+            player.colliding = True
+            # Resets player.jumping to False so it can jump again
+            if collisionInfo[1].dot(vectors.Vector([0.0, 1.0, 0.0])) < 0.0:
+                player.reset_jump()
 
         for elem in sceneList:
             check_collision = broadphase.shape_surface(item, elem)
@@ -279,12 +215,19 @@ def update_physics(game):
         if collided:
             #print 'Player collided with scene'
             collision_response(player.get_shape(), item, collisionInfo)
-            player.collided = True
+            #print 'Collided before:', player.collided
+            player.colliding = True
+            #print 'Collided after:', player.collided
+            # Resets player.jumping to False so it can jump again
+            if collisionInfo[1].dot(vectors.Vector([0.0, 1.0, 0.0])) > 0.0:
+                #print 'Normal correct; jumping:', player.jumping
+                player.reset_jump()
+                #print 'Jumping after:', player.jumping
     
     # TODO: switch to semi-implicit Euler integration
 
     # Friction
-    if player.collided:
+    if player.colliding:
         player.get_shape().add_velocity(player.get_shape()\
                                         .get_velocity()*-0.05)
         if player.get_shape().get_velocity().norm() < 0.001:
@@ -293,8 +236,11 @@ def update_physics(game):
                                         .get_angular_velocity()*-0.05)
         if player.get_shape().get_angular_velocity().norm() < 0.001:
             player.get_shape().set_angular_velocity(vectors.Vector())
-        
+
+    #print 'Velocity before gravity:', player.get_shape().get_velocity()        
     player.get_shape().add_velocity(GRAVITY*dt)
+    #print 'Velocity after gravity:', player.get_shape().get_velocity()
+    #print ''
     player.get_shape().add_pos(player.get_shape().get_velocity())
     
     angVel = player.get_shape().get_angular_velocity()

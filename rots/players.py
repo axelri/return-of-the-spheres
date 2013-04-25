@@ -16,6 +16,7 @@ class Player:
         #self._physicsVelocity = shape.get_velocity()
         self._speed = 0.1
         self.colliding = False
+        self.jumping = False
 
     def get_shape(self):
         return self._shape
@@ -28,9 +29,19 @@ class Player:
         assert speed > 0.0, 'Speed must be greater than 0'
         self._speed = speed
 
+    def jump(self):
+
+        if self.colliding and not self.jumping:
+            self._shape.add_velocity(vectors.Vector([0.0, 0.4, 0.0]))
+            self.jumping = True
+
+    def reset_jump(self):
+        self.jumping = False
+
 
     def update_velocity(self, direction, forwardVector):
         # TODO: You get a small boost when changing direction, fix
+
         # set the velocity we want according to the input
 
         leftVector = vectors.Vector([0.0, 1.0, 0.0]).cross(forwardVector)

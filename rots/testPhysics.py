@@ -82,7 +82,6 @@ def main():
     run = True
 
     while run:
-
         currentEvents = pygame.event.get() # cache current events
         for event in currentEvents:
             if event.type == QUIT or \
@@ -91,17 +90,19 @@ def main():
         keyState = pygame.key.get_pressed()
 
         xDir = keyState[K_d] - keyState[K_a]
-        yDir = keyState[K_SPACE] - keyState[K_LSHIFT]
         zDir = keyState[K_s] - keyState[K_w]
 
-        direction = vectors.Vector([xDir, yDir, zDir]).normalize()
+        if keyState[K_SPACE]:
+            player.jump()
+
+        direction = vectors.Vector([xDir, 0.0, zDir]).normalize()
         if direction == None:
             direction = vectors.Vector()
-
+        
         forwardVector = camera.update(player)
-
-        player.update_velocity(direction, forwardVector)            
-
+        
+        player.update_velocity(direction, forwardVector)
+        
         physics.update_physics(game)
         render.render(game)
         #print 'Pos:', player.get_pos().value
