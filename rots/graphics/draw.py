@@ -80,6 +80,8 @@ def surface(surface):
     Input:  surface: A Surface object
 
     Calls OpenGL to draw the surface. '''
+
+    # TODO: Tesselate the surface for better lighting effects
     
     assert isinstance(surface, shapes.Surface), \
            'Input must be a Surface object'
