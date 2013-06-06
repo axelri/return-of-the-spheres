@@ -9,30 +9,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-def loadTexture(image_file):
-    '''creates a texture'''
-    # Load an image
-    image = pygame.image.load(image_file)
-    image_str = pygame.image.tostring(image, 'RGB', True)
-
-    # Create a texture object
-    tex = glGenTextures(1)
-    glBindTexture(GL_TEXTURE_2D, tex)
-
-    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE )
-
-    # Specify some paramaters 
-    # (What to do) when they "run out of picture": here repeat it
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
-    #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR) #Why doesn't this line work?
-
-    gluBuild2DMipmaps( GL_TEXTURE_2D, 3, 256, 256, 
-                     GL_RGB, GL_UNSIGNED_BYTE, image_str )
-
-    # Return the texture index
-    return tex
+from graphics import textures
 
 def drawTexture(tex):
     '''draws a quad with our texture on it'''
@@ -62,8 +39,9 @@ def main():
     glMatrixMode(GL_PROJECTION)
     gluPerspective(45.0,640/480.0,0.1,100.0)    #setup lens
     glTranslatef(0.0, 0.0, -3.0)                #move back
-    #glRotatef(25, 1, 0, 0)                      #orbit higher
-    tex = loadTexture('graphics/textures/puppy.jpeg')
+
+    image_str = textures.loadImage('graphics/texture_data/puppy.jpeg')
+    tex = textures.loadTexture(image_str)
 
     while 1:
         #check for quit'n events
