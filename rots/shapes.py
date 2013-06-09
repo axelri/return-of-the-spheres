@@ -340,7 +340,7 @@ class Surface(Shape):
     def __init__(self, pos = vectors.Vector(),
                  points = [vectors.Vector([-5.0, 0.0, -5.0]), vectors.Vector([5.0, 0.0, -5.0]),
                            vectors.Vector([5.0, 0.0, 5.0]), vectors.Vector([-5.0, 0.0, 5.0])],
-                 color = [1.0, 0.0, 1.0]):
+                 color = [1.0, 0.0, 1.0], texture = None):
         super(Surface, self).__init__()
         assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
         assert isinstance(color, list), 'Color must be a list'
@@ -362,6 +362,9 @@ class Surface(Shape):
         self._pos = pos
         self._points = points
         self._color = color
+        self._texture = texture
+        # ugly, any solution?
+        self._texCoords = ((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0))
                 
         # Material properties
         self._ambient = [1.0, 0.0, 1.0, 1.0]

@@ -13,7 +13,7 @@ import time
 import shapes
 import games
 import players
-from graphics import render, init_graphics, lights, cameras
+from graphics import render, init_graphics, lights, cameras, textures
 from physics_engine import physics
 from math_classes import vectors
 
@@ -50,7 +50,10 @@ def main():
 
     cube = shapes.Cube(pos = otherPos)
 
-    plane1 = shapes.Surface(points = PLANE_POINTS1)
+    image_str = textures.loadImage('graphics/texture_data/puppy.jpeg')
+    tex = textures.loadTexture(image_str)
+
+    plane1 = shapes.Surface(points = PLANE_POINTS1, texture = tex)
     plane2 = shapes.Surface(points = PLANE_POINTS2,
                             pos = vectors.Vector([0.0, 1.0, -10.0]))
     plane3 = shapes.Surface(points = PLANE_POINTS2,

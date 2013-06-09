@@ -5,6 +5,8 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+# NOTE: loadImage and loadTexture could be merged into one 
+# single function, loadTexture(image_file)
 
 def loadImage(image_file):
     ''' Takes an image file and converts it into a string 

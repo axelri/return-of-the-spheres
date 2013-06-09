@@ -94,13 +94,20 @@ def surface(surface):
     glMaterialfv(GL_FRONT, GL_SPECULAR, specular)
     glMateriali(GL_FRONT, GL_SHININESS, shininess)
     #glMaterialfv(GL_FRONT, GL_EMISSIVE, emissive)
-    
+
     points = surface.get_points()
     #glColor3fv(surface.get_color())
+
+    if surface._texture:
+        glBindTexture(GL_TEXTURE_2D, surface._texture)
+
     glBegin(GL_QUADS)
     glNormal3fv(surface.get_normal().value)
-    for point in points:
-        glVertex3fv(point.value)
+
+    for i in range(len(points)):
+        glTexCoord2f(surface._texCoords[i][0], surface._texCoords[i][1])
+        glVertex3fv(points[i].value)
+
     glEnd()
 
     # TODO: The lines don't seem to be drawn, why? Fix.
@@ -110,6 +117,7 @@ def surface(surface):
         glVertex3fv(points[i].value)
         glVertex3fv(points[(i+1)%len(points)].value)
     glEnd()
+
 
 def sphere(sphere):
     ''' The drawing routine for a Sphere object.
