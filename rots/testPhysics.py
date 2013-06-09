@@ -35,6 +35,14 @@ def main():
                      vectors.Vector([0.0, -1.0, -10.0]),
                      vectors.Vector([0.0, -1.0, 10.0])]
 
+    puppy_str = textures.loadImage('graphics/texture_data/puppy.jpeg')
+    puppy_tex = textures.loadTexture(puppy_str)
+    sunset_str = textures.loadImage('graphics/texture_data/sunset.png')
+    sunset_tex = textures.loadTexture(sunset_str)
+    earth_str = textures.loadImage('graphics/texture_data/earth.jpg')
+    earth_tex = textures.loadTexture(earth_str)
+
+
     speed = 0.1
     xPos = 0.0
     yPos = 5.0
@@ -46,22 +54,27 @@ def main():
     pos = vectors.Vector(pos)
     otherPos = vectors.Vector(otherPos)
 
-    sphere = shapes.Sphere(pos = pos, radius = 0.5)
+    sphere = shapes.Sphere(pos = pos, radius = 0.5, texture = earth_tex, 
+                            color = [1.0, 1.0, 1.0])
 
     cube = shapes.Cube(pos = otherPos)
 
-    image_str = textures.loadImage('graphics/texture_data/puppy.jpeg')
-    tex = textures.loadTexture(image_str)
+    
 
-    plane1 = shapes.Surface(points = PLANE_POINTS1, texture = tex)
+    plane1 = shapes.Surface(points = PLANE_POINTS1, texture = puppy_tex,
+                            color = [1.0, 1.0, 1.0])
     plane2 = shapes.Surface(points = PLANE_POINTS2,
-                            pos = vectors.Vector([0.0, 1.0, -10.0]))
+                            pos = vectors.Vector([0.0, 1.0, -10.0]),
+                            texture = sunset_tex, color = [1.0, 1.0, 1.0])
     plane3 = shapes.Surface(points = PLANE_POINTS2,
-                            pos = vectors.Vector([0.0, 1.0, 10.0]))
+                            pos = vectors.Vector([0.0, 1.0, 10.0]),
+                            texture = sunset_tex, color = [1.0, 1.0, 1.0])
     plane4 = shapes.Surface(points = PLANE_POINTS3,
-                            pos = vectors.Vector([10.0, 1.0, 0.0]))
+                            pos = vectors.Vector([10.0, 1.0, 0.0]),
+                            texture = sunset_tex, color = [1.0, 1.0, 1.0])
     plane5 = shapes.Surface(points = PLANE_POINTS3,
-                            pos = vectors.Vector([-10.0, 1.0, 0.0]))
+                            pos = vectors.Vector([-10.0, 1.0, 0.0]),
+                            texture = sunset_tex, color = [1.0, 1.0, 1.0])
 
     #glEnable(GL_LIGHT0)
 

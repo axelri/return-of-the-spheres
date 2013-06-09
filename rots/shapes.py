@@ -167,7 +167,7 @@ class Shape(object):
 class Sphere(Shape):
 
     def __init__(self, pos = vectors.Vector(), radius = 0.5,
-                 mass = 1.0, color = [1.0, 0.5, 0.3]):
+                 mass = 1.0, color = [1.0, 0.5, 0.3], texture = None):
         super(Sphere, self).__init__()
         assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
         assert isinstance(mass, numbers.Number), 'Mass must be a number'
@@ -188,15 +188,17 @@ class Sphere(Shape):
         self._mass = mass
         self._radius = radius
         self._color = color
+        self._texture = texture
+        self._quadric = gluNewQuadric()
         I = 5/(2*self._mass*self._radius*self._radius)
         self._invInertia = [[I, 0.0, 0.0],
                             [0.0, I, 0.0],
                             [0.0, 0.0, I]]
 
         # Material properties
-        self._ambient = [1.0, 0.5, 0.3, 1.0]
+        self._ambient = self._color + [1.0] #[1.0, 0.5, 0.3, 1.0]
         #self._ambient = [0.0, 1.0, 0.0, 1.0]
-        self._diffuse = [1.0, 0.5, 0.3, 1.0]
+        self._diffuse = self._color + [1.0] #[1.0, 0.5, 0.3, 1.0]
         #self._diffuse = [1.0, 0.0, 0.0, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
         self._shininess = 64
@@ -260,8 +262,8 @@ class Cube(Shape):
         self._color = color
         
         # Material properties
-        self._ambient = [0.8, 0.8, 0.8, 1.0]
-        self._diffuse = [0.8, 0.8, 0.8, 1.0]
+        self._ambient = self._color + [1.0] #[0.8, 0.8, 0.8, 1.0]
+        self._diffuse = self._color + [1.0] #[0.8, 0.8, 0.8, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
         self._shininess = 42
         #self._emissive = [0.0, 0.0, 0.0, 1.0]
@@ -364,11 +366,11 @@ class Surface(Shape):
         self._color = color
         self._texture = texture
         # ugly, any solution?
-        self._texCoords = ((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0))
+        self._texCoords = ((0.0, 1.0), (1.0, 1.0), (1.0, 0.0), (0.0, 0.0))
                 
         # Material properties
-        self._ambient = [1.0, 0.0, 1.0, 1.0]
-        self._diffuse = [1.0, 0.0, 1.0, 1.0]
+        self._ambient = self._color + [1.0] #[1.0, 0.0, 1.0, 1.0]
+        self._diffuse = self._color + [1.0] #[1.0, 0.0, 1.0, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
         self._shininess = 80
         #self._emissive = [0.0, 0.0, 0.0, 1.0]

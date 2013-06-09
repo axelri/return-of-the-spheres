@@ -58,8 +58,8 @@ def loadTexture(image_str):
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
                     GL_LINEAR_MIPMAP_LINEAR)
-    #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
-    #                GL_LINEAR_MIPMAP_LINEAR) #Why doesn't this line work?
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
+                    GL_LINEAR)
 
     gluBuild2DMipmaps( GL_TEXTURE_2D, 3, 256, 256, 
                      GL_RGB, GL_UNSIGNED_BYTE, image_str )

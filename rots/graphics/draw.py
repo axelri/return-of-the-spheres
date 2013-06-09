@@ -99,6 +99,7 @@ def surface(surface):
     #glColor3fv(surface.get_color())
 
     if surface._texture:
+        glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, surface._texture)
 
     glBegin(GL_QUADS)
@@ -117,6 +118,8 @@ def surface(surface):
         glVertex3fv(points[i].value)
         glVertex3fv(points[(i+1)%len(points)].value)
     glEnd()
+
+    glDisable(GL_TEXTURE_2D)
 
 
 def sphere(sphere):
@@ -137,8 +140,20 @@ def sphere(sphere):
     glMaterialfv(GL_FRONT, GL_SPECULAR, specular)
     glMateriali(GL_FRONT, GL_SHININESS, shininess)
     #glMaterialfv(GL_FRONT, GL_EMISSIVE, emissive)
-    
+
+    if sphere._texture:
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, sphere._texture)
+
     #glColor3fv(sphere.get_color())
-    glutSolidSphere(sphere.get_radius(), 10, 10)
+    #glutSolidSphere(sphere.get_radius(), 10, 10)
     #glutSolidSphere(sphere.get_radius(), 40, 40)
     #glutSolidTeapot(sphere.get_radius())
+
+    #gluQuadricDrawStyle(sphere._quadric, GLU_FILL)
+    if sphere._texture:
+        gluQuadricTexture(sphere._quadric, True)
+    #gluQuadricNormals(sphere._quadric, GLU_SMOOTH)
+    gluSphere(sphere._quadric,sphere.get_radius(),20,20)
+
+    glDisable(GL_TEXTURE_2D)
