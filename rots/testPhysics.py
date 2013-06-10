@@ -35,13 +35,20 @@ def main():
                      vectors.Vector([0.0, -1.0, -10.0]),
                      vectors.Vector([0.0, -1.0, 10.0])]
 
-    puppy_str = textures.loadImage('graphics/texture_data/puppy.jpeg')
-    puppy_tex = textures.loadTexture(puppy_str)
-    sunset_str = textures.loadImage('graphics/texture_data/sunset.png')
-    sunset_tex = textures.loadTexture(sunset_str)
-    earth_str = textures.loadImage('graphics/texture_data/earth.jpg')
-    earth_tex = textures.loadTexture(earth_str)
-
+    #puppy_str = textures.loadImage('graphics/texture_data/puppy.jpeg')
+    #puppy_tex = textures.loadTexture(puppy_str, 256, 256)
+    #sunset_str = textures.loadImage('graphics/texture_data/sunset.png')
+    #sunset_tex = textures.loadTexture(sunset_str, 256, 256)
+    #earth_str = textures.loadImage('graphics/texture_data/earth.jpg')
+    #earth_tex = textures.loadTexture(earth_str, 256, 256)
+    #earth_big_str = textures.loadImage('graphics/texture_data/celestial_bodies/earth_big.jpg')
+    #earth_big_tex = textures.loadTexture(earth_big_str, 1024, 1024)
+    moon_str = textures.loadImage('graphics/texture_data/celestial_bodies/moon-4k.png')
+    moon_tex = textures.loadTexture(moon_str, 4096, 2048)
+    #stars_str = textures.loadImage('graphics/texture_data/stars.jpg')
+    #stars_tex = textures.loadTexture(stars_str, 512, 512)
+    stars_big_str = textures.loadImage('graphics/texture_data/stars_big.jpg')
+    stars_big_tex = textures.loadTexture(stars_big_str, 2048, 2048)
 
     speed = 0.1
     xPos = 0.0
@@ -54,27 +61,31 @@ def main():
     pos = vectors.Vector(pos)
     otherPos = vectors.Vector(otherPos)
 
-    sphere = shapes.Sphere(pos = pos, radius = 0.5, texture = earth_tex, 
+    sphere = shapes.Sphere(pos = pos, radius = 0.5, texture = moon_tex, #earth_big_tex, 
                             color = [1.0, 1.0, 1.0])
 
     cube = shapes.Cube(pos = otherPos)
 
     
 
-    plane1 = shapes.Surface(points = PLANE_POINTS1, texture = puppy_tex,
+    plane1 = shapes.Surface(points = PLANE_POINTS1, texture = stars_big_tex,
                             color = [1.0, 1.0, 1.0])
     plane2 = shapes.Surface(points = PLANE_POINTS2,
                             pos = vectors.Vector([0.0, 1.0, -10.0]),
-                            texture = sunset_tex, color = [1.0, 1.0, 1.0])
+                            #texture = sunset_tex, color = [1.0, 1.0, 1.0])
+                            color = [0.0, 0.0, 0.2])
     plane3 = shapes.Surface(points = PLANE_POINTS2,
                             pos = vectors.Vector([0.0, 1.0, 10.0]),
-                            texture = sunset_tex, color = [1.0, 1.0, 1.0])
+                            #texture = sunset_tex, color = [1.0, 1.0, 1.0])
+                            color = [0.0, 0.0, 0.2])
     plane4 = shapes.Surface(points = PLANE_POINTS3,
                             pos = vectors.Vector([10.0, 1.0, 0.0]),
-                            texture = sunset_tex, color = [1.0, 1.0, 1.0])
+                            #texture = sunset_tex, color = [1.0, 1.0, 1.0])
+                            color = [0.0, 0.0, 0.2])
     plane5 = shapes.Surface(points = PLANE_POINTS3,
                             pos = vectors.Vector([-10.0, 1.0, 0.0]),
-                            texture = sunset_tex, color = [1.0, 1.0, 1.0])
+                            #texture = sunset_tex, color = [1.0, 1.0, 1.0])
+                            color = [0.0, 0.0, 0.2])
 
     #glEnable(GL_LIGHT0)
 

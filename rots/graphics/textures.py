@@ -33,7 +33,7 @@ def loadImage(image_file):
     image_str = pygame.image.tostring(image, 'RGB', True)
     return image_str    
 
-def loadTexture(image_str):
+def loadTexture(image_str, width, heigth):
     ''' Creates a texture object from the image given in 
         image_str and returns the index of that object.
 
@@ -61,7 +61,7 @@ def loadTexture(image_str):
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
                     GL_LINEAR)
 
-    gluBuild2DMipmaps( GL_TEXTURE_2D, 3, 256, 256, 
+    gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, heigth, 
                      GL_RGB, GL_UNSIGNED_BYTE, image_str )
 
     # Return the texture index
