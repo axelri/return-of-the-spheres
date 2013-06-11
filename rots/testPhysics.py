@@ -41,10 +41,10 @@ def main():
     #sunset_tex = textures.loadTexture(sunset_str, 256, 256)
     #earth_str = textures.loadImage('graphics/texture_data/earth.jpg')
     #earth_tex = textures.loadTexture(earth_str, 256, 256)
-    #earth_big_str = textures.loadImage('graphics/texture_data/celestial_bodies/earth_big.jpg')
-    #earth_big_tex = textures.loadTexture(earth_big_str, 1024, 1024)
-    moon_str = textures.loadImage('graphics/texture_data/celestial_bodies/moon-4k.png')
-    moon_tex = textures.loadTexture(moon_str, 4096, 2048)
+    earth_big_str = textures.loadImage('graphics/texture_data/celestial_bodies/earth_big.jpg')
+    earth_big_tex = textures.loadTexture(earth_big_str, 1024, 1024)
+    #moon_str = textures.loadImage('graphics/texture_data/celestial_bodies/moon-4k.png')
+    #moon_tex = textures.loadTexture(moon_str, 4096, 2048)
     #stars_str = textures.loadImage('graphics/texture_data/stars.jpg')
     #stars_tex = textures.loadTexture(stars_str, 512, 512)
     stars_big_str = textures.loadImage('graphics/texture_data/stars_big.jpg')
@@ -61,7 +61,7 @@ def main():
     pos = vectors.Vector(pos)
     otherPos = vectors.Vector(otherPos)
 
-    sphere = shapes.Sphere(pos = pos, radius = 0.5, texture = moon_tex, #earth_big_tex, 
+    sphere = shapes.Sphere(pos = pos, radius = 0.5, texture = earth_big_tex, #moon_tex, 
                             color = [1.0, 1.0, 1.0])
 
     cube = shapes.Cube(pos = otherPos)

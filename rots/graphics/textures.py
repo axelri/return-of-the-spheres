@@ -41,6 +41,8 @@ def loadTexture(image_str, width, heigth):
     * image_str:    A string containing the information from
                     an image file in a format readable for 
                     OpenGL. 
+    * width:        The width of the image, in pixels.
+    * heigth:       The heigth of the image, in pixels.
 
     Output:
     * tex:          The OpenGL index of the generated texture.
