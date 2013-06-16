@@ -6,6 +6,8 @@ A new version of the already old fluffy spheres codebase. More to come!
     - Convert all in-game objects to objects for the phys engine
 * Text on screen while the graphics engine is running
 * Menus!
+* Tesselation of big planes (to get correct lightning)
+* Smart culling
 * Work out the level file format, should be human readable (YAML?)
 * Try to work on a world editor
     - Keyboard, mouse support? Use rays in that case
