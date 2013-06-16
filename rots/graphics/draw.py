@@ -154,6 +154,6 @@ def sphere(sphere):
     if sphere._texture:
         gluQuadricTexture(sphere._quadric, True)
     #gluQuadricNormals(sphere._quadric, GLU_SMOOTH)
-    gluSphere(sphere._quadric,sphere.get_radius(), 20, 20)
+    gluSphere(sphere._quadric,sphere.get_radius(), 60, 60)
 
     glDisable(GL_TEXTURE_2D)

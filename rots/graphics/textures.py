@@ -2,6 +2,8 @@ import pygame
 from pygame.locals import *
 
 from OpenGL.GL import *
+from OpenGL.GL.glget import *
+from OpenGL.GL.EXT.texture_filter_anisotropic import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
@@ -63,8 +65,12 @@ def loadTexture(image_str, width, heigth):
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
                     GL_LINEAR)
 
-    gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, heigth, 
+    gluBuild2DMipmaps( GL_TEXTURE_2D, GL_RGBA, width, heigth, 
                      GL_RGB, GL_UNSIGNED_BYTE, image_str )
+
+    # get the largest anisotropy supported by the graphics card
+    largest = glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, largest)
 
     # Return the texture index
     return tex
