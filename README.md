@@ -7,6 +7,7 @@ A new version of the already old fluffy spheres codebase. More to come!
 * Text on screen while the graphics engine is running (by PIL atm)
 * Menus!
 * Tesselation of big planes (to get correct lightning)
+* Shadows
 * Smart culling (begin with normal vector checking)
 * Work out the level file format, should be human readable (YAML?)
 * Try to work on a world editor

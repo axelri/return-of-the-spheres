@@ -227,3 +227,27 @@ def identity():
             0.0, 0.0, 1.0, 0.0,
             0.0, 0.0, 0.0, 1.0]
 
+def OpenGL_to_ODE(matrix):
+    ''' Takes a matrix on OpenGL form (16-list, column major)
+        and converts it to ODE form (9-list, row major) '''
+
+    #TODO: Make prettier?
+
+    c = matrix[:]
+    out = [c[0], c[4], c[8],
+            c[1], c[5], c[9],
+            c[2], c[6], c[10]]
+    return out
+
+def ODE_to_OpenGL(matrix):
+    ''' Takes a matrix on ODE form (9-list, row major)
+        and converts it to OpenGL form (16-list, column major) '''
+
+    #TODO: Make prettier?
+
+    c = matrix[:]
+    out = [c[0], c[3], c[6], 0,
+            c[1], c[4], c[7], 0,
+            c[2], c[5], c[8], 0,
+            0, 0, 0, 1]
+    return out

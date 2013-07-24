@@ -3,6 +3,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 import numbers
+import math
 
 from math_classes import vectors, quaternions, matrices
 from physics_engine import supports
@@ -16,23 +17,29 @@ from graphics import draw
 
 class Shape(object):
 
-    def __init__(self):
+    def __init__(self, world):
 
-        # Linear motion
-        self._pos = vectors.Vector()
-        self._velocity = vectors.Vector()
-        self._mass = float('inf')               # Makes it immobile
-        self._force = vectors.Vector()          # Not used right now
+#        # Linear motion
+#        self._pos = vectors.Vector()
+#        self._velocity = vectors.Vector()
+#        self._mass = float('inf')               # Makes it immobile
+#        self._force = vectors.Vector()          # Not used right now
+#
+#        # Angular motion
+#        #self._orientation = quaternions.Quaternion()
+#        self._orientation = matrices.identity()
+#        #print 'Made an orientation:', self._orientation
+#        self._angularVelocity = vectors.Vector()
+#        self._invInertia = [[0.0, 0.0, 0.0],
+#                            [0.0, 0.0, 0.0],
+#                            [0.0, 0.0, 0.0]]    # Makes it unable to rotate
+#        self._torque = vectors.Vector()         # Not used right now
 
-        # Angular motion
-        #self._orientation = quaternions.Quaternion()
-        self._orientation = matrices.identity()
-        #print 'Made an orientation:', self._orientation
-        self._angularVelocity = vectors.Vector()
-        self._invInertia = [[0.0, 0.0, 0.0],
-                            [0.0, 0.0, 0.0],
-                            [0.0, 0.0, 0.0]]    # Makes it unable to rotate
-        self._torque = vectors.Vector()         # Not used right now
+        # Set ODE properties
+        self.body = ode.Body(world)
+        self.mass = ode.Mass()
+        # Moved to subclasses
+        #self.body.setMass(self.mass)
 
         self._color = None      # Should be removed when material properties
                                 # work properly
@@ -62,88 +69,88 @@ class Shape(object):
         #     e.g. glow in the dark plastic could have a greenish
         #     emissive light. Emissive is defined like colors (se above)
 
-    def get_velocity(self):
-        return self._velocity
+    # def get_velocity(self):
+    #     return self._velocity
 
-    def set_velocity(self, velocity):
-        assert isinstance(velocity, vectors.Vector), 'Velocity must be a vector'
-        self._velocity = velocity
+    # def set_velocity(self, velocity):
+    #     assert isinstance(velocity, vectors.Vector), 'Velocity must be a vector'
+    #     self._velocity = velocity
 
-    def add_velocity(self, velocity):
-        assert isinstance(velocity, vectors.Vector), 'Velocity must be a vector'
-        self._velocity += velocity
+    # def add_velocity(self, velocity):
+    #     assert isinstance(velocity, vectors.Vector), 'Velocity must be a vector'
+    #     self._velocity += velocity
     
-    def get_pos(self):
-        return self._pos
+    # def get_pos(self):
+    #     return self._pos
 
-    def set_pos(self, pos):
-        assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
-        self._pos = pos
+    # def set_pos(self, pos):
+    #     assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
+    #     self._pos = pos
 
-    def add_pos(self, pos):
-        assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
-        self._pos += pos
+    # def add_pos(self, pos):
+    #     assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
+    #     self._pos += pos
 
-    def get_angular_velocity(self):
-        return self._angularVelocity
+    # def get_angular_velocity(self):
+    #     return self._angularVelocity
 
-    def set_angular_velocity(self, velocity):
-        assert isinstance(velocity, vectors.Vector), 'Velocity must be a vector'
-        self._angularVelocity = velocity
+    # def set_angular_velocity(self, velocity):
+    #     assert isinstance(velocity, vectors.Vector), 'Velocity must be a vector'
+    #     self._angularVelocity = velocity
 
-    def add_angular_velocity(self, velocity):
-        assert isinstance(velocity, vectors.Vector), 'Velocity must be a vector'
-        self._angularVelocity += velocity
+    # def add_angular_velocity(self, velocity):
+    #     assert isinstance(velocity, vectors.Vector), 'Velocity must be a vector'
+    #     self._angularVelocity += velocity
 
-    def get_orientation(self):
-        #print 'get_orientation', self._orientation
-        return self._orientation
+    # def get_orientation(self):
+    #     #print 'get_orientation', self._orientation
+    #     return self._orientation
 
-    def set_orientation(self, orientation):
-        #assert isinstance(orientation, quaternions.Quaternion), \
-        #       'Input must be a quaternion'
-        #assert orientation.is_unit(), \
-        #       'Input must be a quaternion of unit length'
-        assert isinstance(orientation, list), 'Input must be a matrix'
-        assert len(orientation) == 16, 'Input must be a 4x4 matrix'
-        if __debug__:
-            for item in orientation:
-                assert isinstance(item, numbers.Number),\
-                       'All elements in the matrix must be numbers'
-        #print 'set_orientation before', self._orientation
-        self._orientation = orientation
-        #print 'set_orientation after', self._orientation
+    # def set_orientation(self, orientation):
+    #     #assert isinstance(orientation, quaternions.Quaternion), \
+    #     #       'Input must be a quaternion'
+    #     #assert orientation.is_unit(), \
+    #     #       'Input must be a quaternion of unit length'
+    #     assert isinstance(orientation, list), 'Input must be a matrix'
+    #     assert len(orientation) == 16, 'Input must be a 4x4 matrix'
+    #     if __debug__:
+    #         for item in orientation:
+    #             assert isinstance(item, numbers.Number),\
+    #                    'All elements in the matrix must be numbers'
+    #     #print 'set_orientation before', self._orientation
+    #     self._orientation = orientation
+    #     #print 'set_orientation after', self._orientation
         
 
-    def add_orientation(self, orientation):
-        #assert isinstance(orientation, quaternions.Quaternion), \
-        #       'Input must be a quaternion'
-        #assert orientation.is_unit(), \
-        #       'Input must be a quaternion of unit length'
-        assert isinstance(orientation, list), 'Input must be a matrix'
-        assert len(orientation) == 16, 'Input must be a 4x4 matrix'
-        if __debug__:
-            for item in orientation:
-                assert isinstance(item, numbers.Number),\
-                       'All elements in the matrix must be numbers'
-        self._orientation = matrices.matrix_mult(orientation, self._orientation)
+    # def add_orientation(self, orientation):
+    #     #assert isinstance(orientation, quaternions.Quaternion), \
+    #     #       'Input must be a quaternion'
+    #     #assert orientation.is_unit(), \
+    #     #       'Input must be a quaternion of unit length'
+    #     assert isinstance(orientation, list), 'Input must be a matrix'
+    #     assert len(orientation) == 16, 'Input must be a 4x4 matrix'
+    #     if __debug__:
+    #         for item in orientation:
+    #             assert isinstance(item, numbers.Number),\
+    #                    'All elements in the matrix must be numbers'
+    #     self._orientation = matrices.matrix_mult(orientation, self._orientation)
 
-        #print 'add_orientation before', self._orientation
-        #self._orientation = orientation * self._orientation
-        #print 'add_orientation middle', self._orientation
-        #self._orientation = self._orientation.check_normalize()
-        #print 'add_orientation after', self._orientation
+    #     #print 'add_orientation before', self._orientation
+    #     #self._orientation = orientation * self._orientation
+    #     #print 'add_orientation middle', self._orientation
+    #     #self._orientation = self._orientation.check_normalize()
+    #     #print 'add_orientation after', self._orientation
 
-    def get_mass(self):
-        return self._mass
+    # def get_mass(self):
+    #     return self._mass
 
-    def set_mass(self, mass):
-        assert isinstance(mass, numbers.Number), 'Mass must be a number'
-        assert mass >= 0, 'Mass must be at least 0'
-        self._mass = mass
+    # def set_mass(self, mass):
+    #     assert isinstance(mass, numbers.Number), 'Mass must be a number'
+    #     assert mass >= 0, 'Mass must be at least 0'
+    #     self._mass = mass
 
-    def get_invInertia(self):
-        return self._invInertia
+    # def get_invInertia(self):
+    #     return self._invInertia
 
     def get_color(self):
         return self._color
@@ -166,9 +173,9 @@ class Shape(object):
 
 class Sphere(Shape):
 
-    def __init__(self, pos = vectors.Vector(), radius = 0.5,
+    def __init__(self, world, space, pos = vectors.Vector(), radius = 0.5,
                  mass = 1.0, color = [1.0, 0.5, 0.3], texture = None):
-        super(Sphere, self).__init__()
+        super(Sphere, self).__init__(world)
         assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
         assert isinstance(mass, numbers.Number), 'Mass must be a number'
         assert mass >= 0, 'Mass must be at least 0'
@@ -183,17 +190,27 @@ class Sphere(Shape):
                        'Every component of color must be a number'
                 assert 0 <= item <= 1, \
                        'Every component of color must be a number between 0 and 1'
-                
-        self._pos = pos
-        self._mass = mass
+        # Set ODE properties
+
+        self.mass.setSphere(1, radius)
+        self.mass.adjust(mass)
+        self.body.setPosition(pos.value)
+        self.body.setMass(self.mass)
+        self.geom = ode.GeomSphere(space, self.radius)
+
+
+
+#        self._pos = pos
+#        self._mass = mass
         self._radius = radius
+
         self._color = color
         self._texture = texture
         self._quadric = gluNewQuadric()
-        I = 5/(2*self._mass*self._radius*self._radius)
-        self._invInertia = [[I, 0.0, 0.0],
-                            [0.0, I, 0.0],
-                            [0.0, 0.0, I]]
+#        I = 5/(2*self._mass*self._radius*self._radius)
+#        self._invInertia = [[I, 0.0, 0.0],
+#                            [0.0, I, 0.0],
+#                            [0.0, 0.0, I]]
 
         # Material properties
         self._ambient = self._color + [1.0] #[1.0, 0.5, 0.3, 1.0]
@@ -238,9 +255,9 @@ class Sphere(Shape):
         
 class Cube(Shape):
 
-    def __init__(self, pos = vectors.Vector(), side = 1,
+    def __init__(self, world, space, pos = vectors.Vector(), side = 1,
                  mass = 1, color = [0.8, 0.8, 0.8]):
-        super(Cube, self).__init__()
+        super(Cube, self).__init__(world)
         assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
         assert isinstance(mass, numbers.Number), 'Mass must be a number'
         assert mass >= 0, 'Mass must be at least 0'
@@ -256,9 +273,16 @@ class Cube(Shape):
                 assert 0 <= item <= 1, \
                        'Every component of color must be a number between 0 and 1'
 
-        self._pos = pos
+        # Set ODE properties
+        self.mass.setBox(1, (side, side, side))
+        self.mass.adjust(mass)
+        self.body.setPosition(pos)
+        self.body.setMass(self.mass)
+        self.geom = ode.GeomBox(space, (side, side, side))
+
+#        self._pos = pos
         self._side = side
-        self._mass = mass
+#        self._mass = mass
         self._color = color
         
         # Material properties
@@ -277,61 +301,65 @@ class Cube(Shape):
         glEndList()
         return displayListIndex
 
-    def support_func(self, direction):
-        #return supports.cube(self, direction)
-        return supports.polyhedron(self, direction)
+#    def support_func(self, direction):
+#        #return supports.cube(self, direction)
+#        return supports.polyhedron(self, direction)
 
     def get_side(self):
         return self._side
 
-    def get_bounding_radius(self):
-        ''' Returns a radius that encapsules the cube, slightly
-            bigger than the distance from the center to a corner.'''
-        return self._side
+#    def get_bounding_radius(self):
+#        ''' Returns a radius that encapsules the cube, slightly
+#            bigger than the distance from the center to a corner.'''
+#        return self._side
 
-    def get_points(self):
-        h = self._side/2.0
-        return [vectors.Vector([h, -h, -h]),  vectors.Vector([h, h, -h]),
-                vectors.Vector([-h, h, -h]),  vectors.Vector([-h, -h, -h]),
-                vectors.Vector([h, -h, h]),   vectors.Vector([h, h, h]),
-                vectors.Vector([-h, -h, h]),  vectors.Vector([-h, h, h])]
 
-    def get_normal(self, point):
-        ''' Returns the normal of the cube in th given point. Assumes the point
-            lies inside of the cube. '''
-        assert isinstance(point, vectors.Vector), 'Input must be a vector'
+    #NOTE: Are get_points() and get_normals() needed? Or are they just something
+    # from the old physics engine?
 
-        dist = point - self._pos
-        halfside = self._side/2.0
+#    def get_points(self):
+#        h = self._side/2.0
+#        return [vectors.Vector([h, -h, -h]),  vectors.Vector([h, h, -h]),
+#                vectors.Vector([-h, h, -h]),  vectors.Vector([-h, -h, -h]),
+#                vectors.Vector([h, -h, h]),   vectors.Vector([h, h, h]),
+#                vectors.Vector([-h, -h, h]),  vectors.Vector([-h, h, h])]
 
-        xdot = dist.dot(vectors.Vector([1.0, 0.0, 0.0]))
-        ydot = dist.dot(vectors.Vector([0.0, 1.0, 0.0]))
-        zdot = dist.dot(vectors.Vector([0.0, 0.0, 1.0]))
-
-        xdist = halfside - abs(xdot)
-        ydist = halfside - abs(ydot)
-        zdist = halfside - abs(zdot)
-
-        distlist = [xdist, ydist, zdist]
-
-        # Calculates which pair of faces is closest to the point
-        index = distlist.index(min(distlist))
-
-        if index == 0:
-            if xdot > 0:
-                return vectors.Vector([1.0, 0.0, 0.0])
-            else:
-                return vectors.Vector([-1.0, 0.0, 0.0])
-        elif index == 1:
-            if ydot > 0:
-                return vectors.Vector([0.0, 1.0, 0.0])
-            else:
-                return vectors.Vector([0.0, -1.0, 0.0])
-        else:
-            if zdot > 0:
-                return vectors.Vector([0.0, 0.0, 1.0])
-            else:
-                return vectors.Vector([0.0, 0.0, -1.0])
+#    def get_normal(self, point):
+#        ''' Returns the normal of the cube in th given point. Assumes the point
+#            lies inside of the cube. '''
+#        assert isinstance(point, vectors.Vector), 'Input must be a vector'
+#
+#        dist = point - self._pos
+#        halfside = self._side/2.0
+#
+#        xdot = dist.dot(vectors.Vector([1.0, 0.0, 0.0]))
+#        ydot = dist.dot(vectors.Vector([0.0, 1.0, 0.0]))
+#        zdot = dist.dot(vectors.Vector([0.0, 0.0, 1.0]))
+#
+#        xdist = halfside - abs(xdot)
+#        ydist = halfside - abs(ydot)
+#        zdist = halfside - abs(zdot)
+#
+#        distlist = [xdist, ydist, zdist]
+#
+#        # Calculates which pair of faces is closest to the point
+#        index = distlist.index(min(distlist))
+#
+#        if index == 0:
+#            if xdot > 0:
+#                return vectors.Vector([1.0, 0.0, 0.0])
+#            else:
+#                return vectors.Vector([-1.0, 0.0, 0.0])
+#        elif index == 1:
+#            if ydot > 0:
+#                return vectors.Vector([0.0, 1.0, 0.0])
+#            else:
+#                return vectors.Vector([0.0, -1.0, 0.0])
+#        else:
+#            if zdot > 0:
+#                return vectors.Vector([0.0, 0.0, 1.0])
+#            else:
+#                return vectors.Vector([0.0, 0.0, -1.0])
 
     def draw(self):
         glCallList(self._displayListIndex)
@@ -361,7 +389,26 @@ class Surface(Shape):
                 assert isinstance(point, vectors.Vector), \
                        'Every component of points must be a vector'
 
-        self._pos = pos
+        # Set ODE properties
+        x_side = (points[1] - points[0]).norm()
+        y_side = 0.1
+        z_side = (points[3] - points[0]).norm()
+        self.geom = ode.GeomBox(space, (x_side, y_side, z_side))
+
+        normal = (points[0] - points[1]).cross(points[3] - points[1]).normalize()
+        axis = vectors.Vector([0, 1, 0]).cross(normal)
+        angle = math.acos(axis.dot(normal))
+        rotation = matrices.OpenGL_to_ODE(
+                    matrices.generate_rotation_matrix(axis, angle))
+
+        center = ((points[0] + points[1]) * 0.5 + 
+                (points[0] + points[3]) * 0.5 - 
+                normal * y_side * 0.5).value
+
+        self.geom.setPosition(center)
+        self.geom.setRotation(rotation)
+
+        #self._pos = pos
         self._points = points
         self._color = color
         self._texture = texture
@@ -375,7 +422,7 @@ class Surface(Shape):
         self._shininess = 80
         #self._emissive = [0.0, 0.0, 0.0, 1.0]
         
-        self._normal = (points[0] - points[1]).cross(points[3] - points[1]).normalize()
+        self._normal = normal
         self._displayListIndex = self.create_displaylist_index()
 
     def create_displaylist_index(self):
@@ -385,8 +432,8 @@ class Surface(Shape):
         glEndList()
         return displayListIndex
 
-    def support_func(self, direction):
-        return supports.polyhedron(self, direction)
+#    def support_func(self, direction):
+#        return supports.polyhedron(self, direction)
 
     def get_points(self):
         return self._points
