@@ -4,7 +4,7 @@ from graphics import lights
 
 class Game():
     ''' A class containing all the objects in the game '''
-    def __init__(self, player, objectList, sceneList, lightList, camera):
+    def __init__(self, player, objectList, sceneList, lightList, textList, camera):
         # TODO: Use the Player object from fluffy instead?
         assert isinstance(player, players.Player), \
                'Input must be a Player object'
@@ -12,9 +12,9 @@ class Game():
         assert isinstance(sceneList, list), 'Input must be a list'
         assert isinstance(lightList, list), 'Input must be a list'
         if __debug__:
-            for item in objectList:
-                assert isinstance(item, shapes.Shape), \
-                       'All items in objectList must be Shape objects'
+            # for item in objectList:
+                # assert isinstance(item, shapes.Shape), \
+                       # 'All items in objectList must be Shape objects'
             for item in sceneList:
                 assert isinstance(item, shapes.Shape), \
                        'All items in sceneList must be Shape objects'
@@ -25,6 +25,7 @@ class Game():
         self._objectList = objectList
         self._sceneList = sceneList
         self._lightList = lightList
+        self._textList = textList
         self._camera = camera
         # TODO: This should describe the game object in
         # the saved state files (levels):
@@ -35,4 +36,4 @@ class Game():
 
     def get_objects(self):
         return self._player, self._objectList, self._sceneList,\
-               self._lightList, self._camera
+               self._lightList, self._textList, self._camera

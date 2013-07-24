@@ -1,6 +1,5 @@
 # Test of the physics engine
 
-import os
 import pygame
 from graphics import glFreeType
 from graphics import init_graphics

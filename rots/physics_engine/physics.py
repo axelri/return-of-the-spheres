@@ -156,7 +156,7 @@ def update_physics(game, dt):
     # works, but I think we can enhance it.
     
     #print 'Entered loop at', time.clock()
-    player, objectList, sceneList, lightList, camera = game.get_objects()
+    player, objectList, sceneList, lightList, textList, camera = game.get_objects()
 
     player.collided = False
     

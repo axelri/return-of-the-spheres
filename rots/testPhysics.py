@@ -13,14 +13,13 @@ import time
 import shapes
 import games
 import players
-from graphics import render, init_graphics, lights, cameras, textures, glFreeType
+from graphics import render, init_graphics, lights, cameras, textures
+from text import TextBox
 from physics_engine import physics
 from math_classes import vectors
 
 def main():
     init_graphics.init_window('testPhysics')
-    our_font = glFreeType.font_data('graphics/texture_data/fonts/test.ttf', 20)
-
 
     PLANE_POINTS1 = [vectors.Vector([-10.0, 0.0, -10.0]),
                     vectors.Vector([10.0, 0.0, -10.0]),
@@ -101,13 +100,16 @@ def main():
     #objectList = [cube]
     #sceneList = []
 
+    text = TextBox('graphics/texture_data/fonts/test.ttf', 14, 200, 200, [1,0,0])
+    textList = [text]
+
     objectList = []
     sceneList = [plane1, plane2, plane3, plane4, plane5]
     #sceneList = [plane1]
 
     lightList = [light1]
 
-    game = games.Game(player, objectList, sceneList, lightList, camera)
+    game = games.Game(player, objectList, sceneList, lightList, textList, camera)
 
     run = True
 
@@ -165,16 +167,9 @@ def main():
         # TODO: Add linear interpolation and SLERP for
         # smoother animation
 
-        render.render(game)
         pos = str(player.get_shape().get_pos().value)
-        # TODO: Make text an object instead to be renderable
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glLoadIdentity()              
-        glPushMatrix()
-        glColor3f (1, 0, 0)
-        our_font.glPrint(200,200,pos)
-        glPopMatrix()
-        pygame.display.flip()
+        text.set_string(pos)
+        render.render(game)
 
         #print 'Pos:', player.get_pos().value
 

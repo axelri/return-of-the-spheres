@@ -20,7 +20,7 @@ def render(game):
 
     assert isinstance(game, games.Game), 'Input must be a Game object'
     
-    player, objectList, sceneList, lightList, camera = game.get_objects()
+    player, objectList, sceneList, lightList, textList, camera = game.get_objects()
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
@@ -51,13 +51,20 @@ def render(game):
         glMultMatrixf(rotMatrix)
         item.draw()
         glPopMatrix()
-
     
     for item in sceneList:
         pos = item.get_pos().value
         glPushMatrix()
         glTranslatef(pos[0], pos[1], pos[2])
         #rotMatrix = item.get_orientation().convert_to_matrix()
+        rotMatrix = item.get_orientation()
+        glMultMatrixf(rotMatrix)
+        item.draw()
+        glPopMatrix()
+
+    for item in textList:
+        glPushMatrix()
+        glLoadIdentity()
         rotMatrix = item.get_orientation()
         glMultMatrixf(rotMatrix)
         item.draw()
