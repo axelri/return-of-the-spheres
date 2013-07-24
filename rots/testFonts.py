@@ -1,12 +1,10 @@
 # Test of the physics engine
 
 import pygame
-import graphics.glFreeType as glFreeType
+from graphics import glFreeType
 from graphics import init_graphics
 from pygame.locals import *
 from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
 from math import cos
 
 import traceback
