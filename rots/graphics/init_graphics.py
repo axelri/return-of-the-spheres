@@ -55,7 +55,7 @@ def init_window(windowName, HAVE_FULLSCREEN = True):
     glClearColor(0.0, 0.0, 0.0, 0.0)
 
     glMatrixMode(GL_PROJECTION)
-    gluPerspective(45.0, 640.0/480.0, 0.1, 100.0)
+    gluPerspective(45.0, float(width)/float(height), 0.1, 100.0)
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
