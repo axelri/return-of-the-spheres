@@ -70,6 +70,8 @@ class Vector:
     def normalize(self):
         ''' Returns a normalized version of the the vector. 
         Returns None if the vector is the zero vector.'''
+        #TODO: Return a zero vector instead of None if self
+        # is a zero vector; this is how we always use it anyways.
         if self.is_zero():
             return None
 
