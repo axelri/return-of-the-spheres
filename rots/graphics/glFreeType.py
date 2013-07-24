@@ -11,7 +11,6 @@
 # We are going to use Python Image Library's font handling
 # From PIL 1.1.4:
 import ImageFont
-import pygame.freetype
 from OpenGL.GL import *
 from OpenGL.GLU import *
 

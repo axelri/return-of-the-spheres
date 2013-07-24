@@ -1,5 +1,6 @@
 # Test of the physics engine
 
+import os
 import pygame
 from graphics import glFreeType
 from graphics import init_graphics
@@ -13,7 +14,8 @@ import time
 
 def main():
     init_graphics.init_window('testPhysics', HAVE_FULLSCREEN = False)
-    our_font = glFreeType.font_data('graphics/texture_data/fonts/test.ttf', 16)
+    path = os.path.normpath('graphics/texture_data/fonts/test.ttf')
+    our_font = glFreeType.font_data(path, 16)
 
     run = True
     rot = 0
