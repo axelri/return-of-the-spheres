@@ -15,6 +15,7 @@ import players
 from graphics import render, init_graphics, lights, cameras, textures
 from math_classes import vectors
 from physics_engine import physics_support
+from text import TextBox
 
 def take_input():
     currentEvents = pygame.event.get() # cache current events
@@ -111,12 +112,15 @@ def main():
 
     player = players.Player(sphere)
 
+    text = TextBox('graphics/texture_data/fonts/test.ttf', 14, 200, 200, [1,0,0])
+    textList = [text]
+
     objectList = []
     sceneList = [plane1, plane2, plane3, plane4, plane5]
 
-    lightList = [light1]
+    lightList = [light1] 
 
-    game = games.Game(player, objectList, sceneList, lightList, camera)
+    game = games.Game(player, objectList, sceneList, lightList, textList, camera)
 
     run = True
 
@@ -166,6 +170,7 @@ def main():
             contactgroup.empty()
 
         # Render
+        text.set_string("Position: {pos}".format(pos = player.get_shape().get_pos()))
         render.render(game)
         pygame.display.flip()
 
