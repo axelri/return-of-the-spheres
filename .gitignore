@@ -36,6 +36,7 @@
 .Spotlight-V100
 .Trashes
 *.swp
+*.swo
 Icon?
 ehthumbs.db
 Thumbs.db
