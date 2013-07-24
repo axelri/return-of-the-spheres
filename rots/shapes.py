@@ -1,12 +1,12 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+import ode
 
 import numbers
 import math
 
 from math_classes import vectors, quaternions, matrices
-from physics_engine import supports
 from graphics import draw
 
 
@@ -79,9 +79,9 @@ class Shape(object):
     # def add_velocity(self, velocity):
     #     assert isinstance(velocity, vectors.Vector), 'Velocity must be a vector'
     #     self._velocity += velocity
-    
-    # def get_pos(self):
-    #     return self._pos
+
+    def get_pos(self):
+        return vectors.Vector(list(self.body.getPosition()))
 
     # def set_pos(self, pos):
     #     assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
@@ -102,9 +102,9 @@ class Shape(object):
     #     assert isinstance(velocity, vectors.Vector), 'Velocity must be a vector'
     #     self._angularVelocity += velocity
 
-    # def get_orientation(self):
-    #     #print 'get_orientation', self._orientation
-    #     return self._orientation
+    def get_orientation(self):
+        orientation = matrices.ODE_to_OpenGL(self.body.getRotation())
+        return orientation
 
     # def set_orientation(self, orientation):
     #     #assert isinstance(orientation, quaternions.Quaternion), \
@@ -196,7 +196,7 @@ class Sphere(Shape):
         self.mass.adjust(mass)
         self.body.setPosition(pos.value)
         self.body.setMass(self.mass)
-        self.geom = ode.GeomSphere(space, self.radius)
+        self.geom = ode.GeomSphere(space, radius)
 
 
 
@@ -274,9 +274,9 @@ class Cube(Shape):
                        'Every component of color must be a number between 0 and 1'
 
         # Set ODE properties
-        self.mass.setBox(1, (side, side, side))
+        self.mass.setBox(1, side, side, side)
         self.mass.adjust(mass)
-        self.body.setPosition(pos)
+        self.body.setPosition(pos.value)
         self.body.setMass(self.mass)
         self.geom = ode.GeomBox(space, (side, side, side))
 
@@ -367,11 +367,11 @@ class Cube(Shape):
 
 class Surface(Shape):
 
-    def __init__(self, pos = vectors.Vector(),
+    def __init__(self, world, space, pos = vectors.Vector(),
                  points = [vectors.Vector([-5.0, 0.0, -5.0]), vectors.Vector([5.0, 0.0, -5.0]),
                            vectors.Vector([5.0, 0.0, 5.0]), vectors.Vector([-5.0, 0.0, 5.0])],
                  color = [1.0, 0.0, 1.0], texture = None):
-        super(Surface, self).__init__()
+        super(Surface, self).__init__(world)
         assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
         assert isinstance(color, list), 'Color must be a list'
         # NOTE: If we use alpha values this should be 4
