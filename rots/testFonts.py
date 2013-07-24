@@ -13,9 +13,9 @@ import sys
 import time
 
 def main():
-    init_graphics.init_window('testPhysics', HAVE_FULLSCREEN = False)
+    init_graphics.init_window('testPhysics', HAVE_FULLSCREEN = True)
     path = os.path.normpath('graphics/texture_data/fonts/test.ttf')
-    our_font = glFreeType.font_data(path, 16)
+    our_font = glFreeType.font_data(path, 70)
 
     run = True
     rot = 0
@@ -47,12 +47,12 @@ def render(font, rot):
     # Spin the text, rotation around z axe == will appears as a 2d rotation of the text on our screen
     glRotatef (rot, 0, 0, 1)
     glScalef (1, 0.8 + 0.3* cos (rot/5), 1)
-    glTranslatef (-180, 0, 0)
+    glTranslatef (0, 0, 0)
     font.glPrint (320, 240, "Active FreeType Text - %7.2f" % (rot))
     glPopMatrix ()
 
     # //Uncomment this to test out print's ability to handle newlines.
-    # font.glPrint (320, 240, "Here\nthere\nbe\n\nnewlines %f\n." % (rot))
+    font.glPrint (0, 0, "Here be newlines %f." % (rot))
     pygame.display.flip()
 
     return rot + 0.051

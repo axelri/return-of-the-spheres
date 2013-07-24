@@ -58,7 +58,7 @@ def make_dlist (ft, ch, list_base, tex_base_list):
 	# Use our helper function to get the widths of
 	# the bitmap data that we will need in order to create
 	# our texture.
-	glyph = ft.getmask (chr (ch))
+	glyph = ft.getmask (chr (ch), mode = "L")
 	glyph_width, glyph_height = glyph.size 
 	# We are using PIL's wrapping for FreeType. As a result, we don't have 
 	# direct access to glyph.advance or other attributes, so we add a 1 pixel pad.

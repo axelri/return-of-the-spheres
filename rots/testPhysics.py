@@ -13,12 +13,14 @@ import time
 import shapes
 import games
 import players
-from graphics import render, init_graphics, lights, cameras, textures
+from graphics import render, init_graphics, lights, cameras, textures, glFreeType
 from physics_engine import physics
 from math_classes import vectors
 
 def main():
     init_graphics.init_window('testPhysics')
+    our_font = glFreeType.font_data('graphics/texture_data/fonts/test.ttf', 20)
+
 
     PLANE_POINTS1 = [vectors.Vector([-10.0, 0.0, -10.0]),
                     vectors.Vector([10.0, 0.0, -10.0]),
@@ -163,8 +165,17 @@ def main():
         # TODO: Add linear interpolation and SLERP for
         # smoother animation
 
-            
         render.render(game)
+        pos = str(player.get_shape().get_pos().value)
+        # TODO: Make text an object instead to be renderable
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glLoadIdentity()              
+        glPushMatrix()
+        glColor3f (1, 0, 0)
+        our_font.glPrint(200,200,pos)
+        glPopMatrix()
+        pygame.display.flip()
+
         #print 'Pos:', player.get_pos().value
 
 if __name__ == '__main__':
