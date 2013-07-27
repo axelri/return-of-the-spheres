@@ -70,22 +70,16 @@ def main():
     earth_big_tex = textures.loadTexture(earth_big_str, 1024, 1024)
     stars_big_str = textures.loadImage('graphics/texture_data/stars_big.jpg')
     stars_big_tex = textures.loadTexture(stars_big_str, 2048, 2048)
+    sunset_str = textures.loadImage('graphics/texture_data/sunset.png')
+    sunset_tex = textures.loadTexture(sunset_str, 256, 256)
 
     speed = 0.1
-    xPos = 0.0
-    yPos = 5.0
-    zPos = 0.0
-    pos = [xPos, yPos, zPos]
 
-    otherPos = [-2.0, 5.0, 0.0]
-
-    pos = vectors.Vector(pos)
-    otherPos = vectors.Vector(otherPos)
-
-    sphere = shapes.Sphere(world, space, pos = pos, radius = 2, texture = earth_big_tex, 
+    sphere = shapes.Sphere(world, space, pos = vectors.Vector([0.0, 5.0, 0.0]), 
+                            radius = 0.5, texture = earth_big_tex, 
                             color = [1.0, 1.0, 1.0])
 
-    cube = shapes.Cube(world, space, pos = otherPos)
+    #cube = shapes.Cube(world, space, pos = otherPos)
 
     plane1 = shapes.Surface(world, space, 
                             points = PLANE_POINTS1, texture = stars_big_tex,
@@ -113,7 +107,9 @@ def main():
     player = players.Player(sphere)
 
     text = TextBox('graphics/texture_data/fonts/test.ttf', 14, 200, 200, [1,0,0])
-    textList = [text]
+    text2 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 200, 150, [1,0,0])
+    text3 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 200, 100, [1,0,0])
+    textList = [text, text2, text3]
 
     objectList = []
     sceneList = [plane1, plane2, plane3, plane4, plane5]
@@ -170,9 +166,12 @@ def main():
             contactgroup.empty()
 
         # Render
-        text.set_string("Position: {pos}".format(pos = player.get_shape().get_pos()))
+        text.set_string("Player position: {pos}".format(pos = player.get_shape().get_pos()))
+        text2.set_string("Plane position: {pos}".format(pos = plane1.get_pos()))
+        text3.set_string("Plane orientation: {rot}".format(rot = plane1.get_orientation()))
         render.render(game)
         pygame.display.flip()
+        clock.tick(fps)
 
 
 

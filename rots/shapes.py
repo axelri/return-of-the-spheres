@@ -197,8 +197,7 @@ class Sphere(Shape):
         self.body.setPosition(pos.value)
         self.body.setMass(self.mass)
         self.geom = ode.GeomSphere(space, radius)
-
-
+        self.geom.setBody(self.body)
 
 #        self._pos = pos
 #        self._mass = mass
@@ -279,6 +278,7 @@ class Cube(Shape):
         self.body.setPosition(pos.value)
         self.body.setMass(self.mass)
         self.geom = ode.GeomBox(space, (side, side, side))
+        self.geom.setBody(self.body)
 
 #        self._pos = pos
         self._side = side
@@ -394,18 +394,32 @@ class Surface(Shape):
         y_side = 0.1
         z_side = (points[3] - points[0]).norm()
         self.geom = ode.GeomBox(space, (x_side, y_side, z_side))
-
+        self.body = None
+        self.geom.setBody(self.body)
+        print "New surface"
+        print "\tpoints:"
+        for point in points:
+            #point += pos
+            print "\t\t", point
         normal = (points[0] - points[1]).cross(points[3] - points[1]).normalize()
-        axis = vectors.Vector([0, 1, 0]).cross(normal)
-        angle = math.acos(axis.dot(normal))
+        axis = vectors.Vector([0.0, 1.0, 0.0]).cross(normal)
+        print "\taxis: ", axis
+        if axis.norm() < 0.1:
+            #Parallel
+            axis = vectors.Vector([0.0, 0.0, 1.0])
+            print "\taxis changed; new value: ", axis
+        angle = math.acos(vectors.Vector([0.0, 1.0, 0.0]).dot(normal))
+        print "\tangle: ", angle
         rotation = matrices.OpenGL_to_ODE(
                     matrices.generate_rotation_matrix(axis, angle))
+        print "\trotation: ", rotation
 
-        center = ((points[0] + points[1]) * 0.5 + 
-                (points[0] + points[3]) * 0.5 - 
-                normal * y_side * 0.5).value
+        #center = ((points[0] + points[2]) * 0.5 - 
+        #        normal * y_side * 0.5).value
+        #print "\tcenter: ", center
+        print ""
 
-        self.geom.setPosition(center)
+        self.geom.setPosition(pos.value)
         self.geom.setRotation(rotation)
 
         #self._pos = pos
@@ -440,6 +454,14 @@ class Surface(Shape):
 
     def get_normal(self, point = vectors.Vector()):
         return self._normal
+
+    def get_pos(self):
+        return vectors.Vector(list(self.geom.getPosition()))
+
+    def get_orientation(self):
+        orientation = matrices.ODE_to_OpenGL(self.geom.getRotation())
+        return orientation
+
 
     def draw(self):
         glCallList(self._displayListIndex)
