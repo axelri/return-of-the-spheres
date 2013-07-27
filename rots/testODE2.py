@@ -17,26 +17,6 @@ from math_classes import vectors
 from physics_engine import physics_support
 from text import TextBox
 
-def take_input():
-    currentEvents = pygame.event.get() # cache current events
-    run = True
-    for event in currentEvents:
-        if event.type == QUIT or \
-        (event.type == KEYDOWN and event.key == K_ESCAPE):
-            run = False
-    keyState = pygame.key.get_pressed()
-
-    xDir = keyState[K_d] - keyState[K_a]
-    zDir = keyState[K_s] - keyState[K_w]
-
-    direction = vectors.Vector([xDir, 0.0, zDir]).normalize()
-    if not direction:
-        direction = [0,0,0]
-    else:
-        direction = direction.value
-
-    return run, direction
-
 def main():
     init_graphics.init_window('testODE 2')
 
@@ -73,7 +53,7 @@ def main():
     sunset_str = textures.loadImage('graphics/texture_data/sunset.png')
     sunset_tex = textures.loadTexture(sunset_str, 256, 256)
 
-    speed = 0.1
+    speed = 1
 
     sphere = shapes.Sphere(world, space, pos = vectors.Vector([0.0, 5.0, 0.0]), 
                             radius = 0.5, texture = earth_big_tex, 
@@ -106,10 +86,10 @@ def main():
 
     player = players.Player(sphere)
 
-    text = TextBox('graphics/texture_data/fonts/test.ttf', 14, 200, 200, [1,0,0])
-    text2 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 200, 150, [1,0,0])
-    text3 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 200, 100, [1,0,0])
-    textList = [text, text2, text3]
+    text1 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 200, [1,0,0])
+    text2 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 150, [1,0,0])
+    text3 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 100, [1,0,0])
+    textList = [text1, text2, text3]
 
     objectList = []
     sceneList = [plane1, plane2, plane3, plane4, plane5]
@@ -133,24 +113,12 @@ def main():
 
     while run:
 
-        run, direction = take_input()
+        # Take input
+        run, direction = player.take_input()
 
         # Move
-
-        if direction == lastDir:
-            current_vel = vectors.Vector(list(player.get_shape().body.getLinearVel()))
-            if current_vel.norm() < speed:
-                corr_vel = vectors.Vector(direction)*(speed - current_vel.norm())
-                new_vel = current_vel + corr_vel
-                player.get_shape().body.setLinearVel(new_vel.value)
-        else:
-            current_vel = vectors.Vector(list(player.get_shape().body.getLinearVel()))
-            corr_vel = vectors.Vector(direction)*speed
-            new_vel = current_vel + corr_vel
-            player.get_shape().body.setLinearVel(new_vel.value)
-            lastDir = direction
-
         forwardVector = camera.update(player)
+        player.move(direction, forwardVector)
 
         # Simulate
         n = 2
@@ -165,14 +133,16 @@ def main():
             # Remove all contact joints
             contactgroup.empty()
 
+        current_fps = clock.get_fps()
+
         # Render
-        text.set_string("Player position: {pos}".format(pos = player.get_shape().get_pos()))
-        text2.set_string("Plane position: {pos}".format(pos = plane1.get_pos()))
-        text3.set_string("Plane orientation: {rot}".format(rot = plane1.get_orientation()))
+        text1.set_string("Player position: {pos}".format(pos = player.get_shape().get_pos()))
+        text2.set_string("Player velocity: {vel}".format(vel = player.get_shape().body.getLinearVel()))
+        text3.set_string("FPS: {FPS}".format(FPS = current_fps))
+
         render.render(game)
         pygame.display.flip()
         clock.tick(fps)
-
 
 
 if __name__ == '__main__':
