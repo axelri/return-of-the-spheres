@@ -17,6 +17,8 @@ class Player:
         self._speed = 5
         self.colliding = False
         self.jumping = False
+        self.jumped_last_frame = False
+        self.toggle_debug_last_frame = False
 
         self.lastDir = Vector()
 
@@ -70,11 +72,11 @@ class Player:
             self._shape.body.addForce((direction * diff * 10).value)
 
         if jump:
-            #self._shape.body.addForce((0.0, 500.0, 0.0))
-            current_vel = Vector(list(self._shape.body.getLinearVel()))
-            jump_vel = Vector([0.0, 7.0, 0.0])
-            new_vel = current_vel + jump_vel
-            self._shape.body.setLinearVel(new_vel.value)
+            self._shape.body.addForce((0.0, 500.0, 0.0))
+            #current_vel = Vector(list(self._shape.body.getLinearVel()))
+            #jump_vel = Vector([0.0, 7.0, 0.0])
+            #new_vel = current_vel + jump_vel
+            #self._shape.body.setLinearVel(new_vel.value)
 
     def take_input(self):
         currentEvents = pygame.event.get() # cache current events
@@ -88,18 +90,27 @@ class Player:
         xDir = keyState[K_d] - keyState[K_a]
         zDir = keyState[K_s] - keyState[K_w]
 
-        if keyState[K_SPACE] and not self.jumping:
+        if keyState[K_SPACE] and self.colliding and not self.jumped_last_frame:
             jump = True
-            self.jumping = True
+            self.jumped_last_frame = True
         elif not keyState[K_SPACE]:
-            self.jumping = False
+            self.jumped_last_frame = False
             jump = False
         else:
             jump = False
+
+        if keyState[K_q] and not self.toggle_debug_last_frame:
+            toggle_debug = True
+            self.toggle_debug_last_frame = True
+        elif not keyState[K_q]:
+            toggle_debug = False
+            self.toggle_debug_last_frame = False
+        else:
+            toggle_debug = False
 
         direction = Vector([xDir, 0.0, zDir]).normalize()
         if not direction:
             direction = Vector()
 
-        return run, direction, jump
+        return run, direction, jump, toggle_debug
 

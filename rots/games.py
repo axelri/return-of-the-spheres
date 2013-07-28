@@ -1,10 +1,11 @@
 import shapes
 import players
 from graphics import lights
+from text import TextBox
 
 class Game():
     ''' A class containing all the objects in the game '''
-    def __init__(self, player, objectList, sceneList, lightList, textList, camera):
+    def __init__(self, player, objectList, sceneList, lightList, textList, camera, clock, debug = False):
         # TODO: Use the Player object from fluffy instead?
         assert isinstance(player, players.Player), \
                'Input must be a Player object'
@@ -27,12 +28,29 @@ class Game():
         self._lightList = lightList
         self._textList = textList
         self._camera = camera
+        self._clock = clock
+        self.debug = debug
         # TODO: This should describe the game object in
         # the saved state files (levels):
         # Player = Profile + associated shape
         # objectList, sceneList
         # lighting objects
         # level constants (gravity etc), hashmap
+
+        # TODO: Add more things to the debug screen
+        self._debug_fps = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 200, [1,0,0])
+        self._debug_player_pos = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 150, [1,0,0])
+        self._debug_player_vel = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 100, [1,0,0])
+        self._debug_player_colliding = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 50, [1,0,0])
+
+        self._debugList = [self._debug_fps, self._debug_player_pos, self._debug_player_vel,
+                            self._debug_player_colliding]
+
+    def update_debug_screen(self):
+        self._debug_fps.set_string("FPS: " + str(self._clock.get_fps()))
+        self._debug_player_pos.set_string("Player pos: " + str(self._player.get_shape().get_pos()))
+        self._debug_player_vel.set_string("Player vel: " + str(self._player.get_shape().get_vel()))
+        self._debug_player_colliding.set_string("Player colliding: " + str(self._player.colliding))
 
     def get_objects(self):
         return self._player, self._objectList, self._sceneList,\

@@ -35,20 +35,29 @@ def loadImage(image_file):
     image_str = pygame.image.tostring(image, 'RGB', True)
     return image_str    
 
-def loadTexture(image_str, width, heigth):
-    ''' Creates a texture object from the image given in 
-        image_str and returns the index of that object.
+def loadTexture(image_file, width, heigth):
+    ''' Creates a texture object from the image file and 
+        returns the index of that object.
 
     Input:
-    * image_str:    A string containing the information from
-                    an image file in a format readable for 
-                    OpenGL. 
+    * image_file:   The name of the image file containing 
+                    the image you want to load. It can be
+                    of most of the normal formats (jpg etc).
+                    It must be a string with the relative
+                    or absolute path to the file, including
+                    the file ending. If you use a relative 
+                    path, it is the relative path from the
+                    file the main routine is run that should
+                    be used, NOT the path relative this file    (or is it?)
     * width:        The width of the image, in pixels.
     * heigth:       The heigth of the image, in pixels.
 
     Output:
     * tex:          The OpenGL index of the generated texture.
     '''
+
+    # Create image string
+    image_str = loadImage(image_file)
 
     # Create a texture object
     tex = glGenTextures(1)

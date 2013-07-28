@@ -57,7 +57,8 @@ class Shape(object):
 
     # NOTE: Function names kept in case we want to build a better API
 
-    # def get_velocity(self):
+    def get_vel(self):
+        return vectors.Vector(list(self.body.getLinearVel()))
 
     # def set_velocity(self, velocity):
 

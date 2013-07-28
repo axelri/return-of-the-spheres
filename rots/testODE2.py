@@ -46,12 +46,8 @@ def main():
                      Vector([0.0, -1.0, -10.0]),
                      Vector([0.0, -1.0, 10.0])]
 
-    earth_big_str = textures.loadImage('graphics/texture_data/celestial_bodies/earth_big.jpg')
-    earth_big_tex = textures.loadTexture(earth_big_str, 1024, 1024)
-    stars_big_str = textures.loadImage('graphics/texture_data/stars_big.jpg')
-    stars_big_tex = textures.loadTexture(stars_big_str, 2048, 2048)
-    sunset_str = textures.loadImage('graphics/texture_data/sunset.png')
-    sunset_tex = textures.loadTexture(sunset_str, 256, 256)
+    earth_big_tex = textures.loadTexture('graphics/texture_data/celestial_bodies/earth_big.jpg', 1024, 1024)
+    stars_big_tex = textures.loadTexture('graphics/texture_data/stars_big.jpg', 2048, 2048)
 
     speed = 1
 
@@ -89,14 +85,18 @@ def main():
     text1 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 200, [1,0,0])
     text2 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 150, [1,0,0])
     text3 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 100, [1,0,0])
-    textList = [text1, text2, text3]
+    text4 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 50, [1,0,0])
+    #textList = [text1, text2, text3, text4]
+    textList = []
 
     objectList = []
     sceneList = [plane1, plane2, plane3, plane4, plane5]
 
     lightList = [light1] 
 
-    game = games.Game(player, objectList, sceneList, lightList, textList, camera)
+    clock = pygame.time.Clock()
+
+    game = games.Game(player, objectList, sceneList, lightList, textList, camera, clock)
 
     run = True
 
@@ -106,7 +106,6 @@ def main():
     fps = 30
     dt = 1.0/fps
     run = True
-    clock = pygame.time.Clock()
     speed = 2
 
     lastDir = [0.0, 0.0, 0.0]
@@ -114,22 +113,25 @@ def main():
     while run:
 
         # Take input
-        run, direction, jump = player.take_input()
+        run, direction, jump, toggle_debug = player.take_input()
+
+        if toggle_debug:
+            game.debug = not game.debug
+
+        # Simulate
+        physics.update_physics(world, space, contactgroup, player, dt)
 
         # Move
         forwardVector = camera.update(player)
         player.move(direction, forwardVector, jump)
 
-        # Simulate
-        physics.update_physics(world, space, contactgroup, dt)
-
-
         current_fps = clock.get_fps()
 
         # Render
-        text1.set_string("Player position: {pos}".format(pos = player.get_shape().get_pos()))
-        text2.set_string("Player velocity: {vel}".format(vel = player.get_shape().body.getLinearVel()))
-        text3.set_string("FPS: {FPS}".format(FPS = current_fps))
+        #text1.set_string("Player position: {pos}".format(pos = player.get_shape().get_pos()))
+        #text2.set_string("Player velocity: {vel}".format(vel = player.get_shape().body.getLinearVel()))
+        #text3.set_string("FPS: {FPS}".format(FPS = current_fps))
+        #text4.set_string("Player colliding: {colliding}".format(colliding = player.colliding))
 
         render.render(game)
         clock.tick(fps)

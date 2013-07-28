@@ -70,5 +70,16 @@ def render(game):
         item.draw()
         glPopMatrix()
 
+    if game.debug:
+        game.update_debug_screen()
+
+        for item in game._debugList:
+            glPushMatrix()
+            glLoadIdentity()
+            rotMatrix = item.get_orientation()
+            glMultMatrixf(rotMatrix)
+            item.draw()
+            glPopMatrix()
+
     pygame.display.flip()
     #pygame.time.wait(10)
