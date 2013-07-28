@@ -13,8 +13,8 @@ import shapes
 import games
 import players
 from graphics import render, init_graphics, lights, cameras, textures
-from math_classes import vectors
-from physics_engine import physics_support
+from math_classes.vectors import Vector
+from physics_engine import physics
 from text import TextBox
 
 def main():
@@ -31,20 +31,20 @@ def main():
 
 
 
-    PLANE_POINTS1 = [vectors.Vector([-10.0, 0.0, -10.0]),
-                    vectors.Vector([10.0, 0.0, -10.0]),
-                    vectors.Vector([10.0, 0.0, 10.0]),
-                    vectors.Vector([-10.0, 0.0, 10.0])]
+    PLANE_POINTS1 = [Vector([-10.0, 0.0, -10.0]),
+                    Vector([10.0, 0.0, -10.0]),
+                    Vector([10.0, 0.0, 10.0]),
+                    Vector([-10.0, 0.0, 10.0])]
 
-    PLANE_POINTS2 = [vectors.Vector([-10.0, 1.0, 0.0]),
-                     vectors.Vector([10.0, 1.0, 0.0]),
-                     vectors.Vector([10.0, -1.0, 0.0]),
-                     vectors.Vector([-10.0, -1.0, 0.0])]
+    PLANE_POINTS2 = [Vector([-10.0, 1.0, 0.0]),
+                     Vector([10.0, 1.0, 0.0]),
+                     Vector([10.0, -1.0, 0.0]),
+                     Vector([-10.0, -1.0, 0.0])]
 
-    PLANE_POINTS3 = [vectors.Vector([0.0, 1.0, 10.0]),
-                     vectors.Vector([0.0, 1.0, -10.0]),
-                     vectors.Vector([0.0, -1.0, -10.0]),
-                     vectors.Vector([0.0, -1.0, 10.0])]
+    PLANE_POINTS3 = [Vector([0.0, 1.0, 10.0]),
+                     Vector([0.0, 1.0, -10.0]),
+                     Vector([0.0, -1.0, -10.0]),
+                     Vector([0.0, -1.0, 10.0])]
 
     earth_big_str = textures.loadImage('graphics/texture_data/celestial_bodies/earth_big.jpg')
     earth_big_tex = textures.loadTexture(earth_big_str, 1024, 1024)
@@ -55,7 +55,7 @@ def main():
 
     speed = 1
 
-    sphere = shapes.Sphere(world, space, pos = vectors.Vector([0.0, 5.0, 0.0]), 
+    sphere = shapes.Sphere(world, space, pos = Vector([0.0, 5.0, 0.0]), 
                             radius = 0.5, texture = earth_big_tex, 
                             color = [1.0, 1.0, 1.0])
 
@@ -65,23 +65,23 @@ def main():
                             points = PLANE_POINTS1, texture = stars_big_tex,
                             color = [1.0, 1.0, 1.0])
     plane2 = shapes.Surface(world, space, points = PLANE_POINTS2,
-                            pos = vectors.Vector([0.0, 1.0, -10.0]),
+                            pos = Vector([0.0, 1.0, -10.0]),
                             #texture = sunset_tex, color = [1.0, 1.0, 1.0])
                             color = [0.0, 0.0, 0.2])
     plane3 = shapes.Surface(world, space, points = PLANE_POINTS2,
-                            pos = vectors.Vector([0.0, 1.0, 10.0]),
+                            pos = Vector([0.0, 1.0, 10.0]),
                             #texture = sunset_tex, color = [1.0, 1.0, 1.0])
                             color = [0.0, 0.0, 0.2])
     plane4 = shapes.Surface(world, space, points = PLANE_POINTS3,
-                            pos = vectors.Vector([10.0, 1.0, 0.0]),
+                            pos = Vector([10.0, 1.0, 0.0]),
                             #texture = sunset_tex, color = [1.0, 1.0, 1.0])
                             color = [0.0, 0.0, 0.2])
     plane5 = shapes.Surface(world, space, points = PLANE_POINTS3,
-                            pos = vectors.Vector([-10.0, 1.0, 0.0]),
+                            pos = Vector([-10.0, 1.0, 0.0]),
                             #texture = sunset_tex, color = [1.0, 1.0, 1.0])
                             color = [0.0, 0.0, 0.2])
 
-    light1 = lights.Light(GL_LIGHT0, vectors.Vector([0.0, 5.0, 4.0]))
+    light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
     camera = cameras.Camera()
 
     player = players.Player(sphere)
@@ -121,17 +121,8 @@ def main():
         player.move(direction, forwardVector, jump)
 
         # Simulate
-        n = 2
-        #Run multiple times for smoother simulation
-        for i in range(n):
-            # Detect collisions and create contact joints
-            space.collide((world,contactgroup), physics_support.near_callback)
+        physics.update_physics(world, space, contactgroup, dt)
 
-            # Simulation step
-            world.step(dt/n)
-
-            # Remove all contact joints
-            contactgroup.empty()
 
         current_fps = clock.get_fps()
 

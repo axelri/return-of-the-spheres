@@ -1,6 +1,20 @@
 import ode
 from math_classes import vectors
 
+def update_physics(world, space, contactgroup, dt):
+    n = 2
+    #Run multiple times for smoother simulation
+    for i in range(n):
+        # Detect collisions and create contact joints
+        space.collide((world,contactgroup), near_callback)
+
+        # Simulation step
+        world.step(dt/n)
+
+        # Remove all contact joints
+        contactgroup.empty()
+
+
 def near_callback(args, geom1, geom2):
     """Callback function for the collide() method.
 

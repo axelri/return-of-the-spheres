@@ -25,8 +25,10 @@ class Shape(object):
         # Moved to subclasses
         #self.body.setMass(self.mass)
 
-        self._color = None      # Should be removed when material properties
+        self._color = None      # TODO: Should be removed when material properties
                                 # work properly
+
+        self.colliding = False
 
         # Material properties
         self._ambient = None
@@ -334,7 +336,7 @@ class Surface(Shape):
 
         # NOTE: To see bounding box, uncomment this 
         # (need to set self.x = x_side etc in __init__() too)
-        
+
         # x = self.x/2.0
         # y = self.y/2.0
         # z = self.z/2.0
@@ -355,4 +357,3 @@ class Surface(Shape):
         #         glVertex3fv(box_points[vert])
         # glEnd()
         # glPopMatrix()
-
