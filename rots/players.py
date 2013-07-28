@@ -5,6 +5,7 @@ from pygame.locals import *
 
 import shapes
 from math_classes.vectors import Vector
+from sound import sound_effects
 
 # TODO: Make prettier, add more stuff
 
@@ -19,6 +20,7 @@ class Player:
         self.jumping = False
         self.jumped_last_frame = False
         self.toggle_debug_last_frame = False
+        self.jump_sound = sound_effects.load_sound('boing.wav')
 
         self.lastDir = Vector()
 
@@ -39,7 +41,8 @@ class Player:
     #        self._shape.add_velocity(Vector([0.0, 0.4, 0.0]))
     #        self.jumping = True
         #if not self.jumping:
-        self._shape.body.addForce((0.0, 20.0, 0.0))
+        self._shape.body.addForce((0.0, 300.0, 0.0))
+        self.jump_sound.play()
         #    self.jumping = True
 
 
@@ -72,7 +75,8 @@ class Player:
             self._shape.body.addForce((direction * diff * 10).value)
 
         if jump:
-            self._shape.body.addForce((0.0, 300.0, 0.0))
+            self.jump()
+            #self._shape.body.addForce((0.0, 300.0, 0.0))
             #current_vel = Vector(list(self._shape.body.getLinearVel()))
             #jump_vel = Vector([0.0, 7.0, 0.0])
             #new_vel = current_vel + jump_vel
