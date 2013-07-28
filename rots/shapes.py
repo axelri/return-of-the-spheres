@@ -265,27 +265,29 @@ class Surface(Shape):
         x_side = (points[1] - points[0]).norm()
         y_side = 0.1
         z_side = (points[3] - points[0]).norm()
+
         self.geom = ode.GeomBox(space, (x_side, y_side, z_side))
         self.body = None
         self.geom.setBody(self.body)
-        print "New surface"
-        print "\tpoints:"
-        for point in points:
-            print "\t\t", point
+
+        # Calculate the surface's normal
         normal = (points[0] - points[1]).cross(points[3] - points[1]).normalize()
+
+        # Calculate the rotation matrix in the first direction needed to align the 
+        # bounding box with the surface
         axis = vectors.Vector([0.0, 1.0, 0.0]).cross(normal)
-        print "\taxis: ", axis
         if axis.norm() < 0.1:
             #Parallel
             axis = vectors.Vector([0.0, 0.0, 1.0])
-            print "\taxis changed; new value: ", axis
-        angle = math.acos(vectors.Vector([0.0, 1.0, 0.0]).dot(normal))
-        print "\tangle: ", angle
-        rotation = matrices.OpenGL_to_ODE(
-                    matrices.generate_rotation_matrix(axis, angle))
-        print "\trotation: ", rotation
+        angle1 = math.acos(vectors.Vector([0.0, 1.0, 0.0]).dot(normal))
+        rotation1 = matrices.generate_rotation_matrix(axis, angle1)
 
-        print ""
+        # Calculate the second rotation matrix
+        angle2 = math.asin(vectors.Vector([1.0, 0.0, 0.0]).cross((points[1] - points[0]).normalize()).norm())
+        rotation2 = matrices.generate_rotation_matrix(normal, angle2)
+
+        # Combine the two rotations
+        rotation = matrices.OpenGL_to_ODE(matrices.matrix_mult(rotation2, rotation1))
 
         self.geom.setPosition(pos.value)
         self.geom.setRotation(rotation)
@@ -329,3 +331,28 @@ class Surface(Shape):
 
     def draw(self):
         glCallList(self._displayListIndex)
+
+        # NOTE: To see bounding box, uncomment this 
+        # (need to set self.x = x_side etc in __init__() too)
+        
+        # x = self.x/2.0
+        # y = self.y/2.0
+        # z = self.z/2.0
+        # box_points = [[x, -y, -z],  [x, y, -z],
+        #             [-x, y, z],  [-x, -y, -z],
+        #             [x, -y, z],   [x, y, z],
+        #             [-x, -y, z],  [-x, y, z]]
+
+        # CUBE_EDGES = ((0,1), (0,3), (0,4), (2,1), (2,3), (2,7),
+        #             (6,3), (6,4), (6,7), (5,1), (5,4), (5,7))
+        # glPushMatrix()
+        # glMultMatrixf(matrices.ODE_to_OpenGL(self.rotation))
+
+        # glColor3f(1.0, 1.0, 1.0)    
+        # glBegin(GL_LINES)
+        # for line in CUBE_EDGES:
+        #     for vert in line:
+        #         glVertex3fv(box_points[vert])
+        # glEnd()
+        # glPopMatrix()
+

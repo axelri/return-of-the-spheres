@@ -47,8 +47,11 @@ class Player:
 
     def move(self, direction, forwardVector, jump):
 
-        #TODO: Tweak with self._speed and the coef in addForce (currrently 10)
-        # to get good movement
+        # TODO: Tweak with self._speed and the coefficient in addForce 
+        # (currrently 10) to get good movement
+        # TODO: Fix so you can't move faster than intended just by moving the mouse
+        # back and forth.
+        # TODO: Fix so you can't jump in mid-air.
         
         leftVector = Vector([0.0, 1.0, 0.0]).cross(forwardVector)
 
