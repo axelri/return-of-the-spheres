@@ -118,6 +118,10 @@ def main():
     dt = 1.0/fps
     run = True
 
+    # Background music
+    pygame.mixer.music.load('sound/sound_data/02. II. Molto vivace.ogg')
+    pygame.mixer.music.play(-1)
+
     while run:
 
         # Take input

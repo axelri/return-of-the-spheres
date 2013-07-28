@@ -7,6 +7,9 @@ from OpenGL.GL.EXT.texture_filter_anisotropic import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+# TODO: Better loading functions with error handling
+# (better example in sound_effects)
+
 # NOTE: loadImage and loadTexture could be merged into one 
 # single function, loadTexture(image_file)
 
