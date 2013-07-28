@@ -1,5 +1,5 @@
 from OpenGL.GL import *
-from math_classes import vectors
+from math_classes.vectors import Vector
 
 # TODO: Add other attributes to the light, such as color, direction,
 # angle of the spreading light etc.
@@ -21,7 +21,7 @@ class Light:
         
         assert isinstance(lightIndex, OpenGL.constant.IntConstant), \
                'Input must be an OpenGL constant'
-        assert isinstance(pos, vectors.Vector), \
+        assert isinstance(pos, Vector), \
                'Input must be a vector'
         
         self._lightIndex = lightIndex
@@ -44,12 +44,12 @@ class Light:
         return self._pos
 
     def set_pos(self, pos):
-        assert isinstance(pos, vectors.Vector), \
+        assert isinstance(pos, Vector), \
                'Input must be a vector'
         self._pos = pos
 
     def add_pos(self, pos):
-        assert isinstance(pos, vectors.Vector), \
+        assert isinstance(pos, Vector), \
                'Input must be a vector'
         self._pos += pos
 

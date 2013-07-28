@@ -34,7 +34,7 @@ class Shape(object):
         self._diffuse = None
         self._specular = None
         self._shininess = None
-        #self._emissive = None
+        self._emissive = None
 
         # Explanations of the material properties:
         #   * Ambient and diffuse "define the color" of the material,
@@ -107,12 +107,13 @@ class Shape(object):
 
     def get_material_properties(self):
         return self._ambient, self._diffuse, self._specular,\
-               self._shininess#, self._emissive
+               self._shininess, self._emissive
 
 class Sphere(Shape):
 
     def __init__(self, world, space, pos = Vector(), radius = 0.5,
-                 mass = 1.0, color = [1.0, 0.5, 0.3], texture = None):
+                 mass = 1.0, color = [1.0, 0.5, 0.3], texture = None,
+                 emissive = [0.0, 0.0, 0.0, 1.0]):
         super(Sphere, self).__init__(world)
         assert isinstance(pos, Vector), 'Pos must be a vector'
         assert isinstance(mass, numbers.Number), 'Mass must be a number'
@@ -152,7 +153,7 @@ class Sphere(Shape):
         #self._diffuse = [1.0, 0.0, 0.0, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
         self._shininess = 64
-        #self._emissive = [0.0, 0.0, 0.0, 1.0]
+        self._emissive = emissive
         
         self._displayListIndex = self.create_displaylist_index()
 
@@ -221,7 +222,7 @@ class Cube(Shape):
         self._diffuse = self._color + [1.0] #[0.8, 0.8, 0.8, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
         self._shininess = 42
-        #self._emissive = [0.0, 0.0, 0.0, 1.0]
+        self._emissive = [0.0, 0.0, 0.0, 1.0]
         
         self._displayListIndex = self.create_displaylist_index()
 
@@ -314,7 +315,7 @@ class Surface(Shape):
         self._diffuse = self._color + [1.0] #[1.0, 0.0, 1.0, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
         self._shininess = 80
-        #self._emissive = [0.0, 0.0, 0.0, 1.0]
+        self._emissive = [0.0, 0.0, 0.0, 1.0]
         
         self._normal = normal
         self._displayListIndex = self.create_displaylist_index()

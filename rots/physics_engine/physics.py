@@ -1,5 +1,5 @@
 import ode
-from math_classes import vectors
+from math_classes.vectors import Vector
 
 def update_physics(world, space, contactgroup, player, dt):
     n = 2
@@ -35,7 +35,10 @@ def near_callback(args, geom1, geom2):
         # the sphere 'climbs' the cube when pushing it.
         c.setBounce(0.2)
 
-        if "Sphere" in str(geom1) or "Sphere" in str(geom2):
+        if "Sphere" in str(geom1) and "Sphere" in str(geom2):
+            # Low friction for two spheres
+            c.setMu(0.1)
+        elif "Sphere" in str(geom1) or "Sphere" in str(geom2):
             # Higher friction for spheres
             c.setMu(5000)
         else:
@@ -69,6 +72,6 @@ def near_callback(args, geom1, geom2):
         #for num_joint in num_joints, body in bodies:
         # The last 'and' is a bit ugly, better solution?
             if num_joints[i] != 0 and bodies[i] and "Sphere" in str(geoms[i]):
-                ang_vel = vectors.Vector(list(bodies[i].getAngularVel()))
+                ang_vel = Vector(list(bodies[i].getAngularVel()))
                 rolling_friction = 0.5
                 bodies[i].addTorque((-ang_vel*rolling_friction).value)

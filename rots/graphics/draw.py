@@ -7,7 +7,6 @@ from OpenGL.GLUT import *
 import numbers
 
 import shapes
-from math_classes import vectors
 
 CUBE_QUAD_VERTS = ((0, 1, 2, 3), (3, 2, 7, 6), (6, 7, 5, 4),
                    (4, 5, 1, 0), (1, 5, 7, 2), (4, 0, 3, 6))
@@ -50,14 +49,13 @@ def cube(cube):
 
     points = cube_points(cube.get_side())
 
-    ambient, diffuse, specular, \
-             shininess = cube.get_material_properties()
+    ambient, diffuse, specular, shininess, emissive = cube.get_material_properties()
 
     glMaterialfv(GL_FRONT, GL_AMBIENT, ambient)
     glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse)
     glMaterialfv(GL_FRONT, GL_SPECULAR, specular)
     glMateriali(GL_FRONT, GL_SHININESS, shininess)
-    #glMaterialfv(GL_FRONT, GL_EMISSIVE, emissive)
+    glMaterialfv(GL_FRONT, GL_EMISSION, emissive)
     #glColor3fv(cube.get_color())
     glBegin(GL_QUADS)
     for face in CUBE_QUAD_VERTS:
@@ -87,13 +85,13 @@ def surface(surface):
            'Input must be a Surface object'
 
     ambient, diffuse, specular, \
-             shininess = surface.get_material_properties()
+             shininess , emissive = surface.get_material_properties()
 
     glMaterialfv(GL_FRONT, GL_AMBIENT, ambient)
     glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse)
     glMaterialfv(GL_FRONT, GL_SPECULAR, specular)
     glMateriali(GL_FRONT, GL_SHININESS, shininess)
-    #glMaterialfv(GL_FRONT, GL_EMISSIVE, emissive)
+    glMaterialfv(GL_FRONT, GL_EMISSION, emissive)
 
     points = surface.get_points()
     #glColor3fv(surface.get_color())
@@ -133,13 +131,13 @@ def sphere(sphere):
            'Input must be a Sphere object'
     
     ambient, diffuse, specular, \
-             shininess = sphere.get_material_properties()
+             shininess, emissive = sphere.get_material_properties()
 
     glMaterialfv(GL_FRONT, GL_AMBIENT, ambient)
     glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse)
     glMaterialfv(GL_FRONT, GL_SPECULAR, specular)
     glMateriali(GL_FRONT, GL_SHININESS, shininess)
-    #glMaterialfv(GL_FRONT, GL_EMISSIVE, emissive)
+    glMaterialfv(GL_FRONT, GL_EMISSION, emissive)
 
     if sphere._texture:
         glEnable(GL_TEXTURE_2D)

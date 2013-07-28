@@ -3,7 +3,7 @@ from pygame.locals import *
 
 from OpenGL.GLU import *
 
-from math_classes import vectors
+from math_classes.vectors import Vector
 from math import cos, sin, pi
 import players
 
@@ -91,14 +91,14 @@ class Camera:
         
         self.move(player)
 
-        direction = vectors.Vector([pos[0] - self._xPos,
+        direction = Vector([pos[0] - self._xPos,
                                     pos[1] - self._yPos,
                                     pos[2] - self._zPos])
-        direction = direction.projected(vectors.Vector([1.0, 0.0, 0.0]),
-                                        vectors.Vector([0.0, 0.0, 1.0]))
+        direction = direction.projected(Vector([1.0, 0.0, 0.0]),
+                                        Vector([0.0, 0.0, 1.0]))
         direction = direction.normalize()
 
-        assert isinstance(direction, vectors.Vector), \
+        assert isinstance(direction, Vector), \
                'Direction must be a vector.'
         
         return direction

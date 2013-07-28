@@ -47,13 +47,23 @@ def main():
                      Vector([0.0, -1.0, 10.0])]
 
     earth_big_tex = textures.loadTexture('graphics/texture_data/celestial_bodies/earth_big.jpg', 1024, 1024)
+    moon_tex = textures.loadTexture('graphics/texture_data/celestial_bodies/moon-4k.png', 4096, 2048)
     stars_big_tex = textures.loadTexture('graphics/texture_data/stars_big.jpg', 2048, 2048)
+    sun_tex = textures.loadTexture('graphics/texture_data/celestial_bodies/th_sun.png', 1024, 512)
 
     speed = 1
 
-    sphere = shapes.Sphere(world, space, pos = Vector([0.0, 5.0, 0.0]), 
+    earth = shapes.Sphere(world, space, pos = Vector([0.0, 5.0, 0.0]), 
                             radius = 0.5, texture = earth_big_tex, 
                             color = [1.0, 1.0, 1.0])
+
+    moon = shapes.Sphere(world, space, pos = Vector([-3.0, 5.0, -3.0]),
+                            radius = 0.27, color = [1.0, 1.0, 1.0], 
+                            mass = 1, texture = moon_tex)
+
+    sun = shapes.Sphere(world, space, pos = Vector([5.0, 5.0, 5.0]), 
+                            radius = 1.5, texture = sun_tex, 
+                            color = [1.0, 1.0, 1.0], emissive = [1.0, 1.0, 1.0, 1.0])
 
     cube = shapes.Cube(world, space, pos = Vector([3.0, 5.0, 0.0]),
                         side = 1)
@@ -81,7 +91,7 @@ def main():
     light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
     camera = cameras.Camera()
 
-    player = players.Player(sphere)
+    player = players.Player(moon)
 
     text1 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 200, [1,0,0])
     text2 = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 150, [1,0,0])
@@ -90,7 +100,7 @@ def main():
     #textList = [text1, text2, text3, text4]
     textList = []
 
-    objectList = [cube]
+    objectList = [sun, earth]
     sceneList = [plane1, plane2, plane3, plane4, plane5]
 
     lightList = [light1] 

@@ -5,7 +5,7 @@
 import numbers
 from math import cos, sin, pi
 
-from math_classes import vectors
+from math_classes.vectors import Vector
 
 def gauss_jordan(m, eps = 1.0/(10**10)):
     """ Puts given matrix (2D array) into the Reduced Row Echelon Form.
@@ -168,7 +168,7 @@ def generate_rotation_matrix(axis, angle):
                 (a list with all 16 elements in column major
                 order) describing the rotation. '''
 
-    assert isinstance(axis, vectors.Vector), \
+    assert isinstance(axis, Vector), \
            'The axis must be a vector'
     assert isinstance(angle, numbers.Number), \
            'The angle must be a number'
