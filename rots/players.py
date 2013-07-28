@@ -72,7 +72,7 @@ class Player:
             self._shape.body.addForce((direction * diff * 10).value)
 
         if jump:
-            self._shape.body.addForce((0.0, 500.0, 0.0))
+            self._shape.body.addForce((0.0, 300.0, 0.0))
             #current_vel = Vector(list(self._shape.body.getLinearVel()))
             #jump_vel = Vector([0.0, 7.0, 0.0])
             #new_vel = current_vel + jump_vel

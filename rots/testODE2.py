@@ -55,7 +55,8 @@ def main():
                             radius = 0.5, texture = earth_big_tex, 
                             color = [1.0, 1.0, 1.0])
 
-    #cube = shapes.Cube(world, space, pos = otherPos)
+    cube = shapes.Cube(world, space, pos = Vector([3.0, 5.0, 0.0]),
+                        side = 1)
 
     plane1 = shapes.Surface(world, space, 
                             points = PLANE_POINTS1, texture = stars_big_tex,
@@ -89,7 +90,7 @@ def main():
     #textList = [text1, text2, text3, text4]
     textList = []
 
-    objectList = []
+    objectList = [cube]
     sceneList = [plane1, plane2, plane3, plane4, plane5]
 
     lightList = [light1] 
@@ -106,9 +107,6 @@ def main():
     fps = 30
     dt = 1.0/fps
     run = True
-    speed = 2
-
-    lastDir = [0.0, 0.0, 0.0]
 
     while run:
 

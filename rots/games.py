@@ -37,17 +37,28 @@ class Game():
         # lighting objects
         # level constants (gravity etc), hashmap
 
-        # TODO: Add more things to the debug screen
-        self._debug_fps = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 200, [1,0,0])
-        self._debug_player_pos = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 150, [1,0,0])
-        self._debug_player_vel = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 100, [1,0,0])
-        self._debug_player_colliding = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 50, [1,0,0])
+        # TODO: Add more things to the debug screen, move textboxes to better positions
+        # (perhaps use pygame.display.Info().current_w /-h to put the text relative
+        # the screen's border?)
+        
+        # Performance
+        self._debug_fps = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 150, [1,0,0])
+        self._debug_time_used = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 100, [1,0,0])
+        
+        # Player properties
+        self._debug_player_pos = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 350, [1,0,0])
+        self._debug_player_vel = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 300, [1,0,0])
+        self._debug_player_colliding = TextBox('graphics/texture_data/fonts/test.ttf', 14, 100, 250, [1,0,0])
 
-        self._debugList = [self._debug_fps, self._debug_player_pos, self._debug_player_vel,
+        self._debugList = [self._debug_fps, self._debug_time_used, self._debug_player_pos, self._debug_player_vel,
                             self._debug_player_colliding]
 
     def update_debug_screen(self):
+        # Performance
         self._debug_fps.set_string("FPS: " + str(self._clock.get_fps()))
+        self._debug_time_used.set_string("Time used last frame [ms]: " + str(self._clock.get_rawtime()))
+        
+        # Player properties
         self._debug_player_pos.set_string("Player pos: " + str(self._player.get_shape().get_pos()))
         self._debug_player_vel.set_string("Player vel: " + str(self._player.get_shape().get_vel()))
         self._debug_player_colliding.set_string("Player colliding: " + str(self._player.colliding))

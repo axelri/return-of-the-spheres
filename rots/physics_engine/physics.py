@@ -30,17 +30,29 @@ def near_callback(args, geom1, geom2):
     # Create contact joints
     world,contactgroup = args
     for c in contacts:
+        # TODO: Make the friction and bounce coefficients object properties.
+        # NOTE: High friction between the cube and the sphere, that's why
+        # the sphere 'climbs' the cube when pushing it.
         c.setBounce(0.2)
-        c.setMu(5000)
+
+        if "Sphere" in str(geom1) or "Sphere" in str(geom2):
+            # Higher friction for spheres
+            c.setMu(5000)
+        else:
+            c.setMu(2)
+
         j = ode.ContactJoint(world, contactgroup, c)
         j.attach(geom1.getBody(), geom2.getBody())
 
-    #Homemaid rolling friction
+    # Homemaid rolling friction
 
-    #TODO: Add spinning friction
-    #TODO: Make this part prettier
+    # NOTE: This part makes the cube behave strangely, would be better to apply
+    # only to spheres.
+    # TODO: Add spinning friction
+    # TODO: Make this part prettier
 
     if contacts != []:
+        geoms = [geom1, geom2]
         bodies = [geom1.getBody(), geom2.getBody()]
         
         if bodies[0]:
@@ -56,7 +68,8 @@ def near_callback(args, geom1, geom2):
 
         for i in range(len(num_joints)):
         #for num_joint in num_joints, body in bodies:
-            if num_joints[i] != 0 and bodies[i]:
+        # The last 'and' is a bit ugly, better solution?
+            if num_joints[i] != 0 and bodies[i] and "Sphere" in str(geoms[i]):
                 ang_vel = vectors.Vector(list(bodies[i].getAngularVel()))
                 rolling_friction = 0.5
                 bodies[i].addTorque((-ang_vel*rolling_friction).value)

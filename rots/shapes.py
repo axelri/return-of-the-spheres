@@ -22,8 +22,6 @@ class Shape(object):
         # Set ODE properties
         self.body = ode.Body(world)
         self.mass = ode.Mass()
-        # Moved to subclasses
-        #self.body.setMass(self.mass)
 
         self._color = None      # TODO: Should be removed when material properties
                                 # work properly
