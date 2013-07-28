@@ -39,6 +39,7 @@ def near_callback(args, geom1, geom2):
             # Higher friction for spheres
             c.setMu(5000)
         else:
+            # Lower friction for other things
             c.setMu(2)
 
         j = ode.ContactJoint(world, contactgroup, c)
@@ -46,8 +47,6 @@ def near_callback(args, geom1, geom2):
 
     # Homemaid rolling friction
 
-    # NOTE: This part makes the cube behave strangely, would be better to apply
-    # only to spheres.
     # TODO: Add spinning friction
     # TODO: Make this part prettier
 

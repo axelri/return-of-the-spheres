@@ -6,7 +6,8 @@ import ode
 import numbers
 import math
 
-from math_classes import vectors, quaternions, matrices
+from math_classes import quaternions, matrices
+from math_classes.vectors import Vector
 from graphics import draw
 
 
@@ -56,14 +57,14 @@ class Shape(object):
     # NOTE: Function names kept in case we want to build a better API
 
     def get_vel(self):
-        return vectors.Vector(list(self.body.getLinearVel()))
+        return Vector(list(self.body.getLinearVel()))
 
     # def set_velocity(self, velocity):
 
     # def add_velocity(self, velocity):
 
     def get_pos(self):
-        return vectors.Vector(list(self.body.getPosition()))
+        return Vector(list(self.body.getPosition()))
 
     # def set_pos(self, pos):
 
@@ -110,10 +111,10 @@ class Shape(object):
 
 class Sphere(Shape):
 
-    def __init__(self, world, space, pos = vectors.Vector(), radius = 0.5,
+    def __init__(self, world, space, pos = Vector(), radius = 0.5,
                  mass = 1.0, color = [1.0, 0.5, 0.3], texture = None):
         super(Sphere, self).__init__(world)
-        assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
+        assert isinstance(pos, Vector), 'Pos must be a vector'
         assert isinstance(mass, numbers.Number), 'Mass must be a number'
         assert mass >= 0, 'Mass must be at least 0'
         assert isinstance(radius, numbers.Number), 'Radius must be a number'
@@ -167,7 +168,7 @@ class Sphere(Shape):
 
     def get_normal(self, point):
         ''' Returns the normal of the sphere in the given point '''
-        assert isinstance(point, vectors.Vector), 'Input must be a vector'
+        assert isinstance(point, Vector), 'Input must be a vector'
         return (point - self._pos).normalize()
 
     def get_radius(self):
@@ -184,10 +185,10 @@ class Sphere(Shape):
         
 class Cube(Shape):
 
-    def __init__(self, world, space, pos = vectors.Vector(), side = 1,
+    def __init__(self, world, space, pos = Vector(), side = 1,
                  mass = 1, color = [0.8, 0.8, 0.8]):
         super(Cube, self).__init__(world)
-        assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
+        assert isinstance(pos, Vector), 'Pos must be a vector'
         assert isinstance(mass, numbers.Number), 'Mass must be a number'
         assert mass >= 0, 'Mass must be at least 0'
         assert isinstance(side, numbers.Number), 'Side must be a number'
@@ -239,13 +240,16 @@ class Cube(Shape):
 
 
 class Surface(Shape):
+    # TODO: Better way of defining the surface. The points at 
+    # the corners is not a very good solution. Used as they are
+    # right now, it's hard to decide which side is up.
 
-    def __init__(self, world, space, pos = vectors.Vector(),
-                 points = [vectors.Vector([-5.0, 0.0, -5.0]), vectors.Vector([5.0, 0.0, -5.0]),
-                           vectors.Vector([5.0, 0.0, 5.0]), vectors.Vector([-5.0, 0.0, 5.0])],
-                 color = [1.0, 0.0, 1.0], texture = None):
+    def __init__(self, world, space, pos = Vector(),
+                 points = [Vector([-5.0, 0.0, -5.0]), Vector([5.0, 0.0, -5.0]),
+                           Vector([5.0, 0.0, 5.0]), Vector([-5.0, 0.0, 5.0])],
+                 color = [1.0, 0.0, 1.0], texture = None, normal = None):
         super(Surface, self).__init__(world)
-        assert isinstance(pos, vectors.Vector), 'Pos must be a vector'
+        assert isinstance(pos, Vector), 'Pos must be a vector'
         assert isinstance(color, list), 'Color must be a list'
         # NOTE: If we use alpha values this should be 4
         assert len(color) == 3, 'Color must be of length 3'
@@ -259,36 +263,41 @@ class Surface(Shape):
         assert len(points) == 4, 'Points must be of length 4'
         if __debug__:
             for point in points:
-                assert isinstance(point, vectors.Vector), \
+                assert isinstance(point, Vector), \
                        'Every component of points must be a vector'
 
         # Set ODE properties
         x_side = (points[1] - points[0]).norm()
         y_side = 0.1
         z_side = (points[3] - points[0]).norm()
+        self.thickness = y_side
 
         self.geom = ode.GeomBox(space, (x_side, y_side, z_side))
         self.body = None
         self.geom.setBody(self.body)
 
         # Calculate the surface's normal
-        normal = (points[0] - points[1]).cross(points[3] - points[1]).normalize()
+        # Ugly fix, needs to be taken care of
+        if not normal:
+            normal = (points[0] - points[1]).cross(points[3] - points[1]).normalize()
 
         # Calculate the rotation matrix in the first direction needed to align the 
         # bounding box with the surface
-        axis = vectors.Vector([0.0, 1.0, 0.0]).cross(normal)
+        axis = Vector([0.0, 1.0, 0.0]).cross(normal)
         if axis.norm() < 0.1:
             #Parallel
-            axis = vectors.Vector([0.0, 0.0, 1.0])
-        angle1 = math.acos(vectors.Vector([0.0, 1.0, 0.0]).dot(normal))
+            axis = Vector([0.0, 0.0, 1.0])
+        angle1 = math.acos(Vector([0.0, 1.0, 0.0]).dot(normal))
         rotation1 = matrices.generate_rotation_matrix(axis, angle1)
 
         # Calculate the second rotation matrix
-        angle2 = math.asin(vectors.Vector([1.0, 0.0, 0.0]).cross((points[1] - points[0]).normalize()).norm())
+        angle2 = math.asin(Vector([1.0, 0.0, 0.0]).cross((points[1] - points[0]).normalize()).norm())
         rotation2 = matrices.generate_rotation_matrix(normal, angle2)
 
         # Combine the two rotations
         rotation = matrices.OpenGL_to_ODE(matrices.matrix_mult(rotation2, rotation1))
+
+        pos = pos - normal * y_side * 0.5
 
         self.geom.setPosition(pos.value)
         self.geom.setRotation(rotation)
@@ -320,11 +329,11 @@ class Surface(Shape):
     def get_points(self):
         return self._points
 
-    def get_normal(self, point = vectors.Vector()):
+    def get_normal(self, point = Vector()):
         return self._normal
 
     def get_pos(self):
-        return vectors.Vector(list(self.geom.getPosition()))
+        return Vector(list(self.geom.getPosition())) + self._normal * self.thickness * 0.5
 
     def get_orientation(self):
         orientation = matrices.ODE_to_OpenGL(self.geom.getRotation())

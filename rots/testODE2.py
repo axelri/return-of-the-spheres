@@ -64,19 +64,19 @@ def main():
     plane2 = shapes.Surface(world, space, points = PLANE_POINTS2,
                             pos = Vector([0.0, 1.0, -10.0]),
                             #texture = sunset_tex, color = [1.0, 1.0, 1.0])
-                            color = [0.0, 0.0, 0.2])
+                            color = [0.0, 0.0, 0.2], normal = Vector([0.0, 0.0, 1.0]))
     plane3 = shapes.Surface(world, space, points = PLANE_POINTS2,
                             pos = Vector([0.0, 1.0, 10.0]),
                             #texture = sunset_tex, color = [1.0, 1.0, 1.0])
-                            color = [0.0, 0.0, 0.2])
+                            color = [0.0, 0.0, 0.2], normal = Vector([0.0, 0.0, -1.0]))
     plane4 = shapes.Surface(world, space, points = PLANE_POINTS3,
                             pos = Vector([10.0, 1.0, 0.0]),
                             #texture = sunset_tex, color = [1.0, 1.0, 1.0])
-                            color = [0.0, 0.0, 0.2])
+                            color = [0.0, 0.0, 0.2], normal = Vector([-1.0, 0.0, 0.0]))
     plane5 = shapes.Surface(world, space, points = PLANE_POINTS3,
                             pos = Vector([-10.0, 1.0, 0.0]),
                             #texture = sunset_tex, color = [1.0, 1.0, 1.0])
-                            color = [0.0, 0.0, 0.2])
+                            color = [0.0, 0.0, 0.2], normal = Vector([1.0, 0.0, 0.0]))
 
     light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
     camera = cameras.Camera()

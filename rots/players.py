@@ -66,8 +66,8 @@ class Player:
 
         if projVel < self._speed:
             diff = self._speed - projVel
-            if diff < self._speed:
-                diff = self._speed
+            #if diff < self._speed:
+            #    diff = self._speed
 
             self._shape.body.addForce((direction * diff * 10).value)
 
