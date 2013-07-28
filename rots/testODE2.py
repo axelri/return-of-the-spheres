@@ -103,7 +103,7 @@ def main():
     # Create group for contact joints
     contactgroup = ode.JointGroup()
 
-    fps = 50
+    fps = 30
     dt = 1.0/fps
     run = True
     clock = pygame.time.Clock()
@@ -114,15 +114,15 @@ def main():
     while run:
 
         # Take input
-        run, direction = player.take_input()
+        run, direction, jump = player.take_input()
 
         # Move
         forwardVector = camera.update(player)
-        player.move(direction, forwardVector)
+        player.move(direction, forwardVector, jump)
 
         # Simulate
         n = 2
-
+        #Run multiple times for smoother simulation
         for i in range(n):
             # Detect collisions and create contact joints
             space.collide((world,contactgroup), physics_support.near_callback)
@@ -141,7 +141,6 @@ def main():
         text3.set_string("FPS: {FPS}".format(FPS = current_fps))
 
         render.render(game)
-        pygame.display.flip()
         clock.tick(fps)
 
 

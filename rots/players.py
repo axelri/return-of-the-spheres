@@ -33,15 +33,19 @@ class Player:
 
     def jump(self):
 
-        if self.colliding and not self.jumping:
-            self._shape.add_velocity(Vector([0.0, 0.4, 0.0]))
-            self.jumping = True
+    #    if self.colliding and not self.jumping:
+    #        self._shape.add_velocity(Vector([0.0, 0.4, 0.0]))
+    #        self.jumping = True
+        #if not self.jumping:
+        self._shape.body.addForce((0.0, 20.0, 0.0))
+        #    self.jumping = True
+
 
     def reset_jump(self):
         self.jumping = False
 
 
-    def move(self, direction, forwardVector):
+    def move(self, direction, forwardVector, jump):
 
         #TODO: Tweak with self._speed and the coef in addForce (currrently 10)
         # to get good movement
@@ -60,7 +64,14 @@ class Player:
             if diff < self._speed:
                 diff = self._speed
 
-            self.get_shape().body.addForce((direction * diff * 10).value)
+            self._shape.body.addForce((direction * diff * 10).value)
+
+        if jump:
+            #self._shape.body.addForce((0.0, 500.0, 0.0))
+            current_vel = Vector(list(self._shape.body.getLinearVel()))
+            jump_vel = Vector([0.0, 7.0, 0.0])
+            new_vel = current_vel + jump_vel
+            self._shape.body.setLinearVel(new_vel.value)
 
     def take_input(self):
         currentEvents = pygame.event.get() # cache current events
@@ -74,9 +85,18 @@ class Player:
         xDir = keyState[K_d] - keyState[K_a]
         zDir = keyState[K_s] - keyState[K_w]
 
+        if keyState[K_SPACE] and not self.jumping:
+            jump = True
+            self.jumping = True
+        elif not keyState[K_SPACE]:
+            self.jumping = False
+            jump = False
+        else:
+            jump = False
+
         direction = Vector([xDir, 0.0, zDir]).normalize()
         if not direction:
             direction = Vector()
 
-        return run, direction
+        return run, direction, jump
 
