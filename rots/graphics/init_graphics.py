@@ -20,6 +20,7 @@ def init_window(windowName, HAVE_FULLSCREEN = True):
            'HAVE_FULLSCREEN must be a boolean'
 
     # Initialize a pygame window
+    pygame.mixer.pre_init(44100, -16, 2, 2048) # setup mixer to avoid sound lag
     pygame.init()
 
     FULLSCREEN_WIDTH = pygame.display.Info().current_w

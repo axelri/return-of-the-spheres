@@ -36,15 +36,8 @@ class Player:
         self._speed = speed
 
     def jump(self):
-
-    #    if self.colliding and not self.jumping:
-    #        self._shape.add_velocity(Vector([0.0, 0.4, 0.0]))
-    #        self.jumping = True
-        #if not self.jumping:
-        self._shape.body.addForce((0.0, 300.0, 0.0))
         self.jump_sound.play()
-        #    self.jumping = True
-
+        self._shape.body.addForce((0.0, 300.0, 0.0))
 
     def reset_jump(self):
         self.jumping = False
