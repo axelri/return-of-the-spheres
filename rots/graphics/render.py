@@ -24,7 +24,7 @@ def render(game):
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
-    pos = player.get_shape().get_pos().value
+    pos = player.get_pos().value
 
     glLoadIdentity()
 

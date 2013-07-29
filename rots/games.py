@@ -66,8 +66,8 @@ class Game():
         self._debug_time_used.set_string("Time used last frame [ms]: %d" % self._clock.get_rawtime())
         
         # Player properties
-        self._debug_player_pos.set_string("Player pos: [%0.2f, %0.2f, %0.2f]" % self._player.get_shape().get_pos().value)
-        self._debug_player_vel.set_string("Player vel: [%0.2f, %0.2f, %0.2f]" % self._player.get_shape().get_vel().value)
+        self._debug_player_pos.set_string("Player pos: [%0.2f, %0.2f, %0.2f]" % self._player.get_pos().value)
+        self._debug_player_vel.set_string("Player vel: [%0.2f, %0.2f, %0.2f]" % self._player.get_vel().value)
         self._debug_player_colliding.set_string("Player colliding: %s" % self._player.colliding)
 
     def get_objects(self):

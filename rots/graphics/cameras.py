@@ -45,7 +45,7 @@ class Camera:
         Calls gluLookAt() with the right input to
         achieve the aforementioned result. '''
         
-        pos = player.get_shape().get_pos().value
+        pos = player.get_pos().value
         
         gluLookAt(self._xPos, self._yPos, self._zPos,
                   pos[0], pos[1], pos[2],
@@ -58,7 +58,7 @@ class Camera:
 
         Input:  player: A Player object '''
         
-        pos = player.get_shape().get_pos().value
+        pos = player.get_pos().value
         mouseX, mouseY = pygame.mouse.get_rel()
 
         self._xAngle -= mouseX * pi / 180.0 * 0.3
@@ -78,7 +78,7 @@ class Camera:
                     camera to the player, projected
                     on the xz-plane and normalized.'''
         
-        pos = player.get_shape().get_pos().value
+        pos = player.get_pos().value
         
         self._move(player)
 
