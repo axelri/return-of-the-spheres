@@ -44,9 +44,6 @@ class Camera:
 
         Calls gluLookAt() with the right input to
         achieve the aforementioned result. '''
-
-        assert isinstance(player, players.Player), \
-               'Input must be a Player object'
         
         pos = player.get_shape().get_pos().value
         
@@ -54,15 +51,12 @@ class Camera:
                   pos[0], pos[1], pos[2],
                   self._up[0], self._up[1], self._up[2])
 
-    def move(self, player):
+    def _move(self, player):
         ''' Sets the position and orientation of
         the camera according to the position of
         the player and the movement of the mouse.
 
         Input:  player: A Player object '''
-
-        assert isinstance(player, players.Player), \
-               'Input must be a Player object'
         
         pos = player.get_shape().get_pos().value
         mouseX, mouseY = pygame.mouse.get_rel()
@@ -83,13 +77,10 @@ class Camera:
         Output: direction: A vector pointing from the
                     camera to the player, projected
                     on the xz-plane and normalized.'''
-
-        assert isinstance(player, players.Player), \
-               'Input must be a Player object'
         
         pos = player.get_shape().get_pos().value
         
-        self.move(player)
+        self._move(player)
 
         direction = Vector([pos[0] - self._xPos,
                                     pos[1] - self._yPos,
@@ -97,8 +88,5 @@ class Camera:
         direction = direction.projected(Vector([1.0, 0.0, 0.0]),
                                         Vector([0.0, 0.0, 1.0]))
         direction = direction.normalize()
-
-        assert isinstance(direction, Vector), \
-               'Direction must be a vector.'
         
         return direction

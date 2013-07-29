@@ -323,13 +323,3 @@ class font_data:
 		""" Python destructor for when no more refs to this Face object """
 		self.release ()
 		return
-
-
-# Unit Test harness if this python module is run directly.
-if __name__ == "__main__":
-	print "testing availability of freetype font arial\n"
-	ft = ImageFont.truetype ("arial.ttf", 15)
-	if ft:
-		print "Found the TrueType font 'arial.ttf'"
-	else:
-		print "faild to find the TrueTYpe font 'arial'\n"

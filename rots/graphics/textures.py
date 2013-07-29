@@ -13,20 +13,14 @@ from OpenGL.GLUT import *
 # NOTE: loadImage and loadTexture could be merged into one 
 # single function, loadTexture(image_file)
 
-def loadImage(image_file):
+def load_image(file_name):
     ''' Takes an image file and converts it into a string 
         that OpenGL can read. 
 
     Input:
-    * image_file:   The name of the image file containing 
+    * file_name:   The name of the image file containing 
                     the image you want to load. It can be
                     of most of the normal formats (jpg etc).
-                    It must be a string with the relative
-                    or absolute path to the file, including
-                    the file ending. If you use a relative 
-                    path, it is the relative path from the
-                    file the main routine is run that should
-                    be used, NOT the path relative this file.
 
     Output:
     * image_str:    A string containing the information from
@@ -34,11 +28,17 @@ def loadImage(image_file):
                     OpenGL. '''
 
     # Load the image
-    image = pygame.image.load(image_file)
-    image_str = pygame.image.tostring(image, 'RGB', True)
-    return image_str    
+    fullname = os.path.join('graphics/texture_data', file_name)
+    try:
+        image = pygame.image.load(fullname)
+        image_size = image.get_size()
+        image_str = pygame.image.tostring(image, 'RGB', True)
+    except pygame.error, message:
+        print 'Cannot load texture:', file_name
+        raise SystemExit, message
+    return image_str, image_size
 
-def loadTexture(image_file, width, heigth):
+def load_texture(image_file):
     ''' Creates a texture object from the image file and 
         returns the index of that object.
 
@@ -46,12 +46,6 @@ def loadTexture(image_file, width, heigth):
     * image_file:   The name of the image file containing 
                     the image you want to load. It can be
                     of most of the normal formats (jpg etc).
-                    It must be a string with the relative
-                    or absolute path to the file, including
-                    the file ending. If you use a relative 
-                    path, it is the relative path from the
-                    file the main routine is run that should
-                    be used, NOT the path relative this file    (or is it?)
     * width:        The width of the image, in pixels.
     * heigth:       The heigth of the image, in pixels.
 
@@ -60,7 +54,9 @@ def loadTexture(image_file, width, heigth):
     '''
 
     # Create image string
-    image_str = loadImage(image_file)
+    image_str, image_size = load_image(image_file)
+
+    width, heigth = image_size
 
     # Create a texture object
     tex = glGenTextures(1)
@@ -83,6 +79,9 @@ def loadTexture(image_file, width, heigth):
     # get the largest anisotropy supported by the graphics card
     largest = glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, largest)
+
+    # Cleanup
+    del image_str
 
     # Return the texture index
     return tex

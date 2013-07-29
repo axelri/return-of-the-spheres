@@ -6,7 +6,7 @@ import ode
 import numbers
 import math
 
-from math_classes import quaternions, matrices
+from math_classes import matrices
 from math_classes.vectors import Vector
 from graphics import draw
 
@@ -21,11 +21,9 @@ class Shape(object):
     def __init__(self, world):
 
         # Set ODE properties
-        self.body = ode.Body(world)
-        self.mass = ode.Mass()
-
-        self._color = None      # TODO: Should be removed when material properties
-                                # work properly
+        self._body = ode.Body(world)
+        self._mass = ode.Mass()
+        self._geom = None
 
         self.colliding = False
 
@@ -35,6 +33,8 @@ class Shape(object):
         self._specular = None
         self._shininess = None
         self._emissive = None
+
+        self.displayListIndex = None
 
         # Explanations of the material properties:
         #   * Ambient and diffuse "define the color" of the material,
@@ -54,106 +54,78 @@ class Shape(object):
         #     e.g. glow in the dark plastic could have a greenish
         #     emissive light. Emissive is defined like colors (se above)
 
-    # NOTE: Function names kept in case we want to build a better API
+    def get_body(self):
+        return self._body
+
+    def get_geom(self):
+        return self._geom
 
     def get_vel(self):
-        return Vector(list(self.body.getLinearVel()))
-
-    # def set_velocity(self, velocity):
-
-    # def add_velocity(self, velocity):
+        return Vector(list(self._body.getLinearVel()))
 
     def get_pos(self):
-        return Vector(list(self.body.getPosition()))
-
-    # def set_pos(self, pos):
-
-    # def add_pos(self, pos):
-
-    # def get_angular_velocity(self):
-
-    # def set_angular_velocity(self, velocity):
-
-    # def add_angular_velocity(self, velocity):
+        return Vector(list(self._body.getPosition()))
 
     def get_orientation(self):
-        orientation = matrices.ODE_to_OpenGL(self.body.getRotation())
+        orientation = matrices.ODE_to_OpenGL(self._body.getRotation())
         return orientation
-
-    # def set_orientation(self, orientation):
-
-    # def add_orientation(self, orientation):
-
-    # def get_mass(self):
-
-    # def set_mass(self, mass):
-
-    # def get_invInertia(self):
-
-    def get_color(self):
-        return self._color
-
-    def set_color(self, color):
-        assert isinstance(color, list), 'Color must be a list'
-        # NOTE: If we use alpha values this should be 4
-        assert len(color) == 3, 'Color must be of length 3' 
-        if __debug__:
-            for item in color:
-                assert isinstance(item, numbers.Number), \
-                       'Every component of color must be a number'
-                assert 0 <= item <= 1, \
-                       'Every component of color must be a number between 0 and 1'
-        self._color = color
 
     def get_material_properties(self):
         return self._ambient, self._diffuse, self._specular,\
                self._shininess, self._emissive
 
+    def set_ambient(self, ambient):
+        self._ambient = ambient
+        self._displayListIndex = self.create_displaylist_index()
+
+    def set_diffuse(self, diffuse):
+        self._diffuse = diffuse
+        self._displayListIndex = self.create_displaylist_index()
+
+    def set_specular(self, specular):
+        self._specular = specular
+        self._displayListIndex = self.create_displaylist_index()
+
+    def set_emissive(self, emissive):
+        self._emissive = emissive
+        self._displayListIndex = self.create_displaylist_index()
+
+    def create_displaylist_index(self):
+        return None
+
+    def draw(self):
+        pos = self.get_pos().value
+        glTranslatef(pos[0], pos[1], pos[2])
+        rotMatrix = self.get_orientation()
+        glMultMatrixf(rotMatrix)
+        glCallList(self._displayListIndex)
+
 class Sphere(Shape):
 
     def __init__(self, world, space, pos = Vector(), radius = 0.5,
-                 mass = 1.0, color = [1.0, 0.5, 0.3], texture = None,
-                 emissive = [0.0, 0.0, 0.0, 1.0]):
+                 mass = 1.0, texture = None):
         super(Sphere, self).__init__(world)
-        assert isinstance(pos, Vector), 'Pos must be a vector'
-        assert isinstance(mass, numbers.Number), 'Mass must be a number'
-        assert mass >= 0, 'Mass must be at least 0'
-        assert isinstance(radius, numbers.Number), 'Radius must be a number'
-        assert radius >= 0, 'Radius must be at least 0'
-        assert isinstance(color, list), 'Color must be a list'
-        # NOTE: If we use alpha values this should be 4
-        assert len(color) == 3, 'Color must be of length 3'
-        if __debug__:
-            for item in color:
-                assert isinstance(item, numbers.Number), \
-                       'Every component of color must be a number'
-                assert 0 <= item <= 1, \
-                       'Every component of color must be a number between 0 and 1'
+
         # Set ODE properties
 
-        self.mass.setSphere(1, radius)
-        self.mass.adjust(mass)
-        self.body.setPosition(pos.value)
-        self.body.setMass(self.mass)
-        self.geom = ode.GeomSphere(space, radius)
-        self.geom.setBody(self.body)
+        self._mass.setSphere(1, radius)
+        self._mass.adjust(mass)
+        self._body.setPosition(pos.value)
+        self._body.setMass(self._mass)
+        self._geom = ode.GeomSphere(space, radius)
+        self._geom.setBody(self._body)
 
-#        self._pos = pos
-#        self._mass = mass
         self._radius = radius
 
-        self._color = color
         self._texture = texture
         self._quadric = gluNewQuadric()
 
         # Material properties
-        self._ambient = self._color + [1.0] #[1.0, 0.5, 0.3, 1.0]
-        #self._ambient = [0.0, 1.0, 0.0, 1.0]
-        self._diffuse = self._color + [1.0] #[1.0, 0.5, 0.3, 1.0]
-        #self._diffuse = [1.0, 0.0, 0.0, 1.0]
+        self._ambient = [1.0, 1.0, 1.0, 1.0]
+        self._diffuse = [1.0, 1.0, 1.0, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
         self._shininess = 64
-        self._emissive = emissive
+        self._emissive = [0.0, 0.0, 0.0, 1.0]
         
         self._displayListIndex = self.create_displaylist_index()
 
@@ -164,62 +136,28 @@ class Sphere(Shape):
         glEndList()
         return displayListIndex
 
-    def support_func(self, direction):
-        return supports.sphere(self, direction)
-
-    def get_normal(self, point):
-        ''' Returns the normal of the sphere in the given point '''
-        assert isinstance(point, Vector), 'Input must be a vector'
-        return (point - self._pos).normalize()
-
     def get_radius(self):
         return self._radius
-
-    def get_bounding_radius(self):
-        ''' Returns a radius that encapsules the sphere, slightly
-            bigger than the sphere's radius.'''
-        return self._radius*1.1
-
-    def draw(self):
-        glCallList(self._displayListIndex)
-
         
 class Cube(Shape):
 
     def __init__(self, world, space, pos = Vector(), side = 1,
-                 mass = 1, color = [0.8, 0.8, 0.8]):
+                 mass = 1):
         super(Cube, self).__init__(world)
-        assert isinstance(pos, Vector), 'Pos must be a vector'
-        assert isinstance(mass, numbers.Number), 'Mass must be a number'
-        assert mass >= 0, 'Mass must be at least 0'
-        assert isinstance(side, numbers.Number), 'Side must be a number'
-        assert side > 0, 'Side must be greater than 0'
-        assert isinstance(color, list), 'Color must be a list'
-        # NOTE: If we use alpha values this should be 4
-        assert len(color) == 3, 'Color must be of length 3'
-        if __debug__:
-            for item in color:
-                assert isinstance(item, numbers.Number), \
-                       'Every component of color must be a number'
-                assert 0 <= item <= 1, \
-                       'Every component of color must be a number between 0 and 1'
 
         # Set ODE properties
-        self.mass.setBox(1, side, side, side)
-        self.mass.adjust(mass)
-        self.body.setPosition(pos.value)
-        self.body.setMass(self.mass)
-        self.geom = ode.GeomBox(space, (side, side, side))
-        self.geom.setBody(self.body)
+        self._mass.setBox(1, side, side, side)
+        self._mass.adjust(mass)
+        self._body.setPosition(pos.value)
+        self._body.setMass(self._mass)
+        self._geom = ode.GeomBox(space, (side, side, side))
+        self._geom.setBody(self._body)
 
-#        self._pos = pos
         self._side = side
-#        self._mass = mass
-        self._color = color
         
         # Material properties
-        self._ambient = self._color + [1.0] #[0.8, 0.8, 0.8, 1.0]
-        self._diffuse = self._color + [1.0] #[0.8, 0.8, 0.8, 1.0]
+        self._ambient = [1.0, 1.0, 1.0, 1.0]
+        self._diffuse = [1.0, 1.0, 1.0, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
         self._shininess = 42
         self._emissive = [0.0, 0.0, 0.0, 1.0]
@@ -236,9 +174,6 @@ class Cube(Shape):
     def get_side(self):
         return self._side
 
-    def draw(self):
-        glCallList(self._displayListIndex)
-
 
 class Surface(Shape):
     # TODO: Better way of defining the surface. The points at 
@@ -247,35 +182,25 @@ class Surface(Shape):
 
     def __init__(self, world, space, pos = Vector(),
                  points = [Vector([-5.0, 0.0, -5.0]), Vector([5.0, 0.0, -5.0]),
-                           Vector([5.0, 0.0, 5.0]), Vector([-5.0, 0.0, 5.0])],
-                 color = [1.0, 0.0, 1.0], texture = None, normal = None):
+                            Vector([5.0, 0.0, 5.0]), Vector([-5.0, 0.0, 5.0])],
+                            texture = None, normal = None):
         super(Surface, self).__init__(world)
-        assert isinstance(pos, Vector), 'Pos must be a vector'
-        assert isinstance(color, list), 'Color must be a list'
-        # NOTE: If we use alpha values this should be 4
-        assert len(color) == 3, 'Color must be of length 3'
-        if __debug__:
-            for item in color:
-                assert isinstance(item, numbers.Number), \
-                       'Every component of color must be a number'
-                assert 0 <= item <= 1, \
-                       'Every component of color must be a number between 0 and 1'
-        assert isinstance(points, list), 'Points must be a list'
-        assert len(points) == 4, 'Points must be of length 4'
-        if __debug__:
-            for point in points:
-                assert isinstance(point, Vector), \
-                       'Every component of points must be a vector'
 
         # Set ODE properties
         x_side = (points[1] - points[0]).norm()
         y_side = 0.1
         z_side = (points[3] - points[0]).norm()
-        self.thickness = y_side
 
-        self.geom = ode.GeomBox(space, (x_side, y_side, z_side))
-        self.body = None
-        self.geom.setBody(self.body)
+        # To draw bounding box
+        self._x = x_side
+        self._y = y_side
+        self._z = z_side
+
+        self._thickness = y_side
+
+        self._geom = ode.GeomBox(space, (x_side, y_side, z_side))
+        self._body = None
+        self._geom.setBody(self._body)
 
         # Calculate the surface's normal
         # Ugly fix, needs to be taken care of
@@ -297,22 +222,21 @@ class Surface(Shape):
 
         # Combine the two rotations
         rotation = matrices.OpenGL_to_ODE(matrices.matrix_mult(rotation2, rotation1))
+        #self.rotation = rotation
 
         pos = pos - normal * y_side * 0.5
 
-        self.geom.setPosition(pos.value)
-        self.geom.setRotation(rotation)
+        self._geom.setPosition(pos.value)
+        self._geom.setRotation(rotation)
 
-        #self._pos = pos
         self._points = points
-        self._color = color
         self._texture = texture
         # ugly, any solution?
         self._texCoords = ((0.0, 1.0), (1.0, 1.0), (1.0, 0.0), (0.0, 0.0))
                 
         # Material properties
-        self._ambient = self._color + [1.0] #[1.0, 0.0, 1.0, 1.0]
-        self._diffuse = self._color + [1.0] #[1.0, 0.0, 1.0, 1.0]
+        self._ambient = [1.0, 1.0, 1.0, 1.0]
+        self._diffuse = [1.0, 1.0, 1.0, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
         self._shininess = 80
         self._emissive = [0.0, 0.0, 0.0, 1.0]
@@ -334,35 +258,37 @@ class Surface(Shape):
         return self._normal
 
     def get_pos(self):
-        return Vector(list(self.geom.getPosition())) + self._normal * self.thickness * 0.5
+        return Vector(list(self._geom.getPosition())) + self._normal * self._thickness * 0.5
 
     def get_orientation(self):
-        orientation = matrices.ODE_to_OpenGL(self.geom.getRotation())
+        orientation = matrices.ODE_to_OpenGL(self._geom.getRotation())
         return orientation
 
     def draw(self):
+        pos = self.get_pos().value
+        glTranslatef(pos[0], pos[1], pos[2])
         glCallList(self._displayListIndex)
 
-        # NOTE: To see bounding box, uncomment this 
-        # (need to set self.x = x_side etc in __init__() too)
+    def draw_bounding_box(self):
 
-        # x = self.x/2.0
-        # y = self.y/2.0
-        # z = self.z/2.0
-        # box_points = [[x, -y, -z],  [x, y, -z],
-        #             [-x, y, z],  [-x, -y, -z],
-        #             [x, -y, z],   [x, y, z],
-        #             [-x, -y, z],  [-x, y, z]]
+        x = self._x/2.0
+        y = self._y/2.0
+        z = self._z/2.0
 
-        # CUBE_EDGES = ((0,1), (0,3), (0,4), (2,1), (2,3), (2,7),
-        #             (6,3), (6,4), (6,7), (5,1), (5,4), (5,7))
-        # glPushMatrix()
-        # glMultMatrixf(matrices.ODE_to_OpenGL(self.rotation))
+        box_points = [[x, -y, -z],  [x, y, -z],
+                    [-x, y, z],  [-x, -y, -z],
+                    [x, -y, z],   [x, y, z],
+                    [-x, -y, z],  [-x, y, z]]
 
-        # glColor3f(1.0, 1.0, 1.0)    
-        # glBegin(GL_LINES)
-        # for line in CUBE_EDGES:
-        #     for vert in line:
-        #         glVertex3fv(box_points[vert])
-        # glEnd()
-        # glPopMatrix()
+        CUBE_EDGES = ((0,1), (0,3), (0,4), (2,1), (2,3), (2,7),
+                    (6,3), (6,4), (6,7), (5,1), (5,4), (5,7))
+        glPushMatrix()
+        glMultMatrixf(matrices.ODE_to_OpenGL(self.rotation))
+
+        glColor3f(1.0, 1.0, 1.0)    
+        glBegin(GL_LINES)
+        for line in CUBE_EDGES:
+            for vert in line:
+                glVertex3fv(box_points[vert])
+        glEnd()
+        glPopMatrix()

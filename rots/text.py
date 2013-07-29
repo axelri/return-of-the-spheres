@@ -1,27 +1,32 @@
+import os
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
 import ImageFont
 from math_classes import matrices
 from math_classes.vectors import Vector
+from math import pi
 
 class TextBox(object):
-    def __init__ (self, font_path, pixel_height, x, y, color):
+    def __init__ (self, font_name, pixel_height, x, y, color, enabled = True):
         # We haven't yet allocated textures or display lists
         self._allocated = False
         self._font_height = pixel_height
-        self._font_path = font_path
+        self._font_name = font_name
         self._x = x
         self._y = y
         self._color = color
         self._string = ""
         self._rotation = 0
+        self._enabled = enabled
 
         # Try to obtain the FreeType font
+        fullname = os.path.join('graphics/texture_data/fonts', font_name)
         try:
-            ft = ImageFont.truetype (font_path, pixel_height)
+            ft = ImageFont.truetype (fullname, pixel_height)
         except:
-            raise ValueError, "Unable to locate true type font '%s'" % (facename)
+            raise ValueError, "Unable to locate true type font '%s'" % (font_name)
 
         # Here we ask opengl to allocate resources for
         # all the textures and displays lists which we
@@ -65,9 +70,26 @@ class TextBox(object):
         self._rotation = r
 
     def rotate(self, angle):
-        self._rotation = self._rotation + angle % 360
+        self._rotation = self._rotation + angle % (2*pi)
+
+    def enable(self):
+        self._enabled = True
+
+    def disable(self):
+        self._enabled = False
+
+    def toggle(self):
+        self._enabled = not self._enabled
 
     def draw(self):
+
+        if not self._enabled:
+            return
+
+        glLoadIdentity()
+        rotMatrix = self.get_orientation()
+        glMultMatrixf(rotMatrix)
+        
         # We want a coordinate system where things coresponding to window pixels.
         pushScreenCoordinateMatrix()
     

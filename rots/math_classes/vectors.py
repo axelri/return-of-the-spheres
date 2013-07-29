@@ -1,18 +1,15 @@
 from math import sqrt
 import numbers
 
+# TODO: Change from lists to tuples EVERYWHERE!
+
 class Vector:
     ''' A vector class to simplify calculations on vectors '''
     
-    def __init__(self, value = [0.0, 0.0, 0.0]):
+    def __init__(self, value = (0.0, 0.0, 0.0)):
         ''' Initializes the vector, sets its value. '''
-        
-        assert isinstance(value, list), \
-                'Input must be a list'
-        if __debug__:
-            for number in value:
-                assert isinstance(number, numbers.Number), \
-                    'Every component must be a number.'
+        if isinstance(value, list):
+            value = tuple(value)
 
         self.value = value
 
@@ -23,12 +20,12 @@ class Vector:
     def is_zero(self):
         ''' Checks whether or not the vector is the zero vector:
         Returns True if it is, False if it isn't. '''
-        return self.value == [0] * self.dim()
+        return self.value == tuple([0] * self.dim())
 
     def is_not_zero(self):
         ''' Checks whether or not the vector is the zero vector:
         Returns False if it is, True if it isn't. '''
-        return self.value != [0] * self.dim()
+        return self.value != tuple([0] * self.dim())
 
     def dot(self, v2):
         ''' Calculates the dot product of the vector and v2 '''
@@ -53,9 +50,9 @@ class Vector:
 
         v1 = self.value
         v2 = v.value
-        return Vector([v1[1] * v2[2] - v1[2] * v2[1],
+        return Vector((v1[1] * v2[2] - v1[2] * v2[1],
                        v1[2] * v2[0] - v1[0] * v2[2],
-                       v1[0] * v2[1] - v1[1] * v2[0]])
+                       v1[0] * v2[1] - v1[1] * v2[0]))
 
     def norm(self):
         ''' Calculates the norm of the vector '''
@@ -185,17 +182,6 @@ class Vector:
 
         Output: A vector defined by (matrix * vector).
                 (The vector transformed by the matrix)'''
-        
-        assert isinstance(matrix, list), \
-               'Input must be a matrix, represented as a list of lists'
-        if __debug__:
-            for item in matrix:
-                assert isinstance(item, list), \
-                       'Input must be a matrix, represented as a list of lists'
-                assert len(item) == self.dim(), 'The dimensions must be the same'
-                for elem in item:
-                    assert isinstance(elem, numbers.Number), \
-                           'All elements in the matrix must be numbers'
 
         out = [0]*self.dim()
         for i in range(self.dim()):

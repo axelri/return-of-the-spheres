@@ -1,17 +1,17 @@
 import ode
 from math_classes.vectors import Vector
 
-def update_physics(world, space, contactgroup, game, dt):
-    n = 2
+def update_physics(world, space, contactgroup, game, dt, iterations = 2):
+
     #Run multiple times for smoother simulation
-    for i in range(n):
+    for i in range(iterations):
         # Detect collisions and create contact joints
         space.collide((world,contactgroup, game), near_callback)
 
         # Simulation step
-        world.step(dt/n)
+        world.step(dt/iterations)
 
-        game._player.colliding = bool(game._player.get_shape().body.getNumJoints())
+        game._player.colliding = bool(game._player.get_shape().get_body().getNumJoints())
 
         # Remove all contact joints
         contactgroup.empty()

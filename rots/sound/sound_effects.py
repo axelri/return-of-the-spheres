@@ -1,7 +1,6 @@
 import os
 import pygame
 
-
 def load_sound(file_name):
     
     class NoneSound:

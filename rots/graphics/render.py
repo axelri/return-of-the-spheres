@@ -20,7 +20,7 @@ def render(game):
 
     assert isinstance(game, games.Game), 'Input must be a Game object'
     
-    player, objectList, sceneList, lightList, textList, camera = game.get_objects()
+    world, space, player, objectList, lightList, camera = game.get_objects()
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
@@ -30,56 +30,15 @@ def render(game):
 
     camera.view(player)
 
-    for light in lightList:
-        light.move()    # NOTE: Is this needed every frame?
-    
-    glPushMatrix()
-    glTranslatef(pos[0], pos[1], pos[2])
-    #print 'Orientation:', player.get_orientation()
-    #rotMatrix = player.get_orientation().convert_to_matrix()
-    rotMatrix = player.get_shape().get_orientation()
-    glMultMatrixf(rotMatrix)
-    player.get_shape().draw()
-    glPopMatrix()
-
-    for item in objectList:
-        pos = item.get_pos().value
-        glPushMatrix()
-        glTranslatef(pos[0], pos[1], pos[2])
-        #rotMatrix = item.get_orientation().convert_to_matrix()
-        rotMatrix = item.get_orientation()
-        glMultMatrixf(rotMatrix)
-        item.draw()
-        glPopMatrix()
-    
-    for item in sceneList:
-        pos = item.get_pos().value
-        glPushMatrix()
-        glTranslatef(pos[0], pos[1], pos[2])
-        #rotMatrix = item.get_orientation().convert_to_matrix()
-        #rotMatrix = item.get_orientation()
-        #glMultMatrixf(rotMatrix)
-        item.draw()
-        glPopMatrix()
-
-    for item in textList:
-        glPushMatrix()
-        glLoadIdentity()
-        rotMatrix = item.get_orientation()
-        glMultMatrixf(rotMatrix)
-        item.draw()
-        glPopMatrix()
-
-    if game.debug:
+    if game.get_debug():
         game.update_debug_screen()
 
-        for item in game._debugList:
-            glPushMatrix()
-            glLoadIdentity()
-            rotMatrix = item.get_orientation()
-            glMultMatrixf(rotMatrix)
-            item.draw()
-            glPopMatrix()
+    for light in lightList:
+        light.move()    # NOTE: Is this needed every frame?
+
+    for item in objectList:
+        glPushMatrix()
+        item.draw()
+        glPopMatrix()
 
     pygame.display.flip()
-    #pygame.time.wait(10)
