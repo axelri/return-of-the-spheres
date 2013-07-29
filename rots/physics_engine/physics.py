@@ -1,17 +1,17 @@
 import ode
 from math_classes.vectors import Vector
 
-def update_physics(world, space, contactgroup, player, dt):
+def update_physics(world, space, contactgroup, game, dt):
     n = 2
     #Run multiple times for smoother simulation
     for i in range(n):
         # Detect collisions and create contact joints
-        space.collide((world,contactgroup), near_callback)
+        space.collide((world,contactgroup, game), near_callback)
 
         # Simulation step
         world.step(dt/n)
 
-        player.colliding = bool(player.get_shape().body.getNumJoints())
+        game._player.colliding = bool(game._player.get_shape().body.getNumJoints())
 
         # Remove all contact joints
         contactgroup.empty()
@@ -28,7 +28,7 @@ def near_callback(args, geom1, geom2):
     contacts = ode.collide(geom1, geom2)
 
     # Create contact joints
-    world,contactgroup = args
+    world,contactgroup, game = args
     for c in contacts:
         # TODO: Make the friction and bounce coefficients object properties.
         # NOTE: High friction between the cube and the sphere, that's why

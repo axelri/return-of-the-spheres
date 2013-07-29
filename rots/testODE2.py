@@ -131,7 +131,7 @@ def main():
             game.debug = not game.debug
 
         # Simulate
-        physics.update_physics(world, space, contactgroup, player, dt)
+        physics.update_physics(world, space, contactgroup, game, dt)
 
         # Move
         forwardVector = camera.update(player)
