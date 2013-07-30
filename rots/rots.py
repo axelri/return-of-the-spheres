@@ -50,6 +50,7 @@ def main():
     moon_tex = textures.load_texture('celestial_bodies/moon-4k.png')
     stars_tex = textures.load_texture('stars_big.jpg')
     sun_tex = textures.load_texture('celestial_bodies/th_sun.png')
+    mars_tex = textures.load_texture('celestial_bodies/Mars_2k-050104.png')
 
     speed = 1
 
@@ -62,10 +63,17 @@ def main():
     sun = shapes.Sphere(world, space, pos = Vector([5.0, 15.0, 5.0]), 
                             radius = 1.5, texture = sun_tex, mass = 5)
 
+    mars = shapes.Sphere(world, space, pos = Vector([-3.0, 5.0, 3.0]),
+                            radius = 0.53, mass = 1, texture = mars_tex)
+
+    sun.set_emissive([1.0, 1.0, 1.0, 1.0])
+    sun_light = lights.Light(GL_LIGHT1, sun.get_pos(), ambient = [0.2, 0.2, 0.0, 1.0],
+                            diffuse = [1.0, 1.0, 0.0, 1.0], specular = [1.0, 1.0, 1.0, 1.0])
+
     cube = shapes.Cube(world, space, pos = Vector([3.0, 5.0, 0.0]), side = 1)
 
-    plane1 = shapes.Surface(world, space, 
-                            points = PLANE_POINTS1, texture = stars_tex)
+    plane1 = shapes.Surface(world, space, points = PLANE_POINTS1, texture = stars_tex,
+                            pos = Vector([0.0, 0.0, 0.0]), normal = Vector([0.0, 1.0, 0.0]))
     plane2 = shapes.Surface(world, space, points = PLANE_POINTS2,
                             pos = Vector([0.0, 1.0, -10.0]), normal = Vector([0.0, 0.0, 1.0]))
     plane3 = shapes.Surface(world, space, points = PLANE_POINTS2,
@@ -75,14 +83,23 @@ def main():
     plane5 = shapes.Surface(world, space, points = PLANE_POINTS3,
                             pos = Vector([-10.0, 1.0, 0.0]), normal = Vector([1.0, 0.0, 0.0]))
 
+    plane2.set_ambient([0.0, 0.0, 0.2, 1.0])
+    plane2.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    plane3.set_ambient([0.0, 0.0, 0.2, 1.0])
+    plane3.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    plane4.set_ambient([0.0, 0.0, 0.2, 1.0])
+    plane4.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    plane5.set_ambient([0.0, 0.0, 0.2, 1.0])
+    plane5.set_diffuse([0.0, 0.0, 0.2, 1.0])
+
     light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
     camera = cameras.Camera()
 
     player = players.Player(earth)
 
-    objectList = [player.get_shape(), sun, moon, cube, plane1, plane2, plane3, plane4, plane5]
+    objectList = [player.get_shape(), sun, moon, mars, cube, plane1, plane2, plane3, plane4, plane5]
 
-    lightList = []#light1] 
+    lightList = [sun_light] 
 
     clock = pygame.time.Clock()
 
@@ -102,6 +119,8 @@ def main():
     pygame.mixer.music.play(-1)
 
     while run:
+
+        sun_light.set_pos(sun.get_pos())
 
         # Take input
         run, direction, jump, toggle_debug = game.take_input()

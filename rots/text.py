@@ -3,7 +3,7 @@ import os
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-import ImageFont
+from PIL import ImageFont
 from math_classes import matrices
 from math_classes.vectors import Vector
 from math import pi
