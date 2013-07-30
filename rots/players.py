@@ -12,7 +12,9 @@ class Player:
         self._shape = shape
         self._speed = 5
         self.colliding = False
-        self.jump_sound = sound_effects.load_sound('boing.wav')
+        self._collided_last_frame = False
+        self._jump_sound = sound_effects.load_sound('boing.wav')
+        self._bounce_sound = sound_effects.load_sound('bounce.wav')
 
         self.lastDir = Vector()
 
@@ -32,7 +34,7 @@ class Player:
         self._speed = speed
 
     def jump(self):
-        self.jump_sound.play()
+        self._jump_sound.play()
         self._shape.get_body().addForce((0.0, 300.0, 0.0))
 
     def move(self, direction, forward_vector, jump):
@@ -60,3 +62,8 @@ class Player:
 
         if jump:
             self.jump()
+
+        if self.colliding and not self._collided_last_frame:
+            self._bounce_sound.play()
+
+        self._collided_last_frame = self.colliding
