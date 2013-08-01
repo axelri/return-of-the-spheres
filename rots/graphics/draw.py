@@ -97,21 +97,49 @@ def surface(surface):
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, surface._texture)
 
-    half_length = surface._length / 2.0
-    half_width = surface._width / 2.0
+    # The dimensions of the surface
+    length = surface._length
+    width = surface._width
+    half_length = length / 2.0
+    half_width = width / 2.0
+    
+    # The wanted subdivision size
+    goal_sub_size = surface._subdivision_size
+
+    # Number of subdivisions
+    length_subs = int(surface._length // goal_sub_size)
+    width_subs = int(surface._width // goal_sub_size)
+
+    # Actual size of the subdivisions
+    length_sub_size = surface._length / float(length_subs)
+    width_sub_size = surface._width / float(width_subs)
+
+    # Size as fractions of the whole surface
+    length_sub_frac = 1.0 / length_subs
+    width_sub_frac = 1.0 / width_subs
     
     glBegin(GL_QUADS)
-    glNormal3fv(surface.get_normal().value)
+    
 
-    glTexCoord2f(0.0, 1.0)
-    glVertex3f(-half_width, 0.0, -half_length)
-    glTexCoord2f(0.0, 0.0)
-    glVertex3f(-half_width, 0.0, half_length)
-    glTexCoord2f(1.0, 0.0)
-    glVertex3f(half_width, 0.0, half_length)
-    glTexCoord2f(1.0, 1.0)
-    glVertex3f(half_width, 0.0, -half_length)
-
+    for l in range(length_subs):
+        for w in range(width_subs):
+            glNormal3fv(surface.get_normal().value)
+            glTexCoord2f(w * width_sub_frac, 1 - l * length_sub_frac)
+            glVertex3f(-half_width + w * width_sub_size, 
+                        0.0,
+                        -half_length + l * length_sub_size)
+            glTexCoord2f(w * width_sub_frac, 1 - (l + 1) *length_sub_frac)
+            glVertex3f(-half_width + w * width_sub_size, 
+                        0.0,
+                        -half_length + (l + 1) * length_sub_size)
+            glTexCoord2f((w + 1) * width_sub_frac, 1 - (l + 1) * length_sub_frac)
+            glVertex3f(-half_width + (w + 1) * width_sub_size, 
+                        0.0,
+                        -half_length + (l + 1) * length_sub_size)
+            glTexCoord2f((w + 1) * width_sub_frac, 1 - l * length_sub_frac)
+            glVertex3f(-half_width + (w + 1) * width_sub_size, 
+                        0.0,
+                        -half_length + l * length_sub_size)
     glEnd()
 
     glDisable(GL_TEXTURE_2D)

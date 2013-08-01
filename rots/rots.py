@@ -67,8 +67,8 @@ def main():
                             radius = 0.53, mass = 1, texture = mars_tex)
 
     sun.set_emissive([1.0, 1.0, 1.0, 1.0])
-    sun_light = lights.Light(GL_LIGHT1, sun.get_pos(), ambient = [0.2, 0.2, 0.0, 1.0],
-                            diffuse = [1.0, 1.0, 0.0, 1.0], specular = [1.0, 1.0, 1.0, 1.0])
+    #sun_light = lights.Light(GL_LIGHT1, sun.get_pos(), ambient = [0.2, 0.2, 0.0, 1.0],
+    #                        diffuse = [1.0, 1.0, 0.0, 1.0], specular = [1.0, 1.0, 1.0, 1.0])
 
     cube = shapes.Cube(world, space, pos = Vector([3.0, 5.0, 0.0]), side = 1)
 
@@ -104,13 +104,15 @@ def main():
     plane5.set_diffuse([0.0, 0.0, 0.2, 1.0])
 
     light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
+    light2 = lights.Light(GL_LIGHT2, Vector([3.0, 2.0, 3.0]))
     camera = cameras.Camera()
 
     player = players.Player(earth)
 
     objectList = [player.get_shape(), sun, moon, mars, cube, plane1, plane2, plane3, plane4, plane5]
 
-    lightList = [sun_light] 
+    #lightList = [sun_light] 
+    lightList = [light1, light2]
 
     clock = pygame.time.Clock()
 
@@ -131,7 +133,7 @@ def main():
 
     while run:
 
-        sun_light.set_pos(sun.get_pos())
+        #sun_light.set_pos(sun.get_pos())
 
         # Take input
         run, direction, jump, toggle_debug = game.take_input()

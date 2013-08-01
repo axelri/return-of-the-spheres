@@ -183,11 +183,14 @@ class Surface(Shape):
     def __init__(self, world, space, pos = Vector(),
                 normal = Vector([0.0, 1.0, 0.0]), 
                 forward = Vector([0.0, 0.0, -1.0]),
-                length = 1, width = 1, texture = None):
+                length = 1, width = 1, texture = None,
+                subdivision_size = 0.3):
 
         # normal: The normal direction
         # forward: The direction in which the surface is 'length' long.
-        # length and width: Size in 'forward' direction, and orthogonal to it.
+        # length: Size in 'forward' direction.
+        # width: Size orthogonal to 'forward' direction
+        # subdivision_size: The target for the size of the elements of the tesselated surface.
 
         super(Surface, self).__init__(world)
 
@@ -197,6 +200,7 @@ class Surface(Shape):
         self._width = width
         self._thickness = 0.1
         self._texture = texture
+        self._subdivision_size = subdivision_size
 
         # Set ODE properties
         self._geom = ode.GeomBox(space, (self._width, self._thickness, self._length))

@@ -3,8 +3,8 @@ A new version of the already old fluffy spheres codebase. More to come!
 # Some things to work on
 * Menus!
 * Tesselation of big planes (to get correct lightning)
+	- (In progress)
 * Shadows
-* Smart culling (begin with normal vector checking)
 * Work out the level file format, should be human readable (YAML?)
 * Try to work on a world editor
     - Keyboard, mouse support? Use rays in that case
