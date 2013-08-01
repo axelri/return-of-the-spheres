@@ -31,20 +31,20 @@ def main():
     # Create a space object
     space = ode.Space()
 
-    PLANE_POINTS1 = [Vector([-10.0, 0.0, -10.0]),
-                    Vector([10.0, 0.0, -10.0]),
-                    Vector([10.0, 0.0, 10.0]),
-                    Vector([-10.0, 0.0, 10.0])]
+    # PLANE_POINTS1 = [Vector([-10.0, 0.0, -10.0]),
+    #                 Vector([10.0, 0.0, -10.0]),
+    #                 Vector([10.0, 0.0, 10.0]),
+    #                 Vector([-10.0, 0.0, 10.0])]
 
-    PLANE_POINTS2 = [Vector([-10.0, 1.0, 0.0]),
-                     Vector([10.0, 1.0, 0.0]),
-                     Vector([10.0, -1.0, 0.0]),
-                     Vector([-10.0, -1.0, 0.0])]
+    # PLANE_POINTS2 = [Vector([-10.0, 1.0, 0.0]),
+    #                  Vector([10.0, 1.0, 0.0]),
+    #                  Vector([10.0, -1.0, 0.0]),
+    #                  Vector([-10.0, -1.0, 0.0])]
 
-    PLANE_POINTS3 = [Vector([0.0, 1.0, 10.0]),
-                     Vector([0.0, 1.0, -10.0]),
-                     Vector([0.0, -1.0, -10.0]),
-                     Vector([0.0, -1.0, 10.0])]
+    # PLANE_POINTS3 = [Vector([0.0, 1.0, 10.0]),
+    #                  Vector([0.0, 1.0, -10.0]),
+    #                  Vector([0.0, -1.0, -10.0]),
+    #                  Vector([0.0, -1.0, 10.0])]
 
     earth_tex = textures.load_texture('celestial_bodies/earth_big.jpg')
     moon_tex = textures.load_texture('celestial_bodies/moon-4k.png')
@@ -72,16 +72,27 @@ def main():
 
     cube = shapes.Cube(world, space, pos = Vector([3.0, 5.0, 0.0]), side = 1)
 
-    plane1 = shapes.Surface(world, space, points = PLANE_POINTS1, texture = stars_tex,
-                            pos = Vector([0.0, 0.0, 0.0]), normal = Vector([0.0, 1.0, 0.0]))
-    plane2 = shapes.Surface(world, space, points = PLANE_POINTS2,
-                            pos = Vector([0.0, 1.0, -10.0]), normal = Vector([0.0, 0.0, 1.0]))
-    plane3 = shapes.Surface(world, space, points = PLANE_POINTS2,
-                            pos = Vector([0.0, 1.0, 10.0]), normal = Vector([0.0, 0.0, -1.0]))
-    plane4 = shapes.Surface(world, space, points = PLANE_POINTS3,
-                            pos = Vector([10.0, 1.0, 0.0]), normal = Vector([-1.0, 0.0, 0.0]))
-    plane5 = shapes.Surface(world, space, points = PLANE_POINTS3,
-                            pos = Vector([-10.0, 1.0, 0.0]), normal = Vector([1.0, 0.0, 0.0]))
+    plane1 = shapes.Surface(world, space, pos = Vector(), 
+                            normal = Vector([0.0, 1.0, 0.0]),
+                            forward = Vector([0.0, -1.0, 0.0]),
+                            length = 20.0, width = 20.0,
+                            texture = stars_tex)
+    plane2 = shapes.Surface(world, space, pos = Vector([10.0, 1.0, 0.0]), 
+                            normal = Vector([-1.0, 0.0, 0.0]),
+                            forward = Vector([0.0, 0.0, 1.0]),
+                            length = 20.0, width = 2.0)
+    plane3 = shapes.Surface(world, space, pos = Vector([-10.0, 1.0, 0.0]), 
+                            normal = Vector([1.0, 0.0, 0.0]),
+                            forward = Vector([0.0, 0.0, -1.0]),
+                            length = 20.0, width = 2.0)
+    plane4 = shapes.Surface(world, space, pos = Vector([0.0, 1.0, 10.0]), 
+                            normal = Vector([0.0, 0.0, -1.0]),
+                            forward = Vector([1.0, 0.0, 0.0]),
+                            length = 20.0, width = 2.0)
+    plane5 = shapes.Surface(world, space, pos = Vector([0.0, 1.0, -10.0]), 
+                            normal = Vector([0.0, 0.0, 1.0]),
+                            forward = Vector([-1.0, 0.0, 0.0]),
+                            length = 20.0, width = 2.0)
 
     plane2.set_ambient([0.0, 0.0, 0.2, 1.0])
     plane2.set_diffuse([0.0, 0.0, 0.2, 1.0])

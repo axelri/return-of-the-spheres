@@ -80,9 +80,6 @@ def surface(surface):
     Calls OpenGL to draw the surface. '''
 
     # TODO: Tesselate the surface for better lighting effects
-    
-    assert isinstance(surface, shapes.Surface), \
-           'Input must be a Surface object'
 
     ambient, diffuse, specular, \
              shininess , emissive = surface.get_material_properties()
@@ -93,28 +90,28 @@ def surface(surface):
     glMateriali(GL_FRONT, GL_SHININESS, shininess)
     glMaterialfv(GL_FRONT, GL_EMISSION, emissive)
 
-    points = surface.get_points()
+    #points = surface.get_points()
     #glColor3fv(surface.get_color())
 
     if surface._texture:
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, surface._texture)
 
+    half_length = surface._length / 2.0
+    half_width = surface._width / 2.0
+    
     glBegin(GL_QUADS)
     glNormal3fv(surface.get_normal().value)
 
-    for i in range(len(points)):
-        glTexCoord2f(surface._texCoords[i][0], surface._texCoords[i][1])
-        glVertex3fv(points[i].value)
+    glTexCoord2f(0.0, 1.0)
+    glVertex3f(-half_width, 0.0, -half_length)
+    glTexCoord2f(0.0, 0.0)
+    glVertex3f(-half_width, 0.0, half_length)
+    glTexCoord2f(1.0, 0.0)
+    glVertex3f(half_width, 0.0, half_length)
+    glTexCoord2f(1.0, 1.0)
+    glVertex3f(half_width, 0.0, -half_length)
 
-    glEnd()
-
-    # TODO: The lines don't seem to be drawn, why? Fix.
-    glColor3f(0.0, 0.0, 0.0)
-    glBegin(GL_LINES)
-    for i in range(len(points)):
-        glVertex3fv(points[i].value)
-        glVertex3fv(points[(i+1)%len(points)].value)
     glEnd()
 
     glDisable(GL_TEXTURE_2D)

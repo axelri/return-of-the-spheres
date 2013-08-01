@@ -51,7 +51,8 @@ def init_window(windowName, HAVE_FULLSCREEN = True):
     glEnable (GL_BLEND)
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     glShadeModel(GL_SMOOTH)
-    glDisable(GL_CULL_FACE)
+    glEnable(GL_CULL_FACE)
+    glCullFace(GL_BACK)
 
     glClearColor(0.0, 0.0, 0.0, 0.0)
 
