@@ -24,21 +24,24 @@ def render(game):
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
-    pos = player.get_pos().value
-
     glLoadIdentity()
 
     camera.view(player)
 
+    draw_scene(game, objectList)
+
+    pygame.display.flip()
+
+
+def draw_scene(game, objectList):# , lightList):
+
     if game.get_debug():
         game.update_debug_screen()
 
-    for light in lightList:
-        light.move()    # NOTE: Is this needed every frame?
+    #for light in lightList:
+    #    light.move()    # NOTE: Is this needed every frame?
 
     for item in objectList:
         glPushMatrix()
         item.draw()
         glPopMatrix()
-
-    pygame.display.flip()

@@ -63,6 +63,14 @@ class Camera:
 
         self._xAngle -= mouseX * pi / 180.0 * 0.3
 
+        player_y_pos = pos[1]
+        y_dist = self._yPos - player_y_pos
+        y_diff = self._yDist - y_dist
+
+        if abs(y_diff) > 0.01 and not player.is_jumping():
+            self._yPos += y_diff * 0.1
+
+
         self._xPos = pos[0] + sin(self._xAngle) * self._zDist
         self._zPos = pos[2] + cos(self._xAngle) * self._zDist
 

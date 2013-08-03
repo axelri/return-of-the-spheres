@@ -8,8 +8,8 @@ import numbers
 
 import shapes
 
-CUBE_QUAD_VERTS = ((0, 1, 2, 3), (3, 2, 7, 6), (6, 7, 5, 4),
-                   (4, 5, 1, 0), (1, 5, 7, 2), (4, 0, 3, 6))
+CUBE_QUAD_VERTS = ((0, 3, 2, 1), (3, 6, 7, 2), (6, 4, 5, 7),
+                   (4, 0, 1, 5), (1, 2, 7, 5), (4, 6, 3, 0))
 
 CUBE_EDGES = ((0,1), (0,3), (0,4), (2,1), (2,3), (2,7),
               (6,3), (6,4), (6,7), (5,1), (5,4), (5,7))
@@ -48,6 +48,7 @@ def cube(cube):
            'Input must be a Cube object'
 
     points = cube_points(cube.get_side())
+    size = cube.get_side()
 
     ambient, diffuse, specular, shininess, emissive = cube.get_material_properties()
 
@@ -56,7 +57,7 @@ def cube(cube):
     glMaterialfv(GL_FRONT, GL_SPECULAR, specular)
     glMateriali(GL_FRONT, GL_SHININESS, shininess)
     glMaterialfv(GL_FRONT, GL_EMISSION, emissive)
-    #glColor3fv(cube.get_color())
+
     glBegin(GL_QUADS)
     for face in CUBE_QUAD_VERTS:
         glNormal3fv(CUBE_NORMALS[CUBE_QUAD_VERTS.index(face)])
@@ -90,29 +91,26 @@ def surface(surface):
     glMateriali(GL_FRONT, GL_SHININESS, shininess)
     glMaterialfv(GL_FRONT, GL_EMISSION, emissive)
 
-    #points = surface.get_points()
-    #glColor3fv(surface.get_color())
-
-    if surface._texture:
+    if surface.get_texture():
         glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, surface._texture)
+        glBindTexture(GL_TEXTURE_2D, surface.get_texture())
 
     # The dimensions of the surface
-    length = surface._length
-    width = surface._width
+    length = surface.get_length()
+    width = surface.get_width()
     half_length = length / 2.0
     half_width = width / 2.0
     
     # The wanted subdivision size
-    goal_sub_size = surface._subdivision_size
+    goal_sub_size = surface.get_subdivision_size()
 
     # Number of subdivisions
-    length_subs = int(surface._length // goal_sub_size)
-    width_subs = int(surface._width // goal_sub_size)
+    length_subs = int(length // goal_sub_size)
+    width_subs = int(width // goal_sub_size)
 
     # Actual size of the subdivisions
-    length_sub_size = surface._length / float(length_subs)
-    width_sub_size = surface._width / float(width_subs)
+    length_sub_size = length / float(length_subs)
+    width_sub_size = width / float(width_subs)
 
     # Size as fractions of the whole surface
     length_sub_frac = 1.0 / length_subs
@@ -164,19 +162,13 @@ def sphere(sphere):
     glMateriali(GL_FRONT, GL_SHININESS, shininess)
     glMaterialfv(GL_FRONT, GL_EMISSION, emissive)
 
-    if sphere._texture:
+    if sphere.get_texture():
         glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, sphere._texture)
+        glBindTexture(GL_TEXTURE_2D, sphere.get_texture())
 
-    #glColor3fv(sphere.get_color())
-    #glutSolidSphere(sphere.get_radius(), 10, 10)
-    #glutSolidSphere(sphere.get_radius(), 40, 40)
-    #glutSolidTeapot(sphere.get_radius())
+    if sphere.get_texture():
+        gluQuadricTexture(sphere.get_quadric(), True)
 
-    #gluQuadricDrawStyle(sphere._quadric, GLU_FILL)
-    if sphere._texture:
-        gluQuadricTexture(sphere._quadric, True)
-    #gluQuadricNormals(sphere._quadric, GLU_SMOOTH)
-    gluSphere(sphere._quadric,sphere.get_radius(), 60, 60)
+    gluSphere(sphere.get_quadric(),sphere.get_radius(), 60, 60)
 
     glDisable(GL_TEXTURE_2D)

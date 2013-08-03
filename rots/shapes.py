@@ -35,6 +35,7 @@ class Shape(object):
         self._emissive = None
 
         self.displayListIndex = None
+        self._texture = None
 
         # Explanations of the material properties:
         #   * Ambient and diffuse "define the color" of the material,
@@ -73,6 +74,9 @@ class Shape(object):
     def get_material_properties(self):
         return self._ambient, self._diffuse, self._specular,\
                self._shininess, self._emissive
+
+    def get_texture(self):
+        return self._texture
 
     def set_ambient(self, ambient):
         self._ambient = ambient
@@ -138,7 +142,11 @@ class Sphere(Shape):
 
     def get_radius(self):
         return self._radius
-        
+
+    def get_quadric(self):
+        return self._quadric
+
+
 class Cube(Shape):
 
     def __init__(self, world, space, pos = Vector(), side = 1,
@@ -184,7 +192,7 @@ class Surface(Shape):
                 normal = Vector([0.0, 1.0, 0.0]), 
                 forward = Vector([0.0, 0.0, -1.0]),
                 length = 1, width = 1, texture = None,
-                subdivision_size = 0.3):
+                subdivision_size = 0.1):
 
         # normal: The normal direction
         # forward: The direction in which the surface is 'length' long.
@@ -232,7 +240,7 @@ class Surface(Shape):
         self._ambient = [1.0, 1.0, 1.0, 1.0]
         self._diffuse = [1.0, 1.0, 1.0, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
-        self._shininess = 80
+        self._shininess = 20
         self._emissive = [0.0, 0.0, 0.0, 1.0]
 
         self._displayListIndex = self.create_displaylist_index()
@@ -256,6 +264,15 @@ class Surface(Shape):
     def get_orientation(self):
         orientation = matrices.ODE_to_OpenGL(self._geom.getRotation())
         return orientation
+
+    def get_length(self):
+        return self._length
+
+    def get_width(self):
+        return self._width
+
+    def get_subdivision_size(self):
+        return self._subdivision_size
 
     # def draw_bounding_box(self):
 

@@ -53,6 +53,11 @@ def init_window(windowName, HAVE_FULLSCREEN = True):
     glShadeModel(GL_SMOOTH)
     glEnable(GL_CULL_FACE)
     glCullFace(GL_BACK)
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE)
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, (0.1, 0.1, 0.1, 1.0))
 
     glClearColor(0.0, 0.0, 0.0, 0.0)
 

@@ -67,52 +67,59 @@ def main():
                             radius = 0.53, mass = 1, texture = mars_tex)
 
     sun.set_emissive([1.0, 1.0, 1.0, 1.0])
-    #sun_light = lights.Light(GL_LIGHT1, sun.get_pos(), ambient = [0.2, 0.2, 0.0, 1.0],
-    #                        diffuse = [1.0, 1.0, 0.0, 1.0], specular = [1.0, 1.0, 1.0, 1.0])
+    sun_light = lights.Light(GL_LIGHT1, sun.get_pos(), ambient = [0.2, 0.2, 0.0, 1.0],
+                            diffuse = [1.0, 1.0, 1.0, 1.0], specular = [1.0, 1.0, 1.0, 1.0])
 
     cube = shapes.Cube(world, space, pos = Vector([3.0, 5.0, 0.0]), side = 1)
 
-    plane1 = shapes.Surface(world, space, pos = Vector(), 
+    floor = shapes.Surface(world, space, pos = Vector(), 
                             normal = Vector([0.0, 1.0, 0.0]),
                             forward = Vector([0.0, -1.0, 0.0]),
-                            length = 20.0, width = 20.0,
-                            texture = stars_tex)
-    plane2 = shapes.Surface(world, space, pos = Vector([10.0, 1.0, 0.0]), 
+                            length = 30.0, width = 30.0)#,
+                            #texture = stars_tex)
+    wall1 = shapes.Surface(world, space, pos = Vector([15.0, 4.0, 0.0]), 
                             normal = Vector([-1.0, 0.0, 0.0]),
                             forward = Vector([0.0, 0.0, 1.0]),
-                            length = 20.0, width = 2.0)
-    plane3 = shapes.Surface(world, space, pos = Vector([-10.0, 1.0, 0.0]), 
+                            length = 30.0, width = 8.0)
+    wall2 = shapes.Surface(world, space, pos = Vector([-15.0, 1.0, 0.0]), 
                             normal = Vector([1.0, 0.0, 0.0]),
                             forward = Vector([0.0, 0.0, -1.0]),
-                            length = 20.0, width = 2.0)
-    plane4 = shapes.Surface(world, space, pos = Vector([0.0, 1.0, 10.0]), 
+                            length = 30.0, width = 2.0)
+    wall3 = shapes.Surface(world, space, pos = Vector([-5.0, 4.0, 15.0]), 
                             normal = Vector([0.0, 0.0, -1.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
-                            length = 20.0, width = 2.0)
-    plane5 = shapes.Surface(world, space, pos = Vector([0.0, 1.0, -10.0]), 
+                            length = 40.0, width = 8.0)
+    wall4 = shapes.Surface(world, space, pos = Vector([-5.0, 4.0, -15.0]), 
                             normal = Vector([0.0, 0.0, 1.0]),
                             forward = Vector([-1.0, 0.0, 0.0]),
-                            length = 20.0, width = 2.0)
+                            length = 40.0, width = 8.0)
+    slope = shapes.Surface(world, space, pos = Vector([-19.0, 5.0, 0.0]),
+                            normal = Vector([0.6, 0.8, 0.0]),
+                            forward = Vector([0.8, -0.6, 0.0]),
+                            length = 10.0, width = 30.0)
 
-    plane2.set_ambient([0.0, 0.0, 0.2, 1.0])
-    plane2.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    plane3.set_ambient([0.0, 0.0, 0.2, 1.0])
-    plane3.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    plane4.set_ambient([0.0, 0.0, 0.2, 1.0])
-    plane4.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    plane5.set_ambient([0.0, 0.0, 0.2, 1.0])
-    plane5.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    wall1.set_ambient([0.0, 0.0, 0.2, 1.0])
+    wall1.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    wall2.set_ambient([0.0, 0.0, 0.2, 1.0])
+    wall2.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    wall3.set_ambient([0.0, 0.0, 0.2, 1.0])
+    wall3.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    wall4.set_ambient([0.0, 0.0, 0.2, 1.0])
+    wall4.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    slope.set_ambient([0.0, 0.0, 0.2, 1.0])
+    slope.set_diffuse([0.0, 0.0, 0.2, 1.0])
 
-    light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
-    light2 = lights.Light(GL_LIGHT2, Vector([3.0, 2.0, 3.0]))
+    #light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
+    #light2 = lights.Light(GL_LIGHT2, Vector([3.0, 2.0, 3.0]))
     camera = cameras.Camera()
 
     player = players.Player(earth)
 
-    objectList = [player.get_shape(), sun, moon, mars, cube, plane1, plane2, plane3, plane4, plane5]
+    objectList = [player.get_shape(), sun, moon, mars, cube, floor, wall1, wall2, wall3, wall4, slope]
 
-    #lightList = [sun_light] 
-    lightList = [light1, light2]
+    lightList = [sun_light] 
+    #lightList = [light1, light2]
+    #lightList = []
 
     clock = pygame.time.Clock()
 
@@ -133,7 +140,7 @@ def main():
 
     while run:
 
-        #sun_light.set_pos(sun.get_pos())
+        sun_light.set_pos(sun.get_pos())
 
         # Take input
         run, direction, jump, toggle_debug = game.take_input()
