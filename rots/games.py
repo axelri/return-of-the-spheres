@@ -7,7 +7,6 @@ from graphics import lights
 from math_classes.vectors import Vector
 from text import TextBox
 
-# TODO: Change the surface class so that we can make objectlist and scenelist to one list
 # TODO: Add a variable to the Shape class "self.moveable"; if true it sets self.geom.setBody(None)
 
 class Game():
@@ -24,8 +23,11 @@ class Game():
         self._clock = clock
         self._debug = debug
 
-        self._jumped_last_frame = False
-        self._toggle_debug_last_frame = False
+        self._keys_pressed = None
+        self._keys_pressed_last_frame = None
+
+        self.constants = {}
+
         # TODO: This should describe the game object in
         # the saved state files (levels):
         # Player = Profile + associated shape
@@ -36,6 +38,8 @@ class Game():
         # TODO: Add more things to the debug screen, move textboxes to better positions
         # (perhaps use pygame.display.Info().current_w /-h to put the text relative
         # the screen's border?)
+
+        # Debug screen textboxes
         
         # Performance
         self._debug_fps = TextBox('test.ttf', 14, 100, 150, [1,0,0], enabled = False)
@@ -45,6 +49,7 @@ class Game():
         self._debug_player_pos = TextBox('test.ttf', 14, 100, 350, [1,0,0], enabled = False)
         self._debug_player_vel = TextBox('test.ttf', 14, 100, 300, [1,0,0], enabled = False)
         self._debug_player_colliding = TextBox('test.ttf', 14, 100, 250, [1,0,0], enabled = False)
+
 
         self._debugList = [self._debug_fps, self._debug_time_used, self._debug_player_pos, self._debug_player_vel,
                             self._debug_player_colliding]
@@ -82,31 +87,25 @@ class Game():
             if event.type == QUIT or \
             (event.type == KEYDOWN and event.key == K_ESCAPE):
                 run = False
-        key_state = pygame.key.get_pressed()
+        self._keys_pressed = pygame.key.get_pressed()
 
-        xDir = key_state[K_d] - key_state[K_a]
-        zDir = key_state[K_s] - key_state[K_w]
+        xDir = self._keys_pressed[K_d] - self._keys_pressed[K_a]
+        zDir = self._keys_pressed[K_s] - self._keys_pressed[K_w]
 
-        if key_state[K_SPACE] and self._player.colliding and not self._jumped_last_frame:
+        if self._keys_pressed[K_SPACE] and self._player.colliding and not self._keys_pressed_last_frame[K_SPACE]:
             jump = True
-            self._jumped_last_frame = True
-        elif not key_state[K_SPACE]:
-            self._jumped_last_frame = False
-            jump = False
         else:
             jump = False
 
-        if key_state[K_q] and not self._toggle_debug_last_frame:
+        if self._keys_pressed[K_q] and not self._keys_pressed_last_frame[K_q]:
             toggle_debug = True
-            self._toggle_debug_last_frame = True
-        elif not key_state[K_q]:
-            toggle_debug = False
-            self._toggle_debug_last_frame = False
         else:
             toggle_debug = False
 
         direction = Vector([xDir, 0.0, zDir]).normalize()
         if not direction:
             direction = Vector()
+
+        self._keys_pressed_last_frame = self._keys_pressed
 
         return run, direction, jump, toggle_debug

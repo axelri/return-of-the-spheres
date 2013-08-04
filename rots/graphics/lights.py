@@ -18,12 +18,7 @@ class Light:
         Input:  light_index: An OpenGL constant referencing the
                     light in OpenGL.
                 pos: A vector describing the position of the light. '''
-        
-        assert isinstance(light_index, OpenGL.constant.IntConstant), \
-               'Input must be an OpenGL constant'
-        assert isinstance(pos, Vector), \
-               'Input must be a vector'
-        
+
         self._light_index = light_index
         self._pos = pos
         self._is_spotlight = False
@@ -53,6 +48,9 @@ class Light:
     
     def get_specular(self):
         return self._specular
+
+    def is_spotlight(self):
+        return self._is_spotlight
 
     #Setters
 

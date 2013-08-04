@@ -109,7 +109,7 @@ def main():
     slope.set_ambient([0.0, 0.0, 0.2, 1.0])
     slope.set_diffuse([0.0, 0.0, 0.2, 1.0])
 
-    #light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
+    light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
     #light2 = lights.Light(GL_LIGHT2, Vector([3.0, 2.0, 3.0]))
     camera = cameras.Camera()
 
@@ -117,13 +117,16 @@ def main():
 
     objectList = [player.get_shape(), sun, moon, mars, cube, floor, wall1, wall2, wall3, wall4, slope]
 
-    lightList = [sun_light] 
+    lightList = [sun_light, light1] 
     #lightList = [light1, light2]
     #lightList = []
 
     clock = pygame.time.Clock()
 
     game = games.Game(world, space, player, objectList, lightList, camera, clock)
+
+    # Initialize some constants for the shadow calculations
+    init_graphics.init_shadows(game)
 
     run = True
 

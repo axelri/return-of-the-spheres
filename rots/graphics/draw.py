@@ -5,6 +5,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 import numbers
+import random
 
 import shapes
 
@@ -116,11 +117,19 @@ def surface(surface):
     length_sub_frac = 1.0 / length_subs
     width_sub_frac = 1.0 / width_subs
     
+    #glEnable(GL_COLOR_MATERIAL)
+
     glBegin(GL_QUADS)
     
 
     for l in range(length_subs):
         for w in range(width_subs):
+
+            # To show the subdivisions of the surface, uncomment this, aswell as
+            # glEnable/Disable GL_COLOR_MATERIAL (directly before and after glBegin/End)
+            #random_color = [random.random(), random.random(), random.random()]
+            #glColor3fv(random_color)
+
             glNormal3fv(surface.get_normal().value)
             glTexCoord2f(w * width_sub_frac, 1 - l * length_sub_frac)
             glVertex3f(-half_width + w * width_sub_size, 
@@ -139,6 +148,8 @@ def surface(surface):
                         0.0,
                         -half_length + l * length_sub_size)
     glEnd()
+
+    #glDisable(GL_COLOR_MATERIAL)
 
     glDisable(GL_TEXTURE_2D)
 

@@ -111,7 +111,6 @@ class Sphere(Shape):
         super(Sphere, self).__init__(world)
 
         # Set ODE properties
-
         self._mass.setSphere(1, radius)
         self._mass.adjust(mass)
         self._body.setPosition(pos.value)
