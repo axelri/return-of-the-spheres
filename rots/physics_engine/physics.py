@@ -1,6 +1,10 @@
 import ode
 from math_classes.vectors import Vector
 
+# TODO: Test if we can solve the problem with different contact
+# coefficients for different object by using several spaces, one
+# for each type of object.
+
 def update_physics(world, space, contactgroup, game, dt, iterations = 2):
 
     #Run multiple times for smoother simulation

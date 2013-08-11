@@ -5,6 +5,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 import itertools
+from math import tan, pi, radians
 
 from graphics import textures
 
@@ -58,12 +59,13 @@ def init_window(windowName, HAVE_FULLSCREEN = True):
     glClearColor(0.0, 0.0, 0.0, 0.0)
 
     glMatrixMode(GL_PROJECTION)
-    gluPerspective(45.0, float(width)/float(height), 0.1, 100.0)
+    aspect_angle = 45.0
+    gluPerspective(aspect_angle, float(width)/float(height), 0.1, 100.0)
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
-    draw_start_screen('stars-5.jpg', width, height)
+    draw_start_screen('stars-5.jpg', width, height, aspect_angle)
 
     glEnable(GL_LIGHTING)
     
@@ -78,13 +80,14 @@ def init_window(windowName, HAVE_FULLSCREEN = True):
 
     return width, height
 
-def draw_start_screen(file_name, width, height):
+def draw_start_screen(file_name, width, height, aspect_angle):
     ''' Draws a start screen. It draws a Quad that
         fills the screen, textured with the image
         in the file 'file_name' '''
     ratio = float(width)/float(height)
+    distance = tan(radians(90 - aspect_angle/2.0 ))
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-    gluLookAt(0.0, 0.0, 2.4,
+    gluLookAt(0.0, 0.0, distance,
             0.0, 0.0, 0.0,
             0.0, 1.0, 0.0)
     start_tex = textures.load_texture(file_name)

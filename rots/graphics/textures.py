@@ -7,12 +7,6 @@ from OpenGL.GL.EXT.texture_filter_anisotropic import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-# TODO: Better loading functions with error handling
-# (better example in sound_effects)
-
-# NOTE: loadImage and loadTexture could be merged into one 
-# single function, loadTexture(image_file)
-
 def load_image(file_name):
     ''' Takes an image file and converts it into a string 
         that OpenGL can read. 
@@ -34,8 +28,20 @@ def load_image(file_name):
         image_size = image.get_size()
         image_str = pygame.image.tostring(image, 'RGB', True)
     except pygame.error, message:
+        print 'Pygame error: ', message
         print 'Cannot load texture:', file_name
-        raise SystemExit, message
+        try:
+            # Try to load default texture
+            missing_tex_path = os.path.join('graphics/texture_data',
+                                            'missing_texture.png')
+            missing_tex = pygame.image.load(missing_tex_path)
+            missing_tex_size = 512, 512
+            missing_tex_str = pygame.image.tostring(missing_tex,
+                                                        'RGB', True)
+            return missing_tex_str, missing_tex_size
+        except Exception, message:
+            raise SystemExit, message
+        
     return image_str, image_size
 
 def load_texture(image_file):
