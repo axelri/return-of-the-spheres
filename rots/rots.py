@@ -48,7 +48,7 @@ def pause_loop(game, clock, fps):
 def main():
     ''' Main routine of the game.'''
 
-    width, height = init_graphics.init_window('testODE 2')
+    width, height = init_graphics.init_window('testODE 2', 'stars-5.jpg')
 
     game = scenes.init_scene()
 

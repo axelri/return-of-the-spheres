@@ -6,8 +6,10 @@ from OpenGL.GLUT import *
 
 import numbers
 import random
+from math import radians, tan, pi
 
 import shapes
+import textures
 
 CUBE_QUAD_VERTS = ((0, 3, 2, 1), (3, 6, 7, 2), (6, 4, 5, 7),
                    (4, 0, 1, 5), (1, 2, 7, 5), (4, 6, 3, 0))
@@ -182,4 +184,31 @@ def sphere(sphere):
 
     gluSphere(sphere.get_quadric(),sphere.get_radius(), 60, 60)
 
+    glDisable(GL_TEXTURE_2D)
+
+def start_screen(file_name, width, height, aspect_angle):
+    ''' Draws a start screen. It draws a Quad that
+        fills the screen, textured with the image
+        in the file 'file_name' '''
+
+    ratio = float(width)/float(height)
+    distance = tan(radians(90 - aspect_angle/2.0 ))
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+    gluLookAt(0.0, 0.0, distance,
+            0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0)
+    start_tex = textures.load_texture(file_name)
+    glEnable(GL_TEXTURE_2D)
+    glBindTexture(GL_TEXTURE_2D, start_tex)
+    glColor4f(1.0, 1.0, 1.0, 1.0)
+    glBegin(GL_QUADS)
+    glTexCoord2f(0,0)
+    glVertex3f(-ratio, -1.0, 0)
+    glTexCoord2f(1,0)
+    glVertex3f(ratio, -1.0, 0)
+    glTexCoord2f(1,1)
+    glVertex3f(ratio, 1.0, 0)
+    glTexCoord2f(0,1)
+    glVertex3f(-ratio, 1.0, 0)
+    glEnd()
     glDisable(GL_TEXTURE_2D)

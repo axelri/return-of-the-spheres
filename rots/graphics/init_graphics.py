@@ -7,10 +7,9 @@ from OpenGL.GLUT import *
 import itertools
 from math import tan, pi, radians
 
-from graphics import textures
+from graphics import textures, draw
 
-
-def init_window(windowName, HAVE_FULLSCREEN = True):
+def init_window(window_name, start_screen_image, HAVE_FULLSCREEN = True):
     ''' Initiates pygame, creates and sets up the window,
     sets up OpenGL.
 
@@ -19,11 +18,6 @@ def init_window(windowName, HAVE_FULLSCREEN = True):
                 set to, a string.
             HAVE_FULLSCREEN: Whether or not the window
                 should be fullscreen, a boolean. '''
-
-    assert isinstance(windowName, str), \
-           'The name must be a string'
-    assert isinstance(HAVE_FULLSCREEN, bool), \
-           'HAVE_FULLSCREEN must be a boolean'
 
     # Initialize a pygame window
     pygame.mixer.pre_init(44100, -16, 2, 1024) # setup mixer to avoid sound lag
@@ -38,26 +32,21 @@ def init_window(windowName, HAVE_FULLSCREEN = True):
     else:
         pygame.display.set_mode((640, 480), OPENGL|DOUBLEBUF)
     
-    pygame.display.set_caption(windowName)
+    pygame.display.set_caption(window_name)
     # NOTE: Locks all input events to the pygame window, maybe DANGEROUS
     pygame.event.set_grab(True)
+
     width = pygame.display.Info().current_w
     height = pygame.display.Info().current_h
 
+    # Hide cursor, move to center of screen
     pygame.mouse.set_visible(0)
     pygame.mouse.set_pos(width/ 2.0,
                          height / 2.0)
 
+    ### Initialize OpenGL
 
-    # Initialize OpenGL
-    # TODO: Change the order of these calls to be more logical,
-    # maybe add comments.
-    glEnable(GL_DEPTH_TEST)
-    glEnable(GL_TEXTURE_2D)
-    glEnable (GL_BLEND)
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-    glClearColor(0.0, 0.0, 0.0, 0.0)
-
+    # Set up the projection and modelview matrices
     glMatrixMode(GL_PROJECTION)
     aspect_angle = 45.0
     gluPerspective(aspect_angle, float(width)/float(height), 0.1, 100.0)
@@ -65,47 +54,37 @@ def init_window(windowName, HAVE_FULLSCREEN = True):
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
-    draw_start_screen('stars-5.jpg', width, height, aspect_angle)
+    # Set clearing color
+    glClearColor(0.0, 0.0, 0.0, 0.0)
 
+    # Enable depth testing and textures
+    glEnable(GL_DEPTH_TEST)
+    glEnable(GL_TEXTURE_2D)
+
+    # Draw the start screen
+    draw.start_screen(start_screen_image, width, height, aspect_angle)
+    pygame.display.flip()
+
+    # Enable and set up alpha blending
+    glEnable (GL_BLEND)
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+    # Enable and set up lighting
     glEnable(GL_LIGHTING)
-    
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE)
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, (0.2, 0.2, 0.2, 1.0))
     glShadeModel(GL_SMOOTH)
+
+    # Enable back-face culling
     glEnable(GL_CULL_FACE)
     glCullFace(GL_BACK)
+
+    # Make OpenGL choose some parameters for best result
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
     glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE)
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, (0.2, 0.2, 0.2, 1.0))
 
     return width, height
-
-def draw_start_screen(file_name, width, height, aspect_angle):
-    ''' Draws a start screen. It draws a Quad that
-        fills the screen, textured with the image
-        in the file 'file_name' '''
-    ratio = float(width)/float(height)
-    distance = tan(radians(90 - aspect_angle/2.0 ))
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-    gluLookAt(0.0, 0.0, distance,
-            0.0, 0.0, 0.0,
-            0.0, 1.0, 0.0)
-    start_tex = textures.load_texture(file_name)
-    glEnable(GL_TEXTURE_2D)
-    glBindTexture(GL_TEXTURE_2D, start_tex)
-    glColor4f(1.0, 1.0, 1.0, 1.0)
-    glBegin(GL_QUADS)
-    glTexCoord2f(0,0)
-    glVertex3f(-ratio, -1.0, 0)
-    glTexCoord2f(1,0)
-    glVertex3f(ratio, -1.0, 0)
-    glTexCoord2f(1,1)
-    glVertex3f(ratio, 1.0, 0)
-    glTexCoord2f(0,1)
-    glVertex3f(-ratio, 1.0, 0)
-    glEnd()
-    glDisable(GL_TEXTURE_2D)
-    pygame.display.flip()
 
 def init_shadows(game):
     ''' Sets the necessary constants for shadow mapping. '''
@@ -143,8 +122,6 @@ def init_shadows(game):
     merged = list(itertools.chain.from_iterable(light_proj_list))
     light_projection_matrix = merged
 
-
-
     light_view_matrix_list = []
     for light in game.get_light_list():
         light_pos = light.get_pos().value
@@ -166,6 +143,7 @@ def init_shadows(game):
                     0.0, 0.0, 0.5, 0.0,
                     0.5, 0.5, 0.5, 1.0)
 
+    # Save the matrices as game constants
     game.add_constant('shadow_map_size', shadow_map_size)
     game.add_constant('window_width', window_width)
     game.add_constant('window_height', window_height)
