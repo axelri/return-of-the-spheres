@@ -69,6 +69,7 @@ def main():
 
     # Background music
     pygame.mixer.music.load('sound/sound_data/02. II. Molto vivace.ogg')
+    pygame.mixer.music.set_volume(0.8)
     pygame.mixer.music.play(-1)
 
     while run:
@@ -89,7 +90,9 @@ def main():
                                         contactgroup, fps, dt)
         else:
             run, toggle_pause = pause_loop(game, clock, fps)
-        
+    
+    pygame.mixer.music.fadeout(2000)
+    pygame.time.wait(2000)        
 
 
 if __name__ == '__main__':
