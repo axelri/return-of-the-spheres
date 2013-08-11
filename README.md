@@ -14,9 +14,7 @@ A new version of the already old fluffy spheres codebase. More to come!
 * (Check up on the math code, maybe switch to NumPy)
 * Music and sound effects (should be handled by pygame)
 	- (In progress)
-* Better error handling
-	- Loading functions etc should have their own error handling,
-	not just the big try/except for the entire game
+* Switch to OpenGL 3/4 ?
 
 # Plot
 The world has been taken over by squares! It's now up to Mr Sphereston and his assistant to save the world and bring back the smooth corners.
