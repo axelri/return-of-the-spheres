@@ -16,6 +16,8 @@ class Player:
         self._jumping = False
         self._jump_sound = sound_effects.load_sound('boing.wav')
         self._bounce_sound = sound_effects.load_sound('bounce.wav')
+        self._jump_sound.set_volume(0.15)
+        self._bounce_sound.set_volume(0.7)
 
         self.lastDir = Vector()
 

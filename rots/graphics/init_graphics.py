@@ -70,6 +70,8 @@ def init_window(windowName, HAVE_FULLSCREEN = True):
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
+    return width, height
+
 def init_shadows(game):
     ''' Sets the necessary constants for shadow mapping. '''
 
@@ -109,7 +111,7 @@ def init_shadows(game):
 
 
     light_view_matrix_list = []
-    for light in game._lightList:
+    for light in game.get_light_list():
         light_pos = light.get_pos().value
         glLoadIdentity()
         gluLookAt( light_pos[0], light_pos[1], light_pos[2],
@@ -129,12 +131,12 @@ def init_shadows(game):
                     0.0, 0.0, 0.5, 0.0,
                     0.5, 0.5, 0.5, 1.0)
 
-    game.constants['shadow_map_size'] = shadow_map_size
-    game.constants['window_width'] = window_width
-    game.constants['window_height'] = window_height
-    game.constants['shadow_map_texture'] = shadow_map_texture
-    game.constants['camera_projection_matrix'] = camera_projection_matrix
-    game.constants['camera_view_matrix'] = camera_view_matrix
-    game.constants['light_projection_matrix'] = light_projection_matrix
-    game.constants['light_view_matrix_list'] = light_view_matrix_list
-    game.constants['bias_matrix'] = bias_matrix
+    game.add_constant('shadow_map_size', shadow_map_size)
+    game.add_constant('window_width', window_width)
+    game.add_constant('window_height', window_height)
+    game.add_constant('shadow_map_texture', shadow_map_texture)
+    game.add_constant('camera_projection_matrix', camera_projection_matrix)
+    game.add_constant('camera_view_matrix', camera_view_matrix)
+    game.add_constant('light_projection_matrix', light_projection_matrix)
+    game.add_constant('light_view_matrix_list', light_view_matrix_list)
+    game.add_constant('bias_matrix', bias_matrix)

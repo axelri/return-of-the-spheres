@@ -20,50 +20,56 @@ def render(game):
 
     Input:  game: A Game object '''
     
-    world, space, player, objectList, lightList, camera = game.get_objects()
+    camera = game.get_camera()
+    player = game.get_player()
+    object_list = game.get_object_list()
+
 
     glLoadIdentity()
 
     camera.view(player)
     camera_view_matrix = glGetFloatv(GL_MODELVIEW_MATRIX)
-    game.constants['camera_view_matrix'] = camera_view_matrix
+    game.add_constant('camera_view_matrix', camera_view_matrix)
 
     if game.get_debug():
         game.update_debug_screen()
 
-    draw_scene(objectList)
-    #draw_scene_with_shadows(game, objectList)
+    draw_scene(object_list)
+    #draw_scene_with_shadows(game, object_list)
 
 
     pygame.display.flip()
 
 
-def draw_scene(objectList):
+def draw_scene(object_list):
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
-    for item in objectList:
+    for item in object_list:
         glPushMatrix()
         item.draw()
         glPopMatrix()
 
-def draw_scene_with_shadows(game, objectList):
+def draw_scene_with_shadows(game, object_list):
+
+    # TODO: Remove the bug that causes the textures on the shapes to float around...
 
     # Constants
-    shadow_map_size = game.constants['shadow_map_size']
-    window_width = game.constants['window_width']
-    window_height = game.constants['window_height']
+    constants = game.get_constants()
+    shadow_map_size = constants['shadow_map_size']
+    window_width = constants['window_width']
+    window_height = constants['window_height']
 
-    light_projection_matrix = game.constants['light_projection_matrix']
-    light_view_matrix_list = game.constants['light_view_matrix_list']
-    camera_projection_matrix = game.constants['camera_projection_matrix']
-    camera_view_matrix = game.constants['camera_view_matrix']
-    bias_matrix = game.constants['bias_matrix']
+    light_projection_matrix = constants['light_projection_matrix']
+    light_view_matrix_list = constants['light_view_matrix_list']
+    camera_projection_matrix = constants['camera_projection_matrix']
+    camera_view_matrix = constants['camera_view_matrix']
+    bias_matrix = constants['bias_matrix']
 
-    shadow_map_texture = game.constants['shadow_map_texture']
+    shadow_map_texture = constants['shadow_map_texture']
 
 
-    for light, light_view_matrix in zip(game._lightList, light_view_matrix_list):
+    for light, light_view_matrix in zip(game.get_light_list(), light_view_matrix_list):
         
         light_index = light.get_light_index()
         light_pos = light.get_pos()
@@ -93,7 +99,7 @@ def draw_scene_with_shadows(game, objectList):
         glColorMask(0, 0, 0, 0)
 
         # Draw the scene
-        draw_scene(objectList)
+        draw_scene(object_list)
 
         # Read the depth buffer into the shadow map texture
         glBindTexture(GL_TEXTURE_2D, shadow_map_texture)
@@ -122,7 +128,7 @@ def draw_scene_with_shadows(game, objectList):
         glLightfv(light_index, GL_SPECULAR, (Vector(specular) * 0).value)
 
         # Draw the scene
-        draw_scene(objectList)
+        draw_scene(object_list)
 
         ### 3rd pass - Draw with bright light
 
@@ -170,7 +176,7 @@ def draw_scene_with_shadows(game, objectList):
         glEnable(GL_ALPHA_TEST)
 
         # Draw the scene
-        draw_scene(objectList)
+        draw_scene(object_list)
 
         # Disable textures and texgen
         glDisable(GL_TEXTURE_2D)
