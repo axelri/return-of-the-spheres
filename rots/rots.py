@@ -17,18 +17,20 @@ from physics_engine import physics
 from text import TextBox
 import scenes
 
-def game_loop(game, world, space, player, camera,
-             clock, contactgroup, fps, dt):
-    #sun_light.set_pos(sun.get_pos())
+def game_loop(game):
 
     # Take input
     run, direction, jump, toggle_debug, toggle_pause = game.take_input()
+    player = game.get_player()
+    camera = game.get_camera()
+    clock = game.get_clock()
+    fps = game.get_fps()
 
     if toggle_debug:
         game.toggle_debug()
 
     # Simulate
-    physics.update_physics(world, space, contactgroup, game, dt)
+    physics.update_physics(game)
 
     # Move
     forwardVector = camera.update(player)
@@ -40,8 +42,11 @@ def game_loop(game, world, space, player, camera,
     clock.tick(fps)
     return run, toggle_pause
 
-def pause_loop(game, clock, fps):
+def pause_loop(game):
     run, direction, jump, toggle_debug, toggle_pause = game.take_input()
+    clock = game.get_clock()
+    fps = game.get_fps()
+    
     clock.tick(fps)
     return run, toggle_pause
 
@@ -53,18 +58,11 @@ def main():
     game = scenes.init_scene()
 
     player = game.get_player()
-    world = game.get_world()
-    space = game.get_space()
-    contactgroup = game.get_contactgroup()
     camera = game.get_camera()
     clock = game.get_clock()
 
     run = True
     pause = False
-
-    fps = 30
-    dt = 1.0/fps
-    run = True
     toggle_pause = False
 
     # Background music
@@ -79,18 +77,18 @@ def main():
             pygame.mouse.set_visible(int(pause))
 
             # Hack to prevent sudden rotation of the camera when
-            # toggling back to unpaused
+            # toggling back to unpaused (doesn't work properly yet...)
+            #for i in range(4):
             pygame.mouse.set_pos(width/ 2.0,
                                 height / 2.0)
             x, y = pygame.mouse.get_rel()
 
         if not pause:
-            run, toggle_pause = game_loop(game, world, space, 
-                                        player, camera, clock,
-                                        contactgroup, fps, dt)
+            run, toggle_pause = game_loop(game)
         else:
-            run, toggle_pause = pause_loop(game, clock, fps)
+            run, toggle_pause = pause_loop(game)
     
+    #Fade out the music after quitting the game
     pygame.mixer.music.fadeout(1000)
     pygame.time.wait(1000)
 

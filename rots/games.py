@@ -11,17 +11,23 @@ from text import TextBox
 
 class Game():
     ''' A class containing all the objects in the game '''
-    def __init__(self, world, space, player, object_list, light_list, camera, clock, contactgroup, debug = False):
+    def __init__(self, world, object_space, scene_space, player, 
+                object_list, light_list, camera, clock, 
+                object_contactgroup, scene_contactgroup, fps, debug = False):
         # TODO: Use the Player object from fluffy instead?
 
         self._world = world
-        self._space = space
+        self._object_space = object_space
+        self._scene_space = scene_space
         self._player = player
         self._object_list = object_list
         self._light_list = light_list
         self._camera = camera
         self._clock = clock
-        self._contactgroup = contactgroup
+        self._object_contactgroup = object_contactgroup
+        self._scene_contactgroup = scene_contactgroup
+        self._fps = fps
+        self._dt = 1/float(fps)
         self._debug = debug
 
         self._keys_pressed = None
@@ -73,15 +79,18 @@ class Game():
         self._debug_player_vel.set_string("Player vel: [%0.2f, %0.2f, %0.2f]" % self._player.get_vel().value)
         self._debug_player_colliding.set_string("Player colliding: %s" % self._player.colliding)
 
-    def get_objects(self):
-        return self._world, self._space, self._player, self._object_list, \
-               self._light_list, self._camera
+    #def get_objects(self):
+    #    return self._world, self._space, self._player, self._object_list, \
+    #           self._light_list, self._camera
 
     def get_world(self):
         return self._world
 
-    def get_space(self):
-        return self._space
+    def get_object_space(self):
+        return self._object_space
+
+    def get_scene_space(self):
+        return self._scene_space
 
     def get_player(self):
         return self._player
@@ -98,11 +107,20 @@ class Game():
     def get_clock(self):
         return self._clock
 
-    def get_contactgroup(self):
-        return self._contactgroup
+    def get_object_contactgroup(self):
+        return self._object_contactgroup
+
+    def get_scene_contactgroup(self):
+        return self._scene_contactgroup
 
     def get_constants(self):
         return self._constants
+
+    def get_fps(self):
+        return self._fps
+
+    def get_dt(self):
+        return self._dt
 
     def get_debug(self):
         return self._debug
@@ -110,6 +128,9 @@ class Game():
     def add_constant(self, key, value):
         self._constants[key] = value
 
+    def set_fps(self, fps):
+        self._fps = fps
+        self._dt = 1/float(fps)
 
     def take_input(self):
         current_events = pygame.event.get() # cache current events

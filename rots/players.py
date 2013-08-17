@@ -41,15 +41,15 @@ class Player:
 
     def jump(self):
         self._jump_sound.play()
-        self._shape.get_body().addForce((0.0, 300.0, 0.0))
+        self._shape.get_body().addForce((0.0, 400.0, 0.0))
         self._jumping = True
 
     def move(self, direction, forward_vector, jump):
 
         # TODO: Tweak with self._speed and the coefficient in addForce 
         # (currrently 10) to get good movement
-        # TODO: Fix so you can't move faster than intended just by moving the mouse
-        # back and forth.
+        # TODO: Fix so you can't move faster than intended just by 
+        # moving the mouse back and forth.
         
         left_vector = Vector((0.0, 1.0, 0.0)).cross(forward_vector)
 
@@ -60,7 +60,9 @@ class Player:
         current_vel = Vector(list(self._shape.get_body().getLinearVel()))
         proj_vel = current_vel.dot(direction)
 
-        if proj_vel < self._speed:
+        # NOTE: The sphere can now only change direction if it touches something,
+        # good or bad? It looks more realistic, but it's harder to control.
+        if proj_vel < self._speed and self.colliding:
             diff = self._speed - proj_vel
             if diff < self._speed:
                 diff = self._speed

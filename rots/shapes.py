@@ -94,6 +94,14 @@ class Shape(object):
         self._emissive = emissive
         self._displayListIndex = self.create_displaylist_index()
 
+    def set_data(self, name, value):
+        ''' Sets an attribute of the shape's geom,
+            keyword 'name', value 'value' '''
+        self._geom.__setattr__(name, value)
+
+    def get_data(self, name):
+        return self._geom.__getattribute__(name)
+
     def create_displaylist_index(self):
         return None
 
@@ -117,6 +125,8 @@ class Sphere(Shape):
         self._body.setMass(self._mass)
         self._geom = ode.GeomSphere(space, radius)
         self._geom.setBody(self._body)
+
+        self.set_data('shape', self)
 
         self._radius = radius
 
@@ -159,6 +169,8 @@ class Cube(Shape):
         self._body.setMass(self._mass)
         self._geom = ode.GeomBox(space, (side, side, side))
         self._geom.setBody(self._body)
+
+        self.set_data('shape', self)
 
         self._side = side
         
@@ -213,6 +225,8 @@ class Surface(Shape):
         self._geom = ode.GeomBox(space, (self._width, self._thickness, self._length))
         self._body = None
         self._geom.setBody(self._body)
+
+        self.set_data('shape', self)
 
         # Calculate the rotation matrix in the first direction needed to align the 
         # bounding box with the surface
