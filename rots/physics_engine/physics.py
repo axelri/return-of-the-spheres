@@ -68,9 +68,10 @@ def sphere_static_callback(game, sphere, static):
         j.attach(sphere_body, static_body)
 
     # Rolling friction
-    ang_vel = Vector(sphere_body.getAngularVel())
-    rolling_friction = sphere_shape.get_rolling_friction()
-    sphere_body.addTorque((-ang_vel * rolling_friction).value)
+    if contacts:
+        ang_vel = Vector(sphere_body.getAngularVel())
+        rolling_friction = sqrt(sphere_shape.get_rolling_friction() * static_shape.get_friction())
+        sphere_body.addTorque((-ang_vel * rolling_friction).value)
 
 def object_static_callback(game, obj, static):
     ''' Callback function for collisions between objects
@@ -89,7 +90,7 @@ def object_static_callback(game, obj, static):
     # Create contact joints
     for c in contacts:
         bounce = sqrt(obj_shape.get_bounce() * static_shape.get_bounce())
-        friction = sqrt(obj_shape.get_friction() * static_shape.get_friction()) * 0.1
+        friction = sqrt(obj_shape.get_friction() * static_shape.get_friction())
         c.setBounce(bounce)
         c.setMu(friction)
         j = ode.ContactJoint(world, contact_group, c)
@@ -99,6 +100,8 @@ def sphere_object_callback(game, sphere, obj):
     ''' Callback function for collisions between spheres
         and objects. This function checks if the given geoms
         do collide and creates contact joints if they do. '''
+
+    # TODO: Add rolling friction
 
     contact_group = game.get_contact_group()
     world = game.get_world()

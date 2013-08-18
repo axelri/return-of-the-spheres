@@ -54,11 +54,15 @@ def init_scene():
     cube = shapes.Cube(world, object_space, pos = Vector([3.0, 5.0, 0.0]), side = 2)
 
     # Create surfaces
-    floor = shapes.Surface(world, static_space, pos = Vector(), 
+    sticky_floor = shapes.Surface(world, static_space, pos = Vector((0.0, 0.0, 7.5)), 
                             normal = Vector([0.0, 1.0, 0.0]),
-                            forward = Vector([0.0, -1.0, 0.0]),
-                            length = 30.0, width = 30.0,
+                            forward = Vector([1.0, 0.0, 0.0]),
+                            length = 30.0, width = 15.0,
                             texture = stars_tex)
+    slippy_floor = shapes.Surface(world, static_space, pos = Vector((0.0, 0.0, -7.5)), 
+                            normal = Vector([0.0, 1.0, 0.0]),
+                            forward = Vector([1.0, 0.0, 0.0]),
+                            length = 30.0, width = 15.0)
     wall1 = shapes.Surface(world, static_space, pos = Vector([15.0, 4.0, 0.0]), 
                             normal = Vector([-1.0, 0.0, 0.0]),
                             forward = Vector([0.0, 0.0, 1.0]),
@@ -81,6 +85,8 @@ def init_scene():
                             length = 10.0, width = 30.0)
 
     #Set the color of the surfaces
+    slippy_floor.set_ambient([0.5, 0.5, 0.8, 1.0])
+    slippy_floor.set_diffuse([0.5, 0.5, 0.8, 1.0])
     wall1.set_ambient([0.0, 0.0, 0.2, 1.0])
     wall1.set_diffuse([0.0, 0.0, 0.2, 1.0])
     wall2.set_ambient([0.0, 0.0, 0.2, 1.0])
@@ -92,6 +98,12 @@ def init_scene():
     slope.set_ambient([0.0, 0.0, 0.2, 1.0])
     slope.set_diffuse([0.0, 0.0, 0.2, 1.0])
 
+    # Set friction and bounce
+    slippy_floor.set_friction(0.1)
+    slippy_floor.set_bounce(0.5)
+    sticky_floor.set_friction(10)
+    sticky_floor.set_bounce(0.1)
+
     # Create lights
     light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
     light2 = lights.Light(GL_LIGHT2, Vector([3.0, 2.0, 3.0]))
@@ -101,7 +113,9 @@ def init_scene():
     player = players.Player(earth)
 
     # Add all objects that should be drawn to a list
-    object_list = [player.get_shape(), sun, moon, mars, cube, floor, wall1, wall2, wall3, wall4, slope]
+    object_list = [player.get_shape(), sun, moon, mars, cube, 
+                    sticky_floor, slippy_floor, wall1, wall2, 
+                    wall3, wall4, slope]
 
     # Add all lights to a list
     light_list = [light1, light2]
