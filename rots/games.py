@@ -7,25 +7,27 @@ from graphics import lights
 from math_classes.vectors import Vector
 from text import TextBox
 
-# TODO: Add a variable to the Shape class "self.moveable"; if true it sets self.geom.setBody(None)
+# TODO: Add a variable to the Shape class "self.moveable"; 
+# if true it sets self.geom.setBody(None)
 
 class Game():
     ''' A class containing all the objects in the game '''
-    def __init__(self, world, object_space, scene_space, player, 
+    def __init__(self, world, spaces, player, 
                 object_list, light_list, camera, clock, 
-                object_contactgroup, scene_contactgroup, fps, debug = False):
-        # TODO: Use the Player object from fluffy instead?
+                contact_group, fps, debug = False):
+        
+        sphere_space, object_space, static_space = spaces
 
         self._world = world
+        self._sphere_space = sphere_space
         self._object_space = object_space
-        self._scene_space = scene_space
+        self._static_space = static_space
         self._player = player
         self._object_list = object_list
         self._light_list = light_list
         self._camera = camera
         self._clock = clock
-        self._object_contactgroup = object_contactgroup
-        self._scene_contactgroup = scene_contactgroup
+        self._contact_group = contact_group
         self._fps = fps
         self._dt = 1/float(fps)
         self._debug = debug
@@ -86,11 +88,14 @@ class Game():
     def get_world(self):
         return self._world
 
+    def get_sphere_space(self):
+        return self._sphere_space
+
     def get_object_space(self):
         return self._object_space
 
-    def get_scene_space(self):
-        return self._scene_space
+    def get_static_space(self):
+        return self._static_space
 
     def get_player(self):
         return self._player
@@ -107,11 +112,8 @@ class Game():
     def get_clock(self):
         return self._clock
 
-    def get_object_contactgroup(self):
-        return self._object_contactgroup
-
-    def get_scene_contactgroup(self):
-        return self._scene_contactgroup
+    def get_contact_group(self):
+        return self._contact_group
 
     def get_constants(self):
         return self._constants

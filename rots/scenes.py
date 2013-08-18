@@ -21,10 +21,11 @@ def init_scene():
     world.setERP(0.8)
     world.setCFM(1E-5)
 
-    # Create space objects
-    #space = ode.Space(type = 1)
+    # Create space objects, one for spheres, one for other
+    # moving objects and one for the static environment
+    sphere_space = ode.Space(1)
     object_space = ode.Space(1)
-    scene_space =ode.Space(1)
+    static_space = ode.Space(1)
 
     # Load textures
     earth_tex = textures.load_texture('celestial_bodies/earth_big.jpg')
@@ -34,47 +35,47 @@ def init_scene():
     mars_tex = textures.load_texture('celestial_bodies/Mars_2k-050104.png')
 
     # Create shapes
-    earth = shapes.Sphere(world, object_space, pos = Vector([0.0, 5.0, 0.0]), 
+    earth = shapes.Sphere(world, sphere_space, pos = Vector([0.0, 5.0, 0.0]), 
                             radius = 1.0, texture = earth_tex)
 
-    moon = shapes.Sphere(world, object_space, pos = Vector([-3.0, 5.0, -3.0]),
+    moon = shapes.Sphere(world, sphere_space, pos = Vector([-3.0, 5.0, -3.0]),
                             radius = 0.27, mass = 0.5, texture = moon_tex)
 
-    sun = shapes.Sphere(world, object_space, pos = Vector([5.0, 15.0, 5.0]), 
+    sun = shapes.Sphere(world, sphere_space, pos = Vector([5.0, 15.0, 5.0]), 
                             radius = 1.5, texture = sun_tex, mass = 5)
 
-    mars = shapes.Sphere(world, object_space, pos = Vector([-3.0, 5.0, 3.0]),
+    mars = shapes.Sphere(world, sphere_space, pos = Vector([-3.0, 5.0, 3.0]),
                             radius = 0.53, mass = 1, texture = mars_tex)
 
     sun.set_emissive([1.0, 1.0, 1.0, 1.0])
     #sun_light = lights.Light(GL_LIGHT1, sun.get_pos(), ambient = [0.2, 0.2, 0.0, 1.0],
     #                        diffuse = [1.0, 1.0, 1.0, 1.0], specular = [1.0, 1.0, 1.0, 1.0])
 
-    cube = shapes.Cube(world, object_space, pos = Vector([3.0, 5.0, 0.0]), side = 1)
+    cube = shapes.Cube(world, object_space, pos = Vector([3.0, 5.0, 0.0]), side = 2)
 
     # Create surfaces
-    floor = shapes.Surface(world, scene_space, pos = Vector(), 
+    floor = shapes.Surface(world, static_space, pos = Vector(), 
                             normal = Vector([0.0, 1.0, 0.0]),
                             forward = Vector([0.0, -1.0, 0.0]),
                             length = 30.0, width = 30.0,
                             texture = stars_tex)
-    wall1 = shapes.Surface(world, scene_space, pos = Vector([15.0, 4.0, 0.0]), 
+    wall1 = shapes.Surface(world, static_space, pos = Vector([15.0, 4.0, 0.0]), 
                             normal = Vector([-1.0, 0.0, 0.0]),
                             forward = Vector([0.0, 0.0, 1.0]),
                             length = 30.0, width = 8.0)
-    wall2 = shapes.Surface(world, scene_space, pos = Vector([-15.0, 1.0, 0.0]), 
+    wall2 = shapes.Surface(world, static_space, pos = Vector([-15.0, 1.0, 0.0]), 
                             normal = Vector([1.0, 0.0, 0.0]),
                             forward = Vector([0.0, 0.0, -1.0]),
                             length = 30.0, width = 2.0)
-    wall3 = shapes.Surface(world, scene_space, pos = Vector([-5.0, 4.0, 15.0]), 
+    wall3 = shapes.Surface(world, static_space, pos = Vector([-5.0, 4.0, 15.0]), 
                             normal = Vector([0.0, 0.0, -1.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 40.0, width = 8.0)
-    wall4 = shapes.Surface(world, scene_space, pos = Vector([-5.0, 4.0, -15.0]), 
+    wall4 = shapes.Surface(world, static_space, pos = Vector([-5.0, 4.0, -15.0]), 
                             normal = Vector([0.0, 0.0, 1.0]),
                             forward = Vector([-1.0, 0.0, 0.0]),
                             length = 40.0, width = 8.0)
-    slope = shapes.Surface(world, scene_space, pos = Vector([-19.0, 5.0, 0.0]),
+    slope = shapes.Surface(world, static_space, pos = Vector([-19.0, 5.0, 0.0]),
                             normal = Vector([0.6, 0.8, 0.0]),
                             forward = Vector([0.8, -0.6, 0.0]),
                             length = 10.0, width = 30.0)
@@ -108,16 +109,16 @@ def init_scene():
     # Create a clock object for timing
     clock = pygame.time.Clock()
 
-    # Create groups for contact joints
-    object_contactgroup = ode.JointGroup()
-    scene_contactgroup = ode.JointGroup()
+    # Create group for contact joints
+    contact_group = ode.JointGroup()
 
     fps = 30
 
     # Create a game object
-    game = games.Game(world, object_space, scene_space, player, 
-                        object_list, light_list, camera, clock, 
-                        object_contactgroup, scene_contactgroup, fps)
+    spaces = (sphere_space, object_space, static_space)
+
+    game = games.Game(world, spaces, player, object_list, 
+                    light_list, camera, clock, contact_group, fps)
 
     # Initialize some constants for the shadow calculations
     init_graphics.init_shadows(game)

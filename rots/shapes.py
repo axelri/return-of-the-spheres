@@ -25,6 +25,9 @@ class Shape(object):
         self._mass = ode.Mass()
         self._geom = None
 
+        self._friction = 1
+        self._bounce = 0.2
+
         self.colliding = False
 
         # Material properties
@@ -34,7 +37,7 @@ class Shape(object):
         self._shininess = None
         self._emissive = None
 
-        self.displayListIndex = None
+        self._displayListIndex = None
         self._texture = None
 
         # Explanations of the material properties:
@@ -77,6 +80,18 @@ class Shape(object):
 
     def get_texture(self):
         return self._texture
+
+    def get_friction(self):
+        return self._friction
+
+    def get_bounce(self):
+        return self._bounce
+
+    def set_friction(self, friction):
+        self._friction = friction
+
+    def set_bounce(self, bounce):
+        self._bounce = bounce
 
     def set_ambient(self, ambient):
         self._ambient = ambient
@@ -126,6 +141,8 @@ class Sphere(Shape):
         self._geom = ode.GeomSphere(space, radius)
         self._geom.setBody(self._body)
 
+        self._rolling_friction = 0.5
+
         self.set_data('shape', self)
 
         self._radius = radius
@@ -154,6 +171,12 @@ class Sphere(Shape):
 
     def get_quadric(self):
         return self._quadric
+
+    def get_rolling_friction(self):
+        return self._rolling_friction
+
+    def set_rolling_friction(self, rolling_friction):
+        self._rolling_friction = rolling_friction
 
 
 class Cube(Shape):

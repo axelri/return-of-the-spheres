@@ -1,165 +1,163 @@
+from math import sqrt
+
 import ode
+
 from math_classes.vectors import Vector
 
-# TODO: Test if we can solve the problem with different contact
-# coefficients for different object by using several spaces, one
-# for each type of object.
-
-# NOTE:
-# geom.setData() and geom.getData() could enable us to tell which
-# geom belongs to which shape (e.g. shape._geom.setData(shape)?)
-# geom.getClass() can be used instead of the ugly solution below.
-# use hashspace instead of simplespace
+# NOTE: A bit ugly with __getattribute__() (we shouldn't call 
+# internal methods). Solution?
 
 def update_physics(game, iterations = 2):
 
+    sphere_space = game.get_sphere_space()
     object_space = game.get_object_space()
-    scene_space = game.get_scene_space()
+    static_space = game.get_static_space()
     world = game.get_world()
-    object_contactgroup = game.get_object_contactgroup()
-    scene_contactgroup = game.get_scene_contactgroup()
+    contact_group = game.get_contact_group()
     dt = game.get_dt()
 
     #Run multiple times for smoother simulation
     for i in range(iterations):
+
         # Detect collisions and create contact joints
+        # sphere-static collisions
+        ode.collide2(sphere_space, static_space, game, sphere_static_callback)
+        # object-static collisions
+        ode.collide2(object_space, static_space, game, object_static_callback)
+        # sphere-object collisions
+        ode.collide2(sphere_space, object_space, game, sphere_object_callback)
+        # sphere-sphere collisions
+        sphere_space.collide(game, sphere_sphere_callback)
         # object-object collisions
-        object_space.collide(game, object_near_callback)
-        # object-scene collisions
-        ode.collide2(object_space, scene_space, game, object_scene_near_callback)
+        object_space.collide(game, object_object_callback)
 
         # Simulation step
         world.step(dt/iterations)
 
+        # Check if the player is colliding
+        # TODO: Move? Is there a prettier way to check this?
         game._player.colliding = bool(game._player.get_shape().get_body().getNumJoints())
 
         # Remove all contact joints
-        object_contactgroup.empty()
-        scene_contactgroup.empty()
+        contact_group.empty()
 
-# TODO: Different callback functions for objects and scene
-# (Right now they are copies of each other, just wanted to test if this worked)
+def sphere_static_callback(game, sphere, static):
+    ''' Callback function for collisions between spheres
+        and the static environment. This function checks
+        if the given geoms do collide and creates contact
+        joints if they do. '''
 
-def object_near_callback(game, geom1, geom2):
-    """Callback function for the collide() method.
-
-    This function checks if the given geoms do collide and
-    creates contact joints if they do.
-
-    There is also a homemaid version of rolling rolling_friction. """
-
-    object_contactgroup = game.get_object_contactgroup()
+    contact_group = game.get_contact_group()
     world = game.get_world()
+    sphere_shape = sphere.__getattribute__('shape')
+    static_shape = static.__getattribute__('shape')
+    sphere_body = sphere.getBody()
+    static_body = static.getBody()
 
     # Check if the objects do collide
-    contacts = ode.collide(geom1, geom2)
+    contacts = ode.collide(sphere, static)
 
     # Create contact joints
     for c in contacts:
-        # TODO: Make the friction and bounce coefficients object properties.
-        # NOTE: High friction between the cube and the sphere, that's why
-        # the sphere 'climbs' the cube when pushing it.
-        c.setBounce(0.2)
+        bounce = sqrt(sphere_shape.get_bounce() * static_shape.get_bounce())
+        friction = sqrt(sphere_shape.get_friction() * static_shape.get_friction()) * 1000
+        c.setBounce(bounce)
+        c.setMu(friction)
 
-        if "Sphere" in str(geom1) and "Sphere" in str(geom2):
-            # Low friction for two spheres
-            c.setMu(0.1)
-        elif "Sphere" in str(geom1) or "Sphere" in str(geom2):
-            # Higher friction for spheres
-            c.setMu(5000)
-        else:
-            # Lower friction for other things
-            c.setMu(2)
+        j = ode.ContactJoint(world, contact_group, c)
+        j.attach(sphere_body, static_body)
 
-        j = ode.ContactJoint(world, object_contactgroup, c)
-        j.attach(geom1.getBody(), geom2.getBody())
+    # Rolling friction
+    ang_vel = Vector(sphere_body.getAngularVel())
+    rolling_friction = sphere_shape.get_rolling_friction()
+    sphere_body.addTorque((-ang_vel * rolling_friction).value)
 
-    # Homemaid rolling friction
+def object_static_callback(game, obj, static):
+    ''' Callback function for collisions between objects
+        and the static environment. This function checks
+        if the given geoms do collide and creates contact
+        joints if they do. '''
 
-    # TODO: Add spinning friction
-    # TODO: Make this part prettier
-
-    if contacts != []:
-        geoms = [geom1, geom2]
-        bodies = [geom1.getBody(), geom2.getBody()]
-        
-        if bodies[0]:
-            num_joints1 = bodies[0].getNumJoints()
-        else:
-            num_joints1 = 0
-        if bodies[1]:
-            num_joints2 = bodies[1].getNumJoints()
-        else:
-            num_joints2 = 0
-
-        num_joints = [num_joints1, num_joints2]
-
-        for i in range(len(num_joints)):
-        #for num_joint in num_joints, body in bodies:
-        # The last 'and' is a bit ugly, better solution?
-            if num_joints[i] != 0 and bodies[i] and "Sphere" in str(geoms[i]):
-                ang_vel = Vector(list(bodies[i].getAngularVel()))
-                rolling_friction = 0.5
-                bodies[i].addTorque((-ang_vel*rolling_friction).value)
-
-def object_scene_near_callback(game, geom1, geom2):
-    """Callback function for the collide() method.
-
-    This function checks if the given geoms do collide and
-    creates contact joints if they do.
-
-    There is also a homemaid version of rolling rolling_friction. """
-
-    scene_contactgroup = game.get_scene_contactgroup()
+    contact_group = game.get_contact_group()
     world = game.get_world()
+    obj_shape = obj.__getattribute__('shape')
+    static_shape = static.__getattribute__('shape')
 
     # Check if the objects do collide
-    contacts = ode.collide(geom1, geom2)
+    contacts = ode.collide(obj, static)
 
     # Create contact joints
     for c in contacts:
-        # TODO: Make the friction and bounce coefficients object properties.
-        # NOTE: High friction between the cube and the sphere, that's why
-        # the sphere 'climbs' the cube when pushing it.
-        c.setBounce(0.2)
+        bounce = sqrt(obj_shape.get_bounce() * static_shape.get_bounce())
+        friction = sqrt(obj_shape.get_friction() * static_shape.get_friction()) * 0.1
+        c.setBounce(bounce)
+        c.setMu(friction)
+        j = ode.ContactJoint(world, contact_group, c)
+        j.attach(obj.getBody(), static.getBody())
 
-        if "Sphere" in str(geom1) and "Sphere" in str(geom2):
-            # Low friction for two spheres
-            c.setMu(0.1)
-        elif "Sphere" in str(geom1) or "Sphere" in str(geom2):
-            # Higher friction for spheres
-            c.setMu(5000)
-        else:
-            # Lower friction for other things
-            c.setMu(2)
+def sphere_object_callback(game, sphere, obj):
+    ''' Callback function for collisions between spheres
+        and objects. This function checks if the given geoms
+        do collide and creates contact joints if they do. '''
 
-        j = ode.ContactJoint(world, scene_contactgroup, c)
-        j.attach(geom1.getBody(), geom2.getBody())
+    contact_group = game.get_contact_group()
+    world = game.get_world()
+    sphere_shape = sphere.__getattribute__('shape')
+    obj_shape = obj.__getattribute__('shape')
 
-    # Homemaid rolling friction
+    # Check if the objects do collide
+    contacts = ode.collide(sphere, obj)
 
-    # TODO: Add spinning friction
-    # TODO: Make this part prettier
+    # Create contact joints
+    for c in contacts:
+        bounce = sqrt(sphere_shape.get_bounce() * obj_shape.get_bounce())
+        friction = sqrt(sphere_shape.get_friction() * obj_shape.get_friction()) * 0.1
+        c.setBounce(bounce)
+        c.setMu(friction)
+        j = ode.ContactJoint(world, contact_group, c)
+        j.attach(sphere.getBody(), obj.getBody())
 
-    if contacts != []:
-        geoms = [geom1, geom2]
-        bodies = [geom1.getBody(), geom2.getBody()]
-        
-        if bodies[0]:
-            num_joints1 = bodies[0].getNumJoints()
-        else:
-            num_joints1 = 0
-        if bodies[1]:
-            num_joints2 = bodies[1].getNumJoints()
-        else:
-            num_joints2 = 0
+def sphere_sphere_callback(game, sphere1, sphere2):
+    ''' Callback function for collisions between spheres. 
+        This function checks if the given geoms do collide
+        and creates contact joints if they do. '''
 
-        num_joints = [num_joints1, num_joints2]
+    contact_group = game.get_contact_group()
+    world = game.get_world()
+    sphere1_shape = sphere1.__getattribute__('shape')
+    sphere2_shape = sphere2.__getattribute__('shape')
 
-        for i in range(len(num_joints)):
-        #for num_joint in num_joints, body in bodies:
-        # The last 'and' is a bit ugly, better solution?
-            if num_joints[i] != 0 and bodies[i] and "Sphere" in str(geoms[i]):
-                ang_vel = Vector(list(bodies[i].getAngularVel()))
-                rolling_friction = 0.5
-                bodies[i].addTorque((-ang_vel*rolling_friction).value)
+    # Check if the objects do collide
+    contacts = ode.collide(sphere1, sphere2)
+
+    # Create contact joints
+    for c in contacts:
+        bounce = sqrt(sphere1_shape.get_bounce() * sphere2_shape.get_bounce())
+        friction = sqrt(sphere1_shape.get_friction() * sphere2_shape.get_friction()) * 0.1
+        c.setBounce(bounce)
+        c.setMu(friction)
+        j = ode.ContactJoint(world, contact_group, c)
+        j.attach(sphere1.getBody(), sphere2.getBody())
+
+def object_object_callback(game, obj1, obj2):
+    ''' Callback function for collisions between objects. 
+        This function checks if the given geoms do collide
+        and creates contact joints if they do. '''
+
+    contact_group = game.get_contact_group()
+    world = game.get_world()
+    obj1_shape = obj1.__getattribute__('shape')
+    obj2_shape = obj2.__getattribute__('shape')
+
+    # Check if the objects do collide
+    contacts = ode.collide(obj1, obj2)
+
+    # Create contact joints
+    for c in contacts:
+        bounce = sqrt(obj1_shape.get_bounce() * obj2_shape.get_bounce())
+        friction = sqrt(obj1_shape.get_friction() * obj2_shape.get_friction())
+        c.setBounce(bounce)
+        c.setMu(friction)
+
+        j = ode.ContactJoint(world, contact_group, c)
+        j.attach(obj1.getBody(), obj2.getBody())
