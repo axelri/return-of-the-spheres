@@ -53,9 +53,10 @@ def pause_loop(game):
 def main():
     ''' Main routine of the game.'''
 
-    width, height = init_graphics.init_window('testODE 2', 'stars-5.jpg')
+    width, height, start_screen = init_graphics.init_window('testODE 2', 
+                                                            'stars-5.jpg')
 
-    game = scenes.init_scene()
+    game = scenes.init_scene(start_screen)
 
     player = game.get_player()
     camera = game.get_camera()
@@ -65,7 +66,6 @@ def main():
     pause = False
     toggle_pause = False
 
-    # Background music
     pygame.mixer.music.load('sound/sound_data/02. II. Molto vivace.ogg')
     pygame.mixer.music.set_volume(0.8)
     pygame.mixer.music.play(-1)

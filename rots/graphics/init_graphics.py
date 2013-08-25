@@ -8,8 +8,9 @@ import itertools
 from math import tan, pi, radians
 
 from graphics import textures, draw
+from text import TextBox
 
-def init_window(window_name, start_screen_image, HAVE_FULLSCREEN = True):
+def init_window(window_name, start_image, HAVE_FULLSCREEN = True):
     ''' Initiates pygame, creates and sets up the window,
     sets up OpenGL.
 
@@ -61,9 +62,9 @@ def init_window(window_name, start_screen_image, HAVE_FULLSCREEN = True):
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_TEXTURE_2D)
 
-    # Draw the start screen
-    draw.start_screen(start_screen_image, width, height, aspect_angle)
-    pygame.display.flip()
+    # Create the start screen
+    start_screen = Start_screen(start_image, width, height, aspect_angle)
+    start_screen.update('Initializing OpenGL')
 
     # Enable and set up alpha blending
     glEnable (GL_BLEND)
@@ -84,7 +85,7 @@ def init_window(window_name, start_screen_image, HAVE_FULLSCREEN = True):
     glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
 
-    return width, height
+    return width, height, start_screen
 
 def init_shadows(game):
     ''' Sets the necessary constants for shadow mapping. '''
@@ -153,3 +154,53 @@ def init_shadows(game):
     game.add_constant('light_projection_matrix', light_projection_matrix)
     game.add_constant('light_view_matrix_list', light_view_matrix_list)
     game.add_constant('bias_matrix', bias_matrix)
+
+class Start_screen:
+    ''' A class for the start screen. Is used to show
+        an image and messages during the loading of the game. '''
+
+    def __init__(self, start_image, width, height, aspect_angle):
+        ''' Initializes the start screen. Creates a quad
+            to show the background image on and a textbox
+            to show messages on. '''
+
+        # Set up the perspective
+        self._ratio = float(width)/float(height)
+        self._distance = tan(radians(90 - aspect_angle/2.0 ))
+
+        # Create a display list for the start screen image
+        start_texture = textures.load_texture(start_image)
+
+        display_list_index = glGenLists(1)
+        glNewList(display_list_index, GL_COMPILE)
+        draw.start_screen(start_texture, self._ratio)
+        glEndList()
+
+        self._display_list_index = display_list_index
+
+        # Create a text box
+        self._text_box = TextBox('test.ttf', 40, width/2 - 200, 
+                                        height/2, [1,0,0])
+
+    def update(self, message):
+        ''' Updates and draws the start screen '''
+
+        glDisable(GL_LIGHTING)
+
+        self._text_box.set_string(message)
+
+        glPushMatrix()
+        glLoadIdentity()
+        gluLookAt(0.0, 0.0, self._distance,
+                    0.0, 0.0, 0.0,
+                    0.0, 1.0, 0.0)
+
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        
+        glCallList(self._display_list_index)
+
+        self._text_box.draw()
+
+        glPopMatrix()
+        pygame.display.flip()
+        glEnable(GL_LIGHTING)

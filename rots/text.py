@@ -63,6 +63,9 @@ class TextBox(object):
     def get_y(self):
         return self._y
 
+    def set_y(self, y):
+        self._y = y
+
     def get_orientation(self):
         return matrices.generate_rotation_matrix(Vector([0.0,0.0,1.0]), self._rotation)
 

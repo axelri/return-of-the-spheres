@@ -186,20 +186,12 @@ def sphere(sphere):
 
     glDisable(GL_TEXTURE_2D)
 
-def start_screen(file_name, width, height, aspect_angle):
+def start_screen(start_texture, ratio):
     ''' Draws a start screen. It draws a Quad that
-        fills the screen, textured with the image
-        in the file 'file_name' '''
+        fills the screen, textured with 'start_screen_texture' '''
 
-    ratio = float(width)/float(height)
-    distance = tan(radians(90 - aspect_angle/2.0 ))
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-    gluLookAt(0.0, 0.0, distance,
-            0.0, 0.0, 0.0,
-            0.0, 1.0, 0.0)
-    start_tex = textures.load_texture(file_name)
     glEnable(GL_TEXTURE_2D)
-    glBindTexture(GL_TEXTURE_2D, start_tex)
+    glBindTexture(GL_TEXTURE_2D, start_texture)
     glColor4f(1.0, 1.0, 1.0, 1.0)
     glBegin(GL_QUADS)
     glTexCoord2f(0,0)

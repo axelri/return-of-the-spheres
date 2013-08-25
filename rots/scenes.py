@@ -11,11 +11,12 @@ import players
 from graphics import init_graphics, lights, cameras, textures
 from math_classes.vectors import Vector
 
-def init_scene():
+def init_scene(start_screen):
     ''' Initializes the scene (creates all objects etc)
         and returns the game object. '''
 
-     # Create a world object
+    # Create a world object
+
     world = ode.World()
     world.setGravity( (0,-9.81,0) )
     world.setERP(0.8)
@@ -28,6 +29,8 @@ def init_scene():
     static_space = ode.Space(1)
 
     # Load textures
+    start_screen.update('Loading textures')
+
     earth_tex = textures.load_texture('celestial_bodies/earth_big.jpg')
     moon_tex = textures.load_texture('celestial_bodies/moon-4k.png')
     stars_tex = textures.load_texture('stars_big.jpg')
@@ -35,6 +38,8 @@ def init_scene():
     mars_tex = textures.load_texture('celestial_bodies/Mars_2k-050104.png')
 
     # Create shapes
+    start_screen.update('Creating objects')
+
     earth = shapes.Sphere(world, sphere_space, pos = Vector([0.0, 5.0, 0.0]), 
                             radius = 1.0, texture = earth_tex)
 
@@ -54,6 +59,8 @@ def init_scene():
     cube = shapes.Cube(world, object_space, pos = Vector([3.0, 5.0, 0.0]), side = 2)
 
     # Create surfaces
+    start_screen.update('Creating scene')
+
     sticky_floor = shapes.Surface(world, static_space, pos = Vector((0.0, 0.0, 7.5)), 
                             normal = Vector([0.0, 1.0, 0.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
@@ -85,6 +92,8 @@ def init_scene():
                             length = 10.0, width = 30.0)
 
     #Set the color of the surfaces
+    start_screen.update('Setting colors')
+
     slippy_floor.set_ambient([0.5, 0.5, 0.8, 1.0])
     slippy_floor.set_diffuse([0.5, 0.5, 0.8, 1.0])
     wall1.set_ambient([0.0, 0.0, 0.2, 1.0])
@@ -110,6 +119,8 @@ def init_scene():
     camera = cameras.Camera()
 
     # Create player
+    start_screen.update('Organizing')
+    
     player = players.Player(earth)
 
     # Add all objects that should be drawn to a list
