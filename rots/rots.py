@@ -66,6 +66,7 @@ def main():
     pause = False
     toggle_pause = False
 
+    # Background music
     pygame.mixer.music.load('sound/sound_data/02. II. Molto vivace.ogg')
     pygame.mixer.music.set_volume(0.8)
     pygame.mixer.music.play(-1)
