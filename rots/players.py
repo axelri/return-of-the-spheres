@@ -18,6 +18,7 @@ class Player:
         self._bounce_sound = sound_effects.load_sound('bounce.wav')
         self._jump_sound.set_volume(0.15)
         self._bounce_sound.set_volume(0.7)
+        self._up = Vector([0.0, 1.0, 0.0])
 
         self.lastDir = Vector()
 
@@ -41,17 +42,21 @@ class Player:
 
     def jump(self):
         self._jump_sound.play()
-        self._shape.get_body().addForce((0.0, 400.0, 0.0))
+        jump_force = self._up * 400
+        self._shape.get_body().addForce(jump_force.value)
         self._jumping = True
 
-    def move(self, direction, forward_vector, jump):
+    def set_up_dir(self, up):
+        self._up = up
+
+    def move(self, direction, forward_vector, up_vector, jump):
 
         # TODO: Tweak with self._speed and the coefficient in addForce 
         # (currrently 10) to get good movement
         # TODO: Fix so you can't move faster than intended just by 
         # moving the mouse back and forth.
         
-        left_vector = Vector((0.0, 1.0, 0.0)).cross(forward_vector)
+        left_vector = up_vector.cross(forward_vector)
 
         x_movement = left_vector * -direction.value[0]
         z_movement = forward_vector * -direction.value[2]

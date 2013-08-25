@@ -33,8 +33,8 @@ def game_loop(game):
     physics.update_physics(game)
 
     # Move
-    forwardVector = camera.update(player)
-    player.move(direction, forwardVector, jump)
+    forward_vector, up_vector = camera.update(player)
+    player.move(direction, forward_vector, up_vector, jump)
 
     # Render
 

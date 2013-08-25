@@ -12,9 +12,11 @@ def update_physics(game, iterations = 2):
     sphere_space = game.get_sphere_space()
     object_space = game.get_object_space()
     static_space = game.get_static_space()
+    power_up_space = game.get_power_up_space()
     world = game.get_world()
     contact_group = game.get_contact_group()
     dt = game.get_dt()
+    player = game.get_player()
 
     #Run multiple times for smoother simulation
     for i in range(iterations):
@@ -30,16 +32,27 @@ def update_physics(game, iterations = 2):
         sphere_space.collide(game, sphere_sphere_callback)
         # object-object collisions
         object_space.collide(game, object_object_callback)
+        # player-power up collisions
+        ode.collide2(player.get_shape().get_geom(), power_up_space, 
+                        game, player_power_up_callback)
 
         # Simulation step
         world.step(dt/iterations)
 
         # Check if the player is colliding
         # TODO: Move? Is there a prettier way to check this?
-        game._player.colliding = bool(game._player.get_shape().get_body().getNumJoints())
+        player.colliding = bool(player.get_shape().get_body().getNumJoints())
 
         # Remove all contact joints
         contact_group.empty()
+
+        # Call power up functions
+        # NOTE: Couldn't find a better place to put this, is there any?
+        for i in range(power_up_space.getNumGeoms()):
+            power_up_geom = power_up_space.getGeom(i)
+            power_up = power_up_geom.__getattribute__('power up')
+            if power_up.get_collided():
+                power_up.collide_func(game)
 
 def sphere_static_callback(game, sphere, static):
     ''' Callback function for collisions between spheres
@@ -164,3 +177,21 @@ def object_object_callback(game, obj1, obj2):
 
         j = ode.ContactJoint(world, contact_group, c)
         j.attach(obj1.getBody(), obj2.getBody())
+
+def player_power_up_callback(game, player_geom, power_up_geom):
+    ''' Callback function for collisions between the
+        player and power ups. If they have collided,
+        the power up's collide_func is called. '''
+
+    power_up = power_up_geom.__getattribute__('power up')
+
+    contacts = ode.collide(player_geom, power_up_geom)
+
+    if contacts:
+        #power_up.collide_func(game)
+        # NOTE: Calling the function from here makes the 
+        # game crash since we are not allowed to remove 
+        # any geom from a space that is currently checked
+        # for collisions. Set a collision flag instead 
+        # and call the function later.
+        power_up.set_collided(True)

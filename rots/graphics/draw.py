@@ -163,9 +163,6 @@ def sphere(sphere):
 
     Calls OpenGL to draw the sphere. '''
     
-    assert isinstance(sphere, shapes.Sphere), \
-           'Input must be a Sphere object'
-    
     ambient, diffuse, specular, \
              shininess, emissive = sphere.get_material_properties()
 

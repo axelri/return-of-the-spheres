@@ -3,7 +3,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import ode
 
-import numbers
+import numbers #Needed?
 import math
 
 from math_classes import matrices
@@ -37,7 +37,7 @@ class Shape(object):
         self._shininess = None
         self._emissive = None
 
-        self._displayListIndex = None
+        self._display_list_index = None
         self._texture = None
 
         # Explanations of the material properties:
@@ -65,10 +65,10 @@ class Shape(object):
         return self._geom
 
     def get_vel(self):
-        return Vector(list(self._body.getLinearVel()))
+        return Vector(self._body.getLinearVel())
 
     def get_pos(self):
-        return Vector(list(self._body.getPosition()))
+        return Vector(self._body.getPosition())
 
     def get_orientation(self):
         orientation = matrices.ODE_to_OpenGL(self._body.getRotation())
@@ -95,19 +95,19 @@ class Shape(object):
 
     def set_ambient(self, ambient):
         self._ambient = ambient
-        self._displayListIndex = self.create_displaylist_index()
+        self._display_list_index = self.create_displaylist_index()
 
     def set_diffuse(self, diffuse):
         self._diffuse = diffuse
-        self._displayListIndex = self.create_displaylist_index()
+        self._display_list_index = self.create_displaylist_index()
 
     def set_specular(self, specular):
         self._specular = specular
-        self._displayListIndex = self.create_displaylist_index()
+        self._display_list_index = self.create_displaylist_index()
 
     def set_emissive(self, emissive):
         self._emissive = emissive
-        self._displayListIndex = self.create_displaylist_index()
+        self._display_list_index = self.create_displaylist_index()
 
     def set_data(self, name, value):
         ''' Sets an attribute of the shape's geom,
@@ -125,7 +125,7 @@ class Shape(object):
         glTranslatef(pos[0], pos[1], pos[2])
         rotMatrix = self.get_orientation()
         glMultMatrixf(rotMatrix)
-        glCallList(self._displayListIndex)
+        glCallList(self._display_list_index)
 
 class Sphere(Shape):
 
@@ -157,14 +157,14 @@ class Sphere(Shape):
         self._shininess = 64
         self._emissive = [0.0, 0.0, 0.0, 1.0]
         
-        self._displayListIndex = self.create_displaylist_index()
+        self._display_list_index = self.create_displaylist_index()
 
     def create_displaylist_index(self):
-        displayListIndex = glGenLists(1)
-        glNewList(displayListIndex, GL_COMPILE)
+        display_list_index = glGenLists(1)
+        glNewList(display_list_index, GL_COMPILE)
         draw.sphere(self)
         glEndList()
-        return displayListIndex
+        return display_list_index
 
     def get_radius(self):
         return self._radius
@@ -204,14 +204,14 @@ class Cube(Shape):
         self._shininess = 42
         self._emissive = [0.0, 0.0, 0.0, 1.0]
         
-        self._displayListIndex = self.create_displaylist_index()
+        self._display_list_index = self.create_displaylist_index()
 
     def create_displaylist_index(self):
-        displayListIndex = glGenLists(1)
-        glNewList(displayListIndex, GL_COMPILE)
+        display_list_index = glGenLists(1)
+        glNewList(display_list_index, GL_COMPILE)
         draw.cube(self)
         glEndList()
-        return displayListIndex
+        return display_list_index
 
     def get_side(self):
         return self._side
@@ -279,14 +279,14 @@ class Surface(Shape):
         self._shininess = 20
         self._emissive = [0.0, 0.0, 0.0, 1.0]
 
-        self._displayListIndex = self.create_displaylist_index()
+        self._display_list_index = self.create_displaylist_index()
 
     def create_displaylist_index(self):
-        displayListIndex = glGenLists(1)
-        glNewList(displayListIndex, GL_COMPILE)
+        display_list_index = glGenLists(1)
+        glNewList(display_list_index, GL_COMPILE)
         draw.surface(self)
         glEndList()
-        return displayListIndex
+        return display_list_index
 
     def get_points(self):
         return self._points

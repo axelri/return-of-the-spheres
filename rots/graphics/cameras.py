@@ -18,19 +18,26 @@ class Camera:
         the camera. '''
         
         # The distance from the camera to the player
-        self._xDist = 0.0
-        self._yDist = 4.0
-        self._zDist = 10.0
+        self._x_dist = 0.0
+        self._y_dist = 4.0
+        self._z_dist = 10.0
 
         # The position of the camera
-        self._xPos = self._xDist
-        self._yPos = self._yDist
-        self._zPos = self._zDist
+        self._xPos = self._x_dist
+        self._yPos = self._y_dist
+        self._zPos = self._z_dist
 
         self._xAngle = 0.0
 
         # The up vector for the camera
-        self._up = [0.0, 1.0, 0.0]        
+        self._up = Vector([0.0, 1.0, 0.0])
+        self._new_up = Vector([0.0, 1.0, 0.0])
+
+        self._flipping = False
+        self._mouse_sensitivity = 0.3
+
+    def get_up(self):
+        return self._up
 
     def view(self, player):
         ''' Calculates a translation/rotation matrix
@@ -46,10 +53,11 @@ class Camera:
         achieve the aforementioned result. '''
         
         pos = player.get_pos().value
+        up = self._up.value
         
         gluLookAt(self._xPos, self._yPos, self._zPos,
                   pos[0], pos[1], pos[2],
-                  self._up[0], self._up[1], self._up[2])
+                  up[0], up[1], up[2])
 
     def _move(self, player):
         ''' Sets the position and orientation of
@@ -61,18 +69,18 @@ class Camera:
         pos = player.get_pos().value
         mouseX, mouseY = pygame.mouse.get_rel()
 
-        self._xAngle -= mouseX * pi / 180.0 * 0.3
+        self._xAngle -= mouseX * pi / 180.0 * self._mouse_sensitivity
 
         player_y_pos = pos[1]
         y_dist = self._yPos - player_y_pos
-        y_diff = self._yDist - y_dist
+        y_diff = self._y_dist - y_dist
 
         if abs(y_diff) > 0.01 and not player.is_jumping():
             self._yPos += y_diff * 0.1
 
 
-        self._xPos = pos[0] + sin(self._xAngle) * self._zDist
-        self._zPos = pos[2] + cos(self._xAngle) * self._zDist
+        self._xPos = pos[0] + sin(self._xAngle) * self._z_dist
+        self._zPos = pos[2] + cos(self._xAngle) * self._z_dist
 
     def update(self, player):
         ''' Updates the camera object: Calls self.move()
@@ -96,5 +104,23 @@ class Camera:
         direction = direction.projected(Vector([1.0, 0.0, 0.0]),
                                         Vector([0.0, 0.0, 1.0]))
         direction = direction.normalize()
-        
-        return direction
+
+        if self._flipping:
+            # TODO: Remove the bug that causes strange
+            # rotation if moving the mouse while flipping
+
+            rot_vec = self._up.cross(direction) * 0.05
+            self._up += rot_vec
+            self._up = self._up.normalize()
+
+            if (self._up - self._new_up).norm() < 0.1:
+                self._up = self._new_up
+                self._flipping = False
+
+        return direction, self._up
+
+    def flip_up_vector(self):
+        self._flipping = True
+        self._new_up = self._up * -1.0
+        self._y_dist *= -1.0
+        self._mouse_sensitivity *= -1.0

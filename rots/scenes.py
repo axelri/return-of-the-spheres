@@ -8,6 +8,7 @@ import ode
 import shapes
 import games
 import players
+import power_ups
 from graphics import init_graphics, lights, cameras, textures
 from math_classes.vectors import Vector
 
@@ -27,6 +28,7 @@ def init_scene(start_screen):
     sphere_space = ode.Space(1)
     object_space = ode.Space(1)
     static_space = ode.Space(1)
+    power_up_space = ode.Space(1)
 
     # Load textures
     tex_no = 5 # The number of textures (used to show progress in loading)
@@ -72,6 +74,10 @@ def init_scene(start_screen):
     #                        diffuse = [1.0, 1.0, 1.0, 1.0], specular = [1.0, 1.0, 1.0, 1.0])
 
     cube = shapes.Cube(world, object_space, pos = Vector([3.0, 5.0, 0.0]), side = 2)
+
+    # Create power ups
+    gravity_flipper = power_ups.Gravity_flipper(power_up_space, 
+                                                Vector([10.0, 2.0, 10.0]))
 
     # Create surfaces
     scene_no = 9
@@ -146,9 +152,9 @@ def init_scene(start_screen):
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 1.0/col_no*100))
     slippy_floor.set_diffuse([0.5, 0.5, 0.8, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 2.0/col_no*100))
-    slippy_roof.set_ambient([0.5, 0.5, 0.8, 1.0])
+    slippy_roof.set_ambient([0.8, 0.5, 0.5, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 3.0/col_no*100))
-    slippy_roof.set_diffuse([0.5, 0.5, 0.8, 1.0])
+    slippy_roof.set_diffuse([0.8, 0.5, 0.5, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 4.0/col_no*100))
     wall1.set_ambient([0.0, 0.0, 0.2, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 5.0/col_no*100))
@@ -195,7 +201,7 @@ def init_scene(start_screen):
     object_list = [player.get_shape(), sun, moon, mars, cube, 
                     sticky_floor, slippy_floor, wall1, wall2, 
                     wall3, floor_slope, roof_slope, slippy_roof,
-                    sticky_roof]
+                    sticky_roof, gravity_flipper]
 
     # Add all lights to a list
     light_list = [light1, light2]
@@ -209,7 +215,7 @@ def init_scene(start_screen):
     fps = 30
 
     # Create a game object
-    spaces = (sphere_space, object_space, static_space)
+    spaces = (sphere_space, object_space, static_space, power_up_space)
 
     game = games.Game(world, spaces, player, object_list, 
                     light_list, camera, clock, contact_group, fps)
