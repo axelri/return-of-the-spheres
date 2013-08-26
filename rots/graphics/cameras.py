@@ -31,9 +31,11 @@ class Camera:
 
         # The up vector for the camera
         self._up = Vector([0.0, 1.0, 0.0])
-        self._new_up = Vector([0.0, 1.0, 0.0])
+        self._new_up = None
+        self._direction = None
 
         self._flipping = False
+        self._flip_axis = None
         self._mouse_sensitivity = 0.3
 
     def get_up(self):
@@ -98,18 +100,18 @@ class Camera:
         
         self._move(player)
 
-        direction = Vector([pos[0] - self._xPos,
+        self._direction = Vector([pos[0] - self._xPos,
                                     pos[1] - self._yPos,
                                     pos[2] - self._zPos])
-        direction = direction.projected(Vector([1.0, 0.0, 0.0]),
+        self._direction = self._direction.projected(Vector([1.0, 0.0, 0.0]),
                                         Vector([0.0, 0.0, 1.0]))
-        direction = direction.normalize()
+        self._direction = self._direction.normalize()
 
         if self._flipping:
             # TODO: Remove the bug that causes strange
             # rotation if moving the mouse while flipping
 
-            rot_vec = self._up.cross(direction) * 0.05
+            rot_vec = self._up.cross(self._flip_axis) * 0.1
             self._up += rot_vec
             self._up = self._up.normalize()
 
@@ -117,10 +119,11 @@ class Camera:
                 self._up = self._new_up
                 self._flipping = False
 
-        return direction, self._up
+        return self._direction, self._up
 
     def flip_up_vector(self):
         self._flipping = True
         self._new_up = self._up * -1.0
         self._y_dist *= -1.0
         self._mouse_sensitivity *= -1.0
+        self._flip_axis = self._direction
