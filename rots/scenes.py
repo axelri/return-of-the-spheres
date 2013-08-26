@@ -31,7 +31,7 @@ def init_scene(start_screen):
     power_up_space = ode.Space(1)
 
     # Load textures
-    tex_no = 5 # The number of textures (used to show progress in loading)
+    tex_no = 6 # The number of textures (used to show progress in loading)
     start_screen.update('Loading textures: {perc:.0f}%'.format(perc = 0.0/tex_no*100))
 
     earth_tex = textures.load_texture('celestial_bodies/earth_big.jpg')
@@ -49,8 +49,11 @@ def init_scene(start_screen):
     mars_tex = textures.load_texture('celestial_bodies/Mars_2k-050104.png')
     start_screen.update('Loading textures: {perc:.0f}%'.format(perc = 5.0/tex_no*100))
 
+    puppy_tex = textures.load_texture('puppy.jpeg')
+    start_screen.update('Loading textures: {perc:.0f}%'.format(perc = 6.0/tex_no*100))
+
     # Create shapes
-    obj_no = 4
+    obj_no = 6
     start_screen.update('Creating objects: {perc:.0f}%'.format(perc = 0.0/obj_no*100))
 
     earth = shapes.Sphere(world, sphere_space, pos = Vector([0.0, 5.0, 0.0]), 
@@ -73,11 +76,14 @@ def init_scene(start_screen):
     #sun_light = lights.Light(GL_LIGHT1, sun.get_pos(), ambient = [0.2, 0.2, 0.0, 1.0],
     #                        diffuse = [1.0, 1.0, 1.0, 1.0], specular = [1.0, 1.0, 1.0, 1.0])
 
-    cube = shapes.Cube(world, object_space, pos = Vector([3.0, 5.0, 0.0]), side = 2)
+    cube = shapes.Cube(world, object_space, pos = Vector([3.0, 5.0, 0.0]), side = 2,
+                        texture = puppy_tex)
+    start_screen.update('Creating objects: {perc:.0f}%'.format(perc = 5.0/obj_no*100))
 
     # Create power ups
-    gravity_flipper = power_ups.Gravity_flipper(power_up_space, 
+    world_flipper = power_ups.World_flipper(power_up_space, 
                                                 Vector([10.0, 2.0, 10.0]))
+    start_screen.update('Creating objects: {perc:.0f}%'.format(perc = 6.0/obj_no*100))
 
     # Create surfaces
     scene_no = 9
@@ -201,7 +207,7 @@ def init_scene(start_screen):
     object_list = [player.get_shape(), sun, moon, mars, cube, 
                     sticky_floor, slippy_floor, wall1, wall2, 
                     wall3, floor_slope, roof_slope, slippy_roof,
-                    sticky_roof, gravity_flipper]
+                    sticky_roof, world_flipper]
 
     # Add all lights to a list
     light_list = [light1, light2]

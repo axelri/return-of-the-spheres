@@ -182,7 +182,7 @@ class Sphere(Shape):
 class Cube(Shape):
 
     def __init__(self, world, space, pos = Vector(), side = 1,
-                 mass = 1):
+                 mass = 1, texture = None):
         super(Cube, self).__init__(world)
 
         # Set ODE properties
@@ -196,6 +196,8 @@ class Cube(Shape):
         self.set_data('shape', self)
 
         self._side = side
+
+        self._texture = texture
         
         # Material properties
         self._ambient = [1.0, 1.0, 1.0, 1.0]
@@ -226,7 +228,7 @@ class Surface(Shape):
                 normal = Vector([0.0, 1.0, 0.0]), 
                 forward = Vector([0.0, 0.0, -1.0]),
                 length = 1, width = 1, texture = None,
-                subdivision_size = 0.1):
+                subdivision_size = 1): #Bigger subdivisions for faster startup when debugging
 
         # normal: The normal direction
         # forward: The direction in which the surface is 'length' long.

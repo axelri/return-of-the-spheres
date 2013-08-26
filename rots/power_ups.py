@@ -73,11 +73,11 @@ class Power_up(object):
             keyword 'name', value 'value' '''
         self._geom.__setattr__(name, value)
 
-class Gravity_flipper(Power_up):
+class World_flipper(Power_up):
 
     def __init__(self, space, pos):
 
-        super(Gravity_flipper, self).__init__()
+        super(World_flipper, self).__init__()
 
         self._radius = 0.5
         self._space = space
@@ -149,7 +149,7 @@ class Gravity_flipper(Power_up):
         player.set_up_dir(up * -1.0)
         
         new_power_pos = Vector((randrange(-14, 14), 8.0, randrange(-14, 14))) + up * 6.0
-        new_power_up = Gravity_flipper(self._space, new_power_pos)
+        new_power_up = World_flipper(self._space, new_power_pos)
         object_list.append(new_power_up)
 
         self.kill(game)
