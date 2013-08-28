@@ -127,3 +127,6 @@ class Camera:
         self._y_dist *= -1.0
         self._mouse_sensitivity *= -1.0
         self._flip_axis = self._direction
+
+    def flip_y_dist(self):
+        self._y_dist *= -1.0

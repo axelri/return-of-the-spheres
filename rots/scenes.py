@@ -83,6 +83,9 @@ def init_scene(start_screen):
     # Create power ups
     world_flipper = power_ups.World_flipper(power_up_space, 
                                                 Vector([10.0, 2.0, 10.0]))
+    gravity_flipper = power_ups.Gravity_flipper(power_up_space, 
+                                                Vector([10.0, 2.0, -10.0]))
+
     start_screen.update('Creating objects: {perc:.0f}%'.format(perc = 6.0/obj_no*100))
 
     # Create surfaces
@@ -207,7 +210,7 @@ def init_scene(start_screen):
     object_list = [player.get_shape(), sun, moon, mars, cube, 
                     sticky_floor, slippy_floor, wall1, wall2, 
                     wall3, floor_slope, roof_slope, slippy_roof,
-                    sticky_roof, world_flipper]
+                    sticky_roof, world_flipper, gravity_flipper]
 
     # Add all lights to a list
     light_list = [light1, light2]

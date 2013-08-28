@@ -109,6 +109,9 @@ class Shape(object):
         self._emissive = emissive
         self._display_list_index = self.create_displaylist_index()
 
+    def set_orientation(self, orientation):
+        self._body.setRotation(orientation)
+
     def set_data(self, name, value):
         ''' Sets an attribute of the shape's geom,
             keyword 'name', value 'value' '''
@@ -149,6 +152,12 @@ class Sphere(Shape):
 
         self._texture = texture
         self._quadric = gluNewQuadric()
+
+        # Set 'right' side up (to compensate for textures being drawn 'sideways')
+        rotation = matrices.OpenGL_to_ODE(matrices.\
+                        generate_rotation_matrix(Vector([-1.0, 0.0, 0.0]), math.pi/2.0))
+
+        self.set_orientation(rotation)
 
         # Material properties
         self._ambient = [1.0, 1.0, 1.0, 1.0]

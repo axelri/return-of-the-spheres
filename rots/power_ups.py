@@ -73,12 +73,11 @@ class Power_up(object):
             keyword 'name', value 'value' '''
         self._geom.__setattr__(name, value)
 
-class World_flipper(Power_up):
+class Gravity_flipper(Power_up):
 
     def __init__(self, space, pos):
 
-        super(World_flipper, self).__init__()
-
+        super(Gravity_flipper, self).__init__()
         self._radius = 0.5
         self._space = space
         self._geom = ode.GeomBox(self._space, (self._radius * 2, self._radius * 2, 
@@ -86,11 +85,14 @@ class World_flipper(Power_up):
         self._geom.setBody(None)
         self._geom.setPosition(pos.value)
 
-        self._texture = textures.load_texture('black_white_2.png')
+        self._texture = textures.load_texture('arrows_2.png')
         self._quadric = gluNewQuadric()
 
         self._draw_pos = self.get_pos()
-        self._draw_orientation = self.get_orientation()
+        # To compensate for the texture being drawn 'sideways'
+        self._draw_orientation = matrices.\
+                generate_rotation_matrix(Vector([-1.0, 0.0, 0.0]),
+                                                pi/2.0)
         self._oscillation_angle = 0
         self._oscillation_amplitude = self._radius
 
@@ -122,12 +124,46 @@ class World_flipper(Power_up):
                     sin(self._oscillation_angle) * self._oscillation_amplitude).value
         glTranslatef(pos[0], pos[1], pos[2])
         rotMatrix = self.get_orientation()
+        glMultMatrixf(self._draw_orientation)
         glMultMatrixf(rotMatrix)
         glCallList(self._display_list_index)
 
         self._oscillation_angle += pi * 0.05
         if self._oscillation_angle <= 2 * pi:
             self._oscillation_angle -= 2 * pi
+
+    def collide_func(self, game):
+        ''' The function that is called whe the player
+            collides with the power up '''
+
+        world = game.get_world()
+        camera = game.get_camera()
+        object_list = game.get_object_list()
+
+        up = camera.get_up()
+
+        new_grav = Vector(world.getGravity()) * -1.0
+
+        world.setGravity(new_grav.value)
+
+        camera.flip_y_dist()
+        
+        new_power_pos = Vector((randrange(-14, 14), 8.0, randrange(-14, 14))) \
+                                    + new_grav.normalize() * 6.0
+        new_power_up = Gravity_flipper(self._space, new_power_pos)
+        object_list.append(new_power_up)
+
+        self.kill(game)
+
+
+class World_flipper(Gravity_flipper):
+
+    def __init__(self, space, pos):
+
+        super(World_flipper, self).__init__(space, pos)
+
+        self._texture = textures.load_texture('arrows_1.png')
+        self._display_list_index = self.create_displaylist_index()
 
     def collide_func(self, game):
         ''' The function that is called whe the player
