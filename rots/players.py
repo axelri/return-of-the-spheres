@@ -19,6 +19,7 @@ class Player:
         self._jump_sound.set_volume(0.15)
         self._bounce_sound.set_volume(0.7)
         self._up = Vector([0.0, 1.0, 0.0])
+        self._jump_constant = 400
 
         self.lastDir = Vector()
 
@@ -42,12 +43,18 @@ class Player:
 
     def jump(self):
         self._jump_sound.play()
-        jump_force = self._up * 400
+        jump_force = self._up * self._jump_constant
         self._shape.get_body().addForce(jump_force.value)
         self._jumping = True
 
     def set_up_dir(self, up):
         self._up = up
+
+    def get_jump_constant(self):
+        return self._jump_constant
+
+    def set_jump_constant(self, jump_constant):
+        self._jump_constant = jump_constant
 
     def move(self, direction, forward_vector, up_vector, jump):
 

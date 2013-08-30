@@ -11,6 +11,7 @@ from math_classes.vectors import Vector
 from graphics import draw, textures
 
 class Power_up(object):
+    ''' Base class for all power ups '''
 
     def __init__(self):
         # TODO: Put more things here, all the things that
@@ -74,6 +75,8 @@ class Power_up(object):
         self._geom.__setattr__(name, value)
 
 class Gravity_flipper(Power_up):
+    ''' A class of power ups that flip the world's
+        gravity upside down '''
 
     def __init__(self, space, pos):
 
@@ -139,6 +142,7 @@ class Gravity_flipper(Power_up):
         world = game.get_world()
         camera = game.get_camera()
         object_list = game.get_object_list()
+        player = game.get_player()
 
         up = camera.get_up()
 
@@ -147,6 +151,8 @@ class Gravity_flipper(Power_up):
         world.setGravity(new_grav.value)
 
         camera.flip_y_dist()
+
+        player.set_jump_constant(player.get_jump_constant() * -1.0)
         
         new_power_pos = Vector((randrange(-14, 14), 8.0, randrange(-14, 14))) \
                                     + new_grav.normalize() * 6.0
@@ -157,6 +163,8 @@ class Gravity_flipper(Power_up):
 
 
 class World_flipper(Gravity_flipper):
+    ''' A class of power ups that flip the entire world
+        upside down '''
 
     def __init__(self, space, pos):
 
