@@ -13,6 +13,7 @@ def update_physics(game, iterations = 2):
     object_space = game.get_object_space()
     static_space = game.get_static_space()
     power_up_space = game.get_power_up_space()
+    interactive_object_space = game.get_interactive_object_space()
     world = game.get_world()
     contact_group = game.get_contact_group()
     dt = game.get_dt()
@@ -35,6 +36,9 @@ def update_physics(game, iterations = 2):
         # player-power up collisions
         ode.collide2(player.get_shape().get_geom(), power_up_space, 
                         game, player_power_up_callback)
+        # player-interactive object collisions
+        #ode.collide2(player.get_shape().get_geom(), interactive_object_space,
+        #                game, player_interactive_object_callback)
 
         # Simulation step
         world.step(dt/iterations)
@@ -53,6 +57,28 @@ def update_physics(game, iterations = 2):
             power_up = power_up_geom.__getattribute__('power up')
             if power_up.get_collided():
                 power_up.collide_func(game)
+
+        # Manual collision detection for interactive objects
+        # (Couldn't make them "unpressed" properly any other way)
+        # TODO: Fix that
+        for i in range(interactive_object_space.getNumGeoms()):
+            obj_geom = interactive_object_space.getGeom(i)
+            obj = obj_geom.__getattribute__('object')
+
+            contacts = ode.collide(player.get_shape().get_geom(), obj_geom)
+
+            if contacts:
+                obj.set_pressed(True)
+            else:
+                obj.set_pressed(False)
+
+            pressed = obj.get_pressed()
+            pressed_last_frame = obj.get_pressed_last_frame()
+
+            if pressed and not pressed_last_frame:
+                obj.collide_func()
+
+            obj.set_pressed_last_frame(obj.get_pressed())
 
 def sphere_static_callback(game, sphere, static):
     ''' Callback function for collisions between spheres
@@ -195,3 +221,14 @@ def player_power_up_callback(game, player_geom, power_up_geom):
         # for collisions. Set a collision flag instead 
         # and call the function later.
         power_up.set_collided(True)
+
+def player_interactive_object_callback(game, player_geom, obj_geom):
+
+    obj = obj_geom.__getattribute__('object')
+
+    contacts = ode.collide(player_geom, obj_geom)
+
+    obj.set_pressed(False)
+
+    if contacts:
+        obj.set_pressed(True)

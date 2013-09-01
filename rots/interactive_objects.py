@@ -3,9 +3,14 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import ode
 
+import math
+
 from math_classes import matrices
 from math_classes.vectors import Vector
 from graphics import draw, textures
+
+def do_nothing():
+    pass
 
 class Interactive_object(object):
     ''' A base class for all interactive objects in the game,
@@ -49,7 +54,7 @@ class Interactive_object(object):
         glCallList(self._display_list_index)
 
     def set_data(self, name, value):
-        ''' Sets an attribute of the power up's geom,
+        ''' Sets an attribute of the interactive object's geom,
             keyword 'name', value 'value' '''
         self._geom.__setattr__(name, value)
 
@@ -57,13 +62,18 @@ class Interactive_object(object):
         aabb = self._geom.getAABB()
         draw.AABB(aabb)
 
+    def collide_func(self):
+        ''' The function that is called when the interactive 
+            object is activated '''
+        pass
+
 class Button(Interactive_object):
     ''' A class for buttons that the player can
         press in-game, that causes something to happen
         when pressed (e.g. open a door) '''
 
-def __init__(self, space, pos, normal, forward, side = 2, thickness = 0.1,
-                texture = None):
+    def __init__(self, space, pos, normal, forward, side = 2, thickness = 0.1,
+                texture = None, action = do_nothing, args = None):
 
         super(Button, self).__init__()
         self._x_size = side
@@ -82,6 +92,12 @@ def __init__(self, space, pos, normal, forward, side = 2, thickness = 0.1,
         self._geom.setBody(self._body)
 
         self.set_data('object', self)
+
+        self._pressed = False
+        self._pressed_last_frame = False
+
+        self._action = action
+        self._args = args
 
         # Calculate the rotation matrix in the first direction needed to align the 
         # bounding box with the surface
@@ -121,3 +137,35 @@ def __init__(self, space, pos, normal, forward, side = 2, thickness = 0.1,
 
     def get_sides(self):
         return self._x_size, self._y_size, self._z_size
+
+    def set_pressed(self, pressed):
+        self._pressed = pressed
+
+    def set_pressed_last_frame(self, pressed):
+        self._pressed_last_frame = pressed
+
+    def get_pressed(self):
+        return self._pressed
+
+    def get_pressed_last_frame(self):
+        return self._pressed_last_frame
+
+    def collide_func(self):
+        ''' The function that is called when the button is pressed '''
+
+        # TODO: Make it get pressed and unpressed slowly with an animation.
+        # TODO: Add click sound
+
+        self._action(self._args)
+
+    def draw(self):
+        pos = self.get_pos()
+        if self._pressed:
+            pos -= self._normal * self._y_size
+
+        pos = pos.value
+
+        glTranslatef(pos[0], pos[1], pos[2])
+        rotMatrix = self.get_orientation()
+        glMultMatrixf(rotMatrix)
+        glCallList(self._display_list_index)

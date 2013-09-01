@@ -9,6 +9,7 @@ import shapes
 import games
 import players
 import power_ups
+import interactive_objects
 from graphics import init_graphics, lights, cameras, textures
 from math_classes.vectors import Vector
 
@@ -29,6 +30,7 @@ def init_scene(start_screen):
     object_space = ode.Space(1)
     static_space = ode.Space(1)
     power_up_space = ode.Space(1)
+    interactive_object_space = ode.Space(1)
 
     # Load textures
     tex_no = 6 # The number of textures (used to show progress in loading)
@@ -201,9 +203,9 @@ def init_scene(start_screen):
     light2 = lights.Light(GL_LIGHT2, Vector([3.0, 2.0, 3.0]))
     camera = cameras.Camera()
 
-    # Create player
     start_screen.update('Organizing')
 
+    # Create player
     player = players.Player(earth)
 
     # Add all objects that should be drawn to a list
@@ -211,6 +213,20 @@ def init_scene(start_screen):
                     sticky_floor, slippy_floor, wall1, wall2, 
                     wall3, floor_slope, roof_slope, slippy_roof,
                     sticky_roof, world_flipper, gravity_flipper]
+
+    def add_sphere(args):
+        object_list, space, world, pos = args
+        sphere = shapes.Sphere(world, space, pos = pos)
+        object_list.append(sphere)
+
+    button_1 = interactive_objects.Button(interactive_object_space, 
+                            pos = Vector([-15.0, 1.1, 0.0]),
+                            normal = Vector([1.0, 0.0, 0.0]),
+                            forward = Vector([0.0, 0.0, 1.0]),
+                            action = add_sphere,
+                            args = (object_list, sphere_space, world, Vector([0.0, 5.0, 0.0])))
+
+    object_list.append(button_1)
 
     # Add all lights to a list
     light_list = [light1, light2]
@@ -224,7 +240,7 @@ def init_scene(start_screen):
     fps = 60
 
     # Create a game object
-    spaces = (sphere_space, object_space, static_space, power_up_space)
+    spaces = (sphere_space, object_space, static_space, power_up_space, interactive_object_space)
 
     game = games.Game(world, spaces, player, object_list, 
                     light_list, camera, clock, contact_group, fps)
