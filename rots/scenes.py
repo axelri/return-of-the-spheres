@@ -221,7 +221,7 @@ def init_scene(start_screen):
     # Create group for contact joints
     contact_group = ode.JointGroup()
 
-    fps = 30
+    fps = 60
 
     # Create a game object
     spaces = (sphere_space, object_space, static_space, power_up_space)

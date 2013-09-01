@@ -9,6 +9,7 @@ from random import randrange
 from math_classes import matrices
 from math_classes.vectors import Vector
 from graphics import draw, textures
+from sound import sound_effects
 
 class Power_up(object):
     ''' Base class for all power ups '''
@@ -30,6 +31,7 @@ class Power_up(object):
         self._display_list_index = None
 
         self._collided = False
+        self._activation_sound = None
 
     def get_texture(self):
         return self._texture
@@ -109,6 +111,8 @@ class Gravity_flipper(Power_up):
         self._shininess = 0
         self._emissive = [1.0, 1.0, 1.0, 1.0]
 
+        self._activation_sound = sound_effects.load_sound('fall_2.wav')
+
         self._display_list_index = self.create_displaylist_index()
 
         self.set_data('power up', self)
@@ -135,7 +139,7 @@ class Gravity_flipper(Power_up):
         glMultMatrixf(rotMatrix)
         glCallList(self._display_list_index)
 
-        self._oscillation_angle += pi * 0.05
+        self._oscillation_angle += pi * 0.02
         if self._oscillation_angle <= 2 * pi:
             self._oscillation_angle -= 2 * pi
 
@@ -143,6 +147,7 @@ class Gravity_flipper(Power_up):
         ''' The function that is called whe the player
             collides with the power up '''
 
+        self._activation_sound.play()
         world = game.get_world()
         camera = game.get_camera()
         object_list = game.get_object_list()
@@ -175,12 +180,14 @@ class World_flipper(Gravity_flipper):
         super(World_flipper, self).__init__(space, pos)
 
         self._texture = textures.load_texture('arrows_1.png')
+        self._activation_sound = sound_effects.load_sound('brown_2.wav')
         self._display_list_index = self.create_displaylist_index()
 
     def collide_func(self, game):
         ''' The function that is called whe the player
             collides with the power up '''
 
+        self._activation_sound.play()
         world = game.get_world()
         camera = game.get_camera()
         object_list = game.get_object_list()

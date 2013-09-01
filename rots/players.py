@@ -15,11 +15,11 @@ class Player:
         self._collided_last_frame = False
         self._jumping = False
         self._jump_sound = sound_effects.load_sound('boing.wav')
-        self._bounce_sound = sound_effects.load_sound('bounce.wav')
+        self._bounce_sound = sound_effects.load_sound('bounce_5.wav')
         self._jump_sound.set_volume(0.15)
         self._bounce_sound.set_volume(0.7)
         self._up = Vector([0.0, 1.0, 0.0])
-        self._jump_constant = 400
+        self._jump_constant = 800
 
         self.lastDir = Vector()
 
