@@ -74,6 +74,10 @@ class Power_up(object):
             keyword 'name', value 'value' '''
         self._geom.__setattr__(name, value)
 
+    def draw_AABB(self):
+        aabb = self._geom.getAABB()
+        draw.AABB(aabb)
+
 class Gravity_flipper(Power_up):
     ''' A class of power ups that flip the world's
         gravity upside down '''
@@ -83,12 +87,12 @@ class Gravity_flipper(Power_up):
         super(Gravity_flipper, self).__init__()
         self._radius = 0.5
         self._space = space
-        self._geom = ode.GeomBox(self._space, (self._radius * 2, self._radius * 2, 
-                                            self._radius * 4))
+        self._geom = ode.GeomBox(self._space, (self._radius * 2, self._radius * 4, 
+                                            self._radius * 2))
         self._geom.setBody(None)
         self._geom.setPosition(pos.value)
 
-        self._texture = textures.load_texture('arrows_2.png')
+        self._texture = textures.load_texture('arrows_3.png')
         self._quadric = gluNewQuadric()
 
         self._draw_pos = self.get_pos()

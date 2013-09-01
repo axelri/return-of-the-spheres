@@ -163,6 +163,12 @@ class TextBox(object):
         self.release()
         return
 
+    def draw_AABB(self):
+        # Hack to be able to keep textboxes in the object list
+        # (this function is called to draw the axis-aligned bounding boxes
+        # of all other objects.)
+        pass
+
 def next_p2 (num):
     """ If num isn't a power of 2, will return the next higher power of two """
     rval = 1

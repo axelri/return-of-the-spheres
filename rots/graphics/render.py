@@ -31,17 +31,17 @@ def render(game):
     camera_view_matrix = glGetFloatv(GL_MODELVIEW_MATRIX)
     game.add_constant('camera_view_matrix', camera_view_matrix)
 
-    if game.get_debug():
+    if game.get_debug_state():
         game.update_debug_screen()
 
-    draw_scene(object_list)
+    draw_scene(object_list, game)
     #draw_scene_with_shadows(game, object_list)
 
 
     pygame.display.flip()
 
 
-def draw_scene(object_list):
+def draw_scene(object_list, game):
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
@@ -49,6 +49,10 @@ def draw_scene(object_list):
         glPushMatrix()
         item.draw()
         glPopMatrix()
+
+    if game.get_debug_state() == 2:
+        for item in object_list:
+            item.draw_AABB()
 
 def draw_scene_with_shadows(game, object_list):
 

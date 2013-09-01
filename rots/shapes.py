@@ -130,6 +130,18 @@ class Shape(object):
         glMultMatrixf(rotMatrix)
         glCallList(self._display_list_index)
 
+    def draw_AABB(self):
+        # aabb = self._geom.getAABB()
+        # x_size = (aabb[1] - aabb[0])/2.0
+        # y_size = (aabb[3] - aabb[2])/2.0
+        # z_size = (aabb[5] - aabb[4])/2.0
+        # pos = self.get_pos().value
+        # glTranslatef(pos[0], pos[1], pos[2])
+        # draw.AABB(x_size, y_size, z_size)
+
+        aabb = self._geom.getAABB()
+        draw.AABB(aabb)
+
 class Sphere(Shape):
 
     def __init__(self, world, space, pos = Vector(), radius = 0.5,
@@ -187,24 +199,25 @@ class Sphere(Shape):
     def set_rolling_friction(self, rolling_friction):
         self._rolling_friction = rolling_friction
 
+class Box(Shape):
 
-class Cube(Shape):
-
-    def __init__(self, world, space, pos = Vector(), side = 1,
-                 mass = 1, texture = None):
-        super(Cube, self).__init__(world)
+    def __init__(self, world, space, pos = Vector(), x_size = 1,
+                y_size = 1, z_size = 1, mass = 1, texture = None):
+        super(Box, self).__init__(world)
 
         # Set ODE properties
-        self._mass.setBox(1, side, side, side)
+        self._mass.setBox(1, x_size, y_size, z_size)
         self._mass.adjust(mass)
         self._body.setPosition(pos.value)
         self._body.setMass(self._mass)
-        self._geom = ode.GeomBox(space, (side, side, side))
+        self._geom = ode.GeomBox(space, (x_size, y_size, z_size))
         self._geom.setBody(self._body)
 
-        self.set_data('shape', self)
+        self._x_size = x_size
+        self._y_size = y_size
+        self._z_size = z_size
 
-        self._side = side
+        self.set_data('shape', self)
 
         self._texture = texture
         
@@ -217,12 +230,25 @@ class Cube(Shape):
         
         self._display_list_index = self.create_displaylist_index()
 
+    def get_sides(self):
+        return self._x_size, self._y_size, self._z_size
+
     def create_displaylist_index(self):
         display_list_index = glGenLists(1)
         glNewList(display_list_index, GL_COMPILE)
-        draw.cube(self)
+        draw.box(self)
         glEndList()
         return display_list_index
+
+# NOTE: Necessary? We can delete this class and just use Box instead.
+class Cube(Box):
+
+    def __init__(self, world, space, pos = Vector(), side = 1,
+                 mass = 1, texture = None):
+        super(Cube, self).__init__(world, space, pos = pos, x_size = side,
+                y_size = side, z_size = side, mass = mass, texture = texture)
+
+        self._side = side
 
     def get_side(self):
         return self._side

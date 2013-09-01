@@ -11,17 +11,17 @@ from math import radians, tan, pi
 import shapes
 import textures
 
-CUBE_QUAD_VERTS = ((0, 3, 2, 1), (3, 6, 7, 2), (6, 4, 5, 7),
+BOX_QUAD_VERTS = ((0, 3, 2, 1), (3, 6, 7, 2), (6, 4, 5, 7),
                    (4, 0, 1, 5), (1, 2, 7, 5), (4, 6, 3, 0))
 
-CUBE_EDGES = ((0,1), (0,3), (0,4), (2,1), (2,3), (2,7),
+BOX_EDGES = ((0,1), (0,3), (0,4), (2,1), (2,3), (2,7),
               (6,3), (6,4), (6,7), (5,1), (5,4), (5,7))
 
-CUBE_NORMALS = ([0.0, 0.0, -1.0], [-1.0, 0.0, 0.0],
+BOX_NORMALS = ([0.0, 0.0, -1.0], [-1.0, 0.0, 0.0],
                 [0.0, 0.0, 1.0], [1.0, 0.0, 0.0],
                 [0.0, 1.0, 0.0], [0.0, -1.0, 0.0])
 
-CUBE_TEX_COORDS = ((0,0), (1,0), (1,1), (0,1))
+BOX_TEX_COORDS = ((0,0), (1,0), (1,1), (0,1))
 
 def cube_points(size):
     ''' Calculates the vertices of a cube of size size.
@@ -68,10 +68,10 @@ def cube(cube):
         glBindTexture(GL_TEXTURE_2D, cube.get_texture())
 
     glBegin(GL_QUADS)
-    for face in CUBE_QUAD_VERTS:
-        glNormal3fv(CUBE_NORMALS[CUBE_QUAD_VERTS.index(face)])
+    for face in BOX_QUAD_VERTS:
+        glNormal3fv(BOX_NORMALS[BOX_QUAD_VERTS.index(face)])
         for vert, i in zip(face, range(4)):
-            tex_coord = CUBE_TEX_COORDS[i]
+            tex_coord = BOX_TEX_COORDS[i]
             glTexCoord2f(tex_coord[0], tex_coord[1])
             glVertex3fv(points[vert])
     glEnd()
@@ -79,7 +79,52 @@ def cube(cube):
     # TODO: Use something like "cube.get_line_color()" instead?
     glColor3f(0.0, 0.0, 0.0)    
     glBegin(GL_LINES)
-    for line in CUBE_EDGES:
+    for line in BOX_EDGES:
+        for vert in line:
+            glVertex3fv(points[vert])
+    glEnd()
+
+    glDisable(GL_TEXTURE_2D)
+
+def box(box):
+    ''' Draws a box '''
+
+    x_size, y_size, z_size = box.get_sides()
+    x = x_size/2.0
+    y = y_size/2.0
+    z = z_size/2.0
+    
+    points = ((x, -y, -z), (x, y, -z), 
+                (-x, y, -z), (-x, -y, -z), 
+                (x, -y, z), (x, y, z),
+                (-x, -y, z), (-x, y, z))
+
+
+    ambient, diffuse, specular, shininess, emissive = box.get_material_properties()
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient)
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse)
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specular)
+    glMateriali(GL_FRONT, GL_SHININESS, shininess)
+    glMaterialfv(GL_FRONT, GL_EMISSION, emissive)
+
+    if box.get_texture():
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, box.get_texture())
+
+    glBegin(GL_QUADS)
+    for face in BOX_QUAD_VERTS:
+        glNormal3fv(BOX_NORMALS[BOX_QUAD_VERTS.index(face)])
+        for vert, i in zip(face, range(4)):
+            tex_coord = BOX_TEX_COORDS[i]
+            glTexCoord2f(tex_coord[0], tex_coord[1])
+            glVertex3fv(points[vert])
+    glEnd()
+
+    # TODO: Use something like "box.get_line_color()" instead?
+    glColor3f(0.0, 0.0, 0.0)    
+    glBegin(GL_LINES)
+    for line in BOX_EDGES:
         for vert in line:
             glVertex3fv(points[vert])
     glEnd()
@@ -211,3 +256,23 @@ def start_screen(start_texture, ratio):
     glVertex3f(-ratio, 1.0, 0)
     glEnd()
     glDisable(GL_TEXTURE_2D)
+
+def AABB(aabb):
+    ''' Draws an AABB.
+        Input: An AABB as given by ODE (6-tuple:
+                (minx, maxx, miny, maxy, minz, maxz)) '''
+    
+    # TODO: Add possibility to change color?
+
+    minx, maxx, miny, maxy, minz, maxz = aabb
+
+    points = ((maxx, miny, minz), (maxx, maxy, minz), 
+                (minx, maxy, minz), (minx, miny, minz), 
+                (maxx, miny, maxz), (maxx, maxy, maxz),
+                (minx, miny, maxz), (minx, maxy, maxz))
+
+    glBegin(GL_LINES)
+    for line in BOX_EDGES:
+        for vert in line:
+            glVertex3fv(points[vert])
+    glEnd()

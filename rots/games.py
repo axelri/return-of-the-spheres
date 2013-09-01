@@ -14,7 +14,7 @@ class Game():
     ''' A class containing all the objects in the game '''
     def __init__(self, world, spaces, player, 
                 object_list, light_list, camera, clock, 
-                contact_group, fps, debug = False):
+                contact_group, fps, debug_state = 0):
         
         sphere_space, object_space, static_space, power_up_space = spaces
 
@@ -31,7 +31,7 @@ class Game():
         self._contact_group = contact_group
         self._fps = fps
         self._dt = 1/float(fps)
-        self._debug = debug
+        self._debug_state = debug_state
 
         self._keys_pressed = None
         self._keys_pressed_last_frame = None
@@ -67,9 +67,10 @@ class Game():
         self._object_list += self._debug_list
 
     def toggle_debug(self):
-        self._debug = not self._debug
-        for item in self._debug_list:
-            item.toggle()
+        self._debug_state = (self._debug_state + 1) % 3
+        if self._debug_state == 0 or self._debug_state == 1:
+            for item in self._debug_list:
+                item.toggle()
 
     def update_debug_screen(self):
         # Performance
@@ -128,8 +129,8 @@ class Game():
     def get_dt(self):
         return self._dt
 
-    def get_debug(self):
-        return self._debug
+    def get_debug_state(self):
+        return self._debug_state
 
     def add_constant(self, key, value):
         self._constants[key] = value
