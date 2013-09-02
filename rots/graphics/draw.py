@@ -8,7 +8,6 @@ import numbers
 import random
 from math import radians, tan, pi
 
-import shapes
 import textures
 
 BOX_QUAD_VERTS = ((0, 3, 2, 1), (3, 6, 7, 2), (6, 4, 5, 7),

@@ -8,7 +8,7 @@ import itertools
 from math import tan, pi, radians
 
 from graphics import textures, draw
-from text import TextBox
+from objects.text import TextBox
 
 def init_window(window_name, start_image, HAVE_FULLSCREEN = True):
     ''' Initiates pygame, creates and sets up the window,

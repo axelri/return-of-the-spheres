@@ -7,9 +7,9 @@ from OpenGL.GLUT import *
 from OpenGL.GL.ARB.depth_texture import *
 from OpenGL.GL.ARB.shadow import *
 
-import shapes
 import lights
 import games
+from objects import shapes
 from math_classes import matrices
 from math_classes.vectors import Vector
 

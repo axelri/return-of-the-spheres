@@ -1,6 +1,6 @@
 import numbers
 
-import shapes
+from objects import shapes
 from math_classes.vectors import Vector
 from sound import sound_effects
 

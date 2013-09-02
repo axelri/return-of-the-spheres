@@ -8,14 +8,14 @@ import ode
 import traceback
 import sys
 
-import shapes
+import scenes
 import games
 import players
 from graphics import render, init_graphics, lights, cameras, textures
 from math_classes.vectors import Vector
 from physics_engine import physics
-from text import TextBox
-import scenes
+from objects import shapes
+from objects.text import TextBox
 
 def game_loop(game):
 

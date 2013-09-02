@@ -1,11 +1,11 @@
 import pygame
 from pygame.locals import *
 
-import shapes
 import players
 from graphics import lights
 from math_classes.vectors import Vector
-from text import TextBox
+from objects import shapes
+from objects.text import TextBox
 
 # TODO: Add a variable to the Shape class "self.moveable"; 
 # if true it sets self.geom.setBody(None)

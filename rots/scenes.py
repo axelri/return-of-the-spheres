@@ -5,11 +5,9 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import ode
 
-import shapes
 import games
 import players
-import power_ups
-import interactive_objects
+from objects import shapes, power_ups, interactive_objects
 from graphics import init_graphics, lights, cameras, textures
 from math_classes.vectors import Vector
 
