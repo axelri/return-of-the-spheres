@@ -115,16 +115,16 @@ class Button(Interactive_object):
         # Combine the two rotations
         rotation = matrices.OpenGL_to_ODE(matrices.matrix_mult(rotation2, rotation1))
 
-        #pos = pos - self._normal * self._thickness * 0.5
+        self._pos = self._pos + self._normal * self._y_size * 0.5
 
-        self._geom.setPosition(pos.value)
+        self._geom.setPosition(self._pos.value)
         self._geom.setRotation(rotation)
 
         self._ambient = [1.0, 1.0, 1.0, 1.0]
         self._diffuse = [1.0, 1.0, 1.0, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
         self._shininess = 0
-        self._emissive = [1.0, 1.0, 1.0, 1.0]
+        self._emissive = [0.0, 0.0, 0.0, 1.0]
 
         self._display_list_index = self.create_displaylist_index()
 
@@ -156,12 +156,15 @@ class Button(Interactive_object):
         # TODO: Make it get pressed and unpressed slowly with an animation.
         # TODO: Add click sound
 
-        self._action(self._args)
+        if self._args != None:
+            self._action(self._args)
+        else:
+            self._action()
 
     def draw(self):
         pos = self.get_pos()
         if self._pressed:
-            pos -= self._normal * self._y_size
+            pos -= self._normal * self._y_size * 0.9
 
         pos = pos.value
 

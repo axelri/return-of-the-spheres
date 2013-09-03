@@ -7,7 +7,7 @@ import ode
 
 import games
 import players
-from objects import shapes, power_ups, interactive_objects
+from objects import shapes, power_ups, interactive_objects, moving_scene
 from graphics import init_graphics, lights, cameras, textures
 from math_classes.vectors import Vector
 
@@ -196,6 +196,17 @@ def init_scene(start_screen):
     sticky_roof.set_friction(10)
     sticky_roof.set_bounce(0.1)
 
+    door = moving_scene.Sliding_door(static_space, pos = Vector((10.0, 2.0, -15.0)), 
+                            normal = Vector((0.0, 0.0, 1.0)),
+                            slide_dir = Vector((1.0, 0.0, 0.0)), slide_size = 5,
+                            ort_size = 4)
+
+    door_button = interactive_objects.Button(interactive_object_space, 
+                            pos = Vector([2.0, 1.0, -15.0]),
+                            normal = Vector([0.0, 0.0, 1.0]),
+                            forward = Vector([1.0, 0.0, 0.0]),
+                            action = door.toggle)
+
     # Create lights
     light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
     light2 = lights.Light(GL_LIGHT2, Vector([3.0, 2.0, 3.0]))
@@ -210,7 +221,8 @@ def init_scene(start_screen):
     object_list = [player.get_shape(), sun, moon, mars, cube, 
                     sticky_floor, slippy_floor, wall1, wall2, 
                     wall3, floor_slope, roof_slope, slippy_roof,
-                    sticky_roof, world_flipper, gravity_flipper]
+                    sticky_roof, world_flipper, gravity_flipper,
+                    door, door_button]
 
     def add_sphere(args):
         object_list, space, world, pos = args

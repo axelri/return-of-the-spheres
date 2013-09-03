@@ -36,27 +36,10 @@ def update_physics(game, iterations = 2):
         # player-power up collisions
         ode.collide2(player.get_shape().get_geom(), power_up_space, 
                         game, player_power_up_callback)
-        # player-interactive object collisions
+        # player-interactive object collisions (seems it doesn't work to put it here...)
         #ode.collide2(player.get_shape().get_geom(), interactive_object_space,
         #                game, player_interactive_object_callback)
 
-        # Simulation step
-        world.step(dt/iterations)
-
-        # Check if the player is colliding
-        # TODO: Move? Is there a prettier way to check this?
-        player.colliding = bool(player.get_shape().get_body().getNumJoints())
-
-        # Remove all contact joints
-        contact_group.empty()
-
-        # Call power up functions
-        # NOTE: Couldn't find a better place to put this, is there any?
-        for i in range(power_up_space.getNumGeoms()):
-            power_up_geom = power_up_space.getGeom(i)
-            power_up = power_up_geom.__getattribute__('power up')
-            if power_up.get_collided():
-                power_up.collide_func(game)
 
         # Manual collision detection for interactive objects
         # (Couldn't make them "unpressed" properly any other way)
@@ -79,6 +62,26 @@ def update_physics(game, iterations = 2):
                 obj.collide_func()
 
             obj.set_pressed_last_frame(obj.get_pressed())
+
+
+        # Simulation step
+        world.step(dt/iterations)
+
+        # Check if the player is colliding
+        # TODO: Move? Is there a prettier way to check this?
+        player.colliding = bool(player.get_shape().get_body().getNumJoints())
+
+        # Remove all contact joints
+        contact_group.empty()
+
+        # Call power up functions
+        # NOTE: Couldn't find a better place to put this, is there any?
+        for i in range(power_up_space.getNumGeoms()):
+            power_up_geom = power_up_space.getGeom(i)
+            power_up = power_up_geom.__getattribute__('power up')
+            if power_up.get_collided():
+                power_up.collide_func(game)
+
 
 def sphere_static_callback(game, sphere, static):
     ''' Callback function for collisions between spheres
