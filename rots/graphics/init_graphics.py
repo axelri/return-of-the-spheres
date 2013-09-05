@@ -62,6 +62,7 @@ def init_window(window_name, start_image, HAVE_FULLSCREEN = True):
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_TEXTURE_2D)
 
+    # TODO: Move this to init_scene instead
     # Create the start screen
     start_screen = Start_screen(start_image, width, height, aspect_angle)
     start_screen.update('Initializing OpenGL')
@@ -154,6 +155,8 @@ def init_shadows(game):
     game.add_constant('light_projection_matrix', light_projection_matrix)
     game.add_constant('light_view_matrix_list', light_view_matrix_list)
     game.add_constant('bias_matrix', bias_matrix)
+
+# TODO: Create a 'Loading-screen' class instead
 
 class Start_screen:
     ''' A class for the start screen. Is used to show

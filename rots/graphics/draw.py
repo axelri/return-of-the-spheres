@@ -88,6 +88,8 @@ def cube(cube):
 def box(box):
     ''' Draws a box '''
 
+    # TODO: Add subdivision
+
     x_size, y_size, z_size = box.get_sides()
     x = x_size/2.0
     y = y_size/2.0

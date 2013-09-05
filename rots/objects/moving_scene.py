@@ -98,7 +98,6 @@ class Sliding_door(Moving_scene):
         self._slide_dir = slide_dir
         self._texture = texture
         self._pos = pos
-        self._closed_pos = pos
 
         self._open = False
         self._toggling = False  # Opening or closing
@@ -133,14 +132,15 @@ class Sliding_door(Moving_scene):
         rotation = matrices.OpenGL_to_ODE(matrices.matrix_mult(rotation2, rotation1))
 
         self._pos = self._pos + self._normal * self._thickness * 0.5 # To prevent it from being inside the wall
+        self._closed_pos = self._pos
 
         self._geom.setPosition(self._pos.value)
         self._geom.setRotation(rotation)
 
-        self._ambient = [0.5, 0.5, 0.5, 1.0]
-        self._diffuse = [0.5, 0.5, 0.5, 1.0]
+        self._ambient = [1.0, 0.5, 0.5, 1.0]
+        self._diffuse = [1.0, 0.5, 0.5, 1.0]
         self._specular = [1.0, 1.0, 1.0, 1.0]
-        self._shininess = 0
+        self._shininess = 10
         self._emissive = [0.0, 0.0, 0.0, 1.0]
 
         self._display_list_index = self.create_displaylist_index()

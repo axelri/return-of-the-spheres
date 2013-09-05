@@ -15,6 +15,12 @@ def init_scene(start_screen):
     ''' Initializes the scene (creates all objects etc)
         and returns the game object. '''
 
+    # TODO: Make this function read info from another file and create
+    # a the scene as described in that file, in order to make it easier
+    # to create different scenes.
+
+    # TODO: Move things to better order, update start screen messages.
+
     # Create a world object
 
     world = ode.World()
@@ -89,7 +95,7 @@ def init_scene(start_screen):
     start_screen.update('Creating objects: {perc:.0f}%'.format(perc = 6.0/obj_no*100))
 
     # Create surfaces
-    scene_no = 9
+    scene_no = 15
     start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 0.0/scene_no*100))
 
     sticky_floor = shapes.Surface(world, static_space, pos = Vector((0.0, 0.0, 7.5)), 
@@ -117,43 +123,79 @@ def init_scene(start_screen):
                             length = 50.0, width = 16.0)
     start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 4.0/scene_no*100))
 
-    wall3 = shapes.Surface(world, static_space, pos = Vector([10.0, 8.0, -15.0]), 
+    door_wall_1 = shapes.Surface(world, static_space, pos = Vector([-9.0, 8.0, -15.0]), 
                             normal = Vector([0.0, 0.0, 1.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
-                            length = 50.0, width = 16.0)
+                            length = 12.0, width = 16.0)
     start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 5.0/scene_no*100))
+
+    door_wall_2 = shapes.Surface(world, static_space, pos = Vector([0.0, 11.0, -15.0]), 
+                            normal = Vector([0.0, 0.0, 1.0]),
+                            forward = Vector([1.0, 0.0, 0.0]),
+                            length = 6.0, width = 14.0)
+    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 6.0/scene_no*100))
+
+    door_wall_3 = shapes.Surface(world, static_space, pos = Vector([19.0, 8.0, -15.0]), 
+                            normal = Vector([0.0, 0.0, 1.0]),
+                            forward = Vector([1.0, 0.0, 0.0]),
+                            length = 32.0, width = 16.0)
+    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 7.0/scene_no*100))
 
     floor_slope = shapes.Surface(world, static_space, pos = Vector([25.0, 4.0, 0.0]), 
                             normal = Vector([-8.0, 20.0, 0.0]).normalize(),
                             forward = Vector([20.0, 8.0, 0.0]).normalize(),
                             length = Vector([20.0, 8.0, 0.0]).norm(), width = 30.0)
-    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 6.0/scene_no*100))
+    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 8.0/scene_no*100))
 
     roof_slope = shapes.Surface(world, static_space, pos = Vector([25.0, 12.0, 0.0]),
                             normal = Vector([-8.0, -20.0, 0.0]).normalize(),
                             forward = Vector([20.0, -8.0, 0.0]).normalize(),
                             length = Vector([20.0, -8.0, 0.0]).norm(), width = 30.0)
-    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 7.0/scene_no*100))
+    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 9.0/scene_no*100))
 
     sticky_roof = shapes.Surface(world, static_space, pos = Vector((0.0, 16.0, 7.5)), 
                             normal = Vector([0.0, -1.0, 0.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 30.0, width = 15.0,
                             texture = stars_tex)
-    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 8.0/scene_no*100))
+    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 10.0/scene_no*100))
 
     slippy_roof = shapes.Surface(world, static_space, pos = Vector((0.0, 16.0, -7.5)), 
                             normal = Vector([0.0, -1.0, 0.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 30.0, width = 15.0)
-    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 9.0/scene_no*100))
+    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 11.0/scene_no*100))
+
+    balcony = shapes.Surface(world, static_space, pos = Vector((0.0, 0.0, -20.0)), 
+                            normal = Vector([0.0, 1.0, 0.0]),
+                            forward = Vector([1.0, 0.0, 0.0]),
+                            length = 12.0, width = 10.0)
+    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 12.0/scene_no*100))
+
+    fence_1 = shapes.Surface(world, static_space, pos = Vector((-6.0, 0.75, -20.0)), 
+                            normal = Vector([1.0, 0.0, 0.0]),
+                            forward = Vector([0.0, 0.0, 1.0]),
+                            length = 10.0, width = 1.5)
+    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 13.0/scene_no*100))
+
+    fence_2 = shapes.Surface(world, static_space, pos = Vector((6.0, 0.75, -20.0)), 
+                            normal = Vector([-1.0, 0.0, 0.0]),
+                            forward = Vector([0.0, 0.0, -1.0]),
+                            length = 10.0, width = 1.5)
+    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 14.0/scene_no*100))
+
+    fence_3 = shapes.Surface(world, static_space, pos = Vector((0.0, 0.75, -25.0)), 
+                            normal = Vector([0.0, 0.0, 1.0]),
+                            forward = Vector([1.0, 0.0, 0.0]),
+                            length = 12.0, width = 1.5)
+    start_screen.update('Creating scene: {perc:.0f}%'.format(perc = 15.0/scene_no*100))
 
     # Set the color of the surfaces
 
     # NOTE: It takes A LOT of time to set the colors,
     # since we generate a new display list each time we
     # change color. Better/faster solution?
-    col_no = 14
+    col_no = 24
 
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 0.0/col_no*100))
 
@@ -161,30 +203,61 @@ def init_scene(start_screen):
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 1.0/col_no*100))
     slippy_floor.set_diffuse([0.5, 0.5, 0.8, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 2.0/col_no*100))
+
     slippy_roof.set_ambient([0.8, 0.5, 0.5, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 3.0/col_no*100))
     slippy_roof.set_diffuse([0.8, 0.5, 0.5, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 4.0/col_no*100))
+
     wall1.set_ambient([0.0, 0.0, 0.2, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 5.0/col_no*100))
     wall1.set_diffuse([0.0, 0.0, 0.2, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 6.0/col_no*100))
+
     wall2.set_ambient([0.0, 0.0, 0.2, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 7.0/col_no*100))
     wall2.set_diffuse([0.0, 0.0, 0.2, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 8.0/col_no*100))
-    wall3.set_ambient([0.0, 0.0, 0.2, 1.0])
+
+    door_wall_1.set_ambient([0.0, 0.0, 0.2, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 9.0/col_no*100))
-    wall3.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    door_wall_1.set_diffuse([0.0, 0.0, 0.2, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 10.0/col_no*100))
-    floor_slope.set_ambient([0.0, 0.0, 0.2, 1.0])
+
+    door_wall_2.set_ambient([0.0, 0.0, 0.2, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 11.0/col_no*100))
-    floor_slope.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    door_wall_2.set_diffuse([0.0, 0.0, 0.2, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 12.0/col_no*100))
-    roof_slope.set_ambient([0.0, 0.0, 0.2, 1.0])
+
+    door_wall_3.set_ambient([0.0, 0.0, 0.2, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 13.0/col_no*100))
-    roof_slope.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    door_wall_3.set_diffuse([0.0, 0.0, 0.2, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 14.0/col_no*100))
+
+    floor_slope.set_ambient([0.0, 0.0, 0.2, 1.0])
+    start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 15.0/col_no*100))
+    floor_slope.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 16.0/col_no*100))
+
+    roof_slope.set_ambient([0.0, 0.0, 0.2, 1.0])
+    start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 17.0/col_no*100))
+    roof_slope.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 18.0/col_no*100))
+
+    fence_1.set_ambient([0.0, 0.0, 0.2, 1.0])
+    start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 19.0/col_no*100))
+    fence_1.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 20.0/col_no*100))
+
+    fence_2.set_ambient([0.0, 0.0, 0.2, 1.0])
+    start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 21.0/col_no*100))
+    fence_2.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 22.0/col_no*100))
+
+    fence_3.set_ambient([0.0, 0.0, 0.2, 1.0])
+    start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 23.0/col_no*100))
+    fence_3.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 24.0/col_no*100))
 
     # Set friction and bounce
     slippy_floor.set_friction(0.1)
@@ -196,15 +269,23 @@ def init_scene(start_screen):
     sticky_roof.set_friction(10)
     sticky_roof.set_bounce(0.1)
 
-    door = moving_scene.Sliding_door(static_space, pos = Vector((5.0, 2.0, -15.0)), 
+    door = moving_scene.Sliding_door(static_space, pos = Vector((0.0, 2.0, -15.0)), 
                             normal = Vector((0.0, 0.0, 1.0)),
-                            slide_dir = Vector((1.0, 0.0, 0.0)), slide_size = 5,
+                            slide_dir = Vector((1.0, 0.0, 0.0)), slide_size = 6,
                             ort_size = 4)
 
-    door_button = interactive_objects.Button(interactive_object_space, 
-                            pos = Vector([-3.0, 1.0, -15.0]),
+    door_button_1 = interactive_objects.Button(interactive_object_space, 
+                            pos = Vector([-8.0, 1.2, -15.0]),
                             normal = Vector([0.0, 0.0, 1.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
+                            side = 1,
+                            action = door.toggle)
+
+    door_button_2 = interactive_objects.Button(interactive_object_space, 
+                            pos = Vector([-6.0, 0.75, -18.0]),
+                            normal = Vector([1.0, 0.0, 0.0]),
+                            forward = Vector([0.0, 0.0, 1.0]),
+                            side = 1,
                             action = door.toggle)
 
     # Create lights
@@ -220,9 +301,11 @@ def init_scene(start_screen):
     # Add all objects that should be drawn to a list
     object_list = [player.get_shape(), sun, moon, mars, cube, 
                     sticky_floor, slippy_floor, wall1, wall2, 
-                    wall3, floor_slope, roof_slope, slippy_roof,
-                    sticky_roof, world_flipper, gravity_flipper,
-                    door, door_button]
+                    door_wall_1, door_wall_2, door_wall_3, 
+                    floor_slope, roof_slope, slippy_roof,
+                    sticky_roof, balcony, fence_1, fence_2, fence_3,
+                    world_flipper, gravity_flipper,
+                    door, door_button_1, door_button_2]
 
     def add_sphere(args):
         object_list, space, world, pos = args
