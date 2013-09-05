@@ -8,6 +8,7 @@ from math import sin, cos, pi, asin, acos
 from math_classes import matrices
 from math_classes.vectors import Vector
 from graphics import draw, textures
+from sound import sound_effects
 
 class Moving_scene(object):
     ''' Base class for all objects in the 
@@ -31,6 +32,9 @@ class Moving_scene(object):
 
         self._display_list_index = None
 
+        self._friction = 1
+        self._bounce = 0.2
+
     def get_texture(self):
         return self._texture
 
@@ -44,6 +48,18 @@ class Moving_scene(object):
     def get_material_properties(self):
         return self._ambient, self._diffuse, self._specular,\
                self._shininess, self._emissive
+
+    def get_friction(self):
+        return self._friction
+
+    def get_bounce(self):
+        return self._bounce
+
+    def set_friction(self, friction):
+        self._friction = friction
+
+    def set_bounce(self, bounce):
+        self._bounce = bounce
 
     def draw(self):
         self.update()
@@ -92,12 +108,13 @@ class Sliding_door(Moving_scene):
 
         # Set ODE properties
         self._space = space
-        self._geom = ode.GeomBox(self._space, (self._slide_size, 
-                                self._thickness, self._ort_size))
+        self._geom = ode.GeomBox(self._space, (self._ort_size, 
+                                self._thickness, self._slide_size))
         self._body = None
         self._geom.setBody(self._body)
 
         self.set_data('object', self)
+        self._slide_sound = sound_effects.load_sound('slide_2.wav')
 
         # Calculate the rotation matrix in the first direction needed to align the 
         # bounding box with the object
@@ -132,6 +149,9 @@ class Sliding_door(Moving_scene):
         ''' Checks if the door should be opening or closing,
             if so do that, otherwise pass. '''
 
+        # TODO: Change the arguments of the cos and sin calls to create smoother movement
+        # (slow start, slow stop)
+
         # Check if it should be toggling
         if self._toggling:
             # Check in which state it is
@@ -139,8 +159,8 @@ class Sliding_door(Moving_scene):
                 # It is open, close it
                 self._opening_counter += 1
                 self._pos = self._closed_pos + self._slide_dir * \
-                            cos(pi/2 * (float(self._opening_counter)/self._opening_time)) \
-                            * self._slide_size
+                            (1 + cos(pi * (float(self._opening_counter)/self._opening_time))) \
+                            * self._slide_size * 0.5
 
                 # Check if it is closed
                 if self._opening_counter == self._opening_time:
@@ -152,8 +172,8 @@ class Sliding_door(Moving_scene):
                 # It is closed, open it
                 self._opening_counter += 1
                 self._pos = self._closed_pos + self._slide_dir * \
-                            sin(pi/2 * (float(self._opening_counter)/self._opening_time)) \
-                            * self._slide_size
+                            (1 + sin(pi * (((float(self._opening_counter)/self._opening_time)) - 0.5))) \
+                            * self._slide_size * 0.5
 
                 # Check if it is open
                 if self._opening_counter == self._opening_time:
@@ -167,11 +187,9 @@ class Sliding_door(Moving_scene):
         ''' Toggles the door: Opens it if it is closed and vice versa.
             If the door is currently closing/opening, it does nothing. '''
 
-        print 'Called toggle()'
-
         if not self._toggling:
-            print 'Should be toggling'
             self._toggling = True
+            self._slide_sound.play()
 
     def open(self):
         ''' Opens the door. If it is already open the call is ignored. '''
@@ -186,7 +204,7 @@ class Sliding_door(Moving_scene):
             self._toggling = True
 
     def get_sides(self):
-        return self._slide_size, self._thickness, self._ort_size
+        return self._ort_size, self._thickness, self._slide_size
 
     def create_displaylist_index(self):
         display_list_index = glGenLists(1)

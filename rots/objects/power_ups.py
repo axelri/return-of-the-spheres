@@ -115,7 +115,7 @@ class Gravity_flipper(Power_up):
 
         self._display_list_index = self.create_displaylist_index()
 
-        self.set_data('power up', self)
+        self.set_data('object', self)
 
     def get_radius(self):
         return self._radius

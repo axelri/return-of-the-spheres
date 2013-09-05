@@ -196,13 +196,13 @@ def init_scene(start_screen):
     sticky_roof.set_friction(10)
     sticky_roof.set_bounce(0.1)
 
-    door = moving_scene.Sliding_door(static_space, pos = Vector((10.0, 2.0, -15.0)), 
+    door = moving_scene.Sliding_door(static_space, pos = Vector((5.0, 2.0, -15.0)), 
                             normal = Vector((0.0, 0.0, 1.0)),
                             slide_dir = Vector((1.0, 0.0, 0.0)), slide_size = 5,
                             ort_size = 4)
 
     door_button = interactive_objects.Button(interactive_object_space, 
-                            pos = Vector([2.0, 1.0, -15.0]),
+                            pos = Vector([-3.0, 1.0, -15.0]),
                             normal = Vector([0.0, 0.0, 1.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             action = door.toggle)

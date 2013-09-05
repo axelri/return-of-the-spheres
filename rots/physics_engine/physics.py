@@ -78,7 +78,7 @@ def update_physics(game, iterations = 2):
         # NOTE: Couldn't find a better place to put this, is there any?
         for i in range(power_up_space.getNumGeoms()):
             power_up_geom = power_up_space.getGeom(i)
-            power_up = power_up_geom.__getattribute__('power up')
+            power_up = power_up_geom.__getattribute__('object')
             if power_up.get_collided():
                 power_up.collide_func(game)
 
@@ -91,8 +91,8 @@ def sphere_static_callback(game, sphere, static):
 
     contact_group = game.get_contact_group()
     world = game.get_world()
-    sphere_shape = sphere.__getattribute__('shape')
-    static_shape = static.__getattribute__('shape')
+    sphere_shape = sphere.__getattribute__('object')
+    static_shape = static.__getattribute__('object')
     sphere_body = sphere.getBody()
     static_body = static.getBody()
 
@@ -123,8 +123,8 @@ def object_static_callback(game, obj, static):
 
     contact_group = game.get_contact_group()
     world = game.get_world()
-    obj_shape = obj.__getattribute__('shape')
-    static_shape = static.__getattribute__('shape')
+    obj_shape = obj.__getattribute__('object')
+    static_shape = static.__getattribute__('object')
 
     # Check if the objects do collide
     contacts = ode.collide(obj, static)
@@ -147,8 +147,8 @@ def sphere_object_callback(game, sphere, obj):
 
     contact_group = game.get_contact_group()
     world = game.get_world()
-    sphere_shape = sphere.__getattribute__('shape')
-    obj_shape = obj.__getattribute__('shape')
+    sphere_shape = sphere.__getattribute__('object')
+    obj_shape = obj.__getattribute__('object')
 
     # Check if the objects do collide
     contacts = ode.collide(sphere, obj)
@@ -169,8 +169,8 @@ def sphere_sphere_callback(game, sphere1, sphere2):
 
     contact_group = game.get_contact_group()
     world = game.get_world()
-    sphere1_shape = sphere1.__getattribute__('shape')
-    sphere2_shape = sphere2.__getattribute__('shape')
+    sphere1_shape = sphere1.__getattribute__('object')
+    sphere2_shape = sphere2.__getattribute__('object')
 
     # Check if the objects do collide
     contacts = ode.collide(sphere1, sphere2)
@@ -191,8 +191,8 @@ def object_object_callback(game, obj1, obj2):
 
     contact_group = game.get_contact_group()
     world = game.get_world()
-    obj1_shape = obj1.__getattribute__('shape')
-    obj2_shape = obj2.__getattribute__('shape')
+    obj1_shape = obj1.__getattribute__('object')
+    obj2_shape = obj2.__getattribute__('object')
 
     # Check if the objects do collide
     contacts = ode.collide(obj1, obj2)
@@ -212,7 +212,7 @@ def player_power_up_callback(game, player_geom, power_up_geom):
         player and power ups. If they have collided,
         the power up's collide_func is called. '''
 
-    power_up = power_up_geom.__getattribute__('power up')
+    power_up = power_up_geom.__getattribute__('object')
 
     contacts = ode.collide(player_geom, power_up_geom)
 

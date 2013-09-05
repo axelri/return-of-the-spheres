@@ -8,6 +8,7 @@ import math
 from math_classes import matrices
 from math_classes.vectors import Vector
 from graphics import draw, textures
+from sound import sound_effects
 
 def do_nothing():
     pass
@@ -99,6 +100,8 @@ class Button(Interactive_object):
         self._action = action
         self._args = args
 
+        self._click_sound = sound_effects.load_sound('button-29.wav')
+
         # Calculate the rotation matrix in the first direction needed to align the 
         # bounding box with the surface
         axis = Vector([0.0, 1.0, 0.0]).cross(self._normal)
@@ -157,8 +160,10 @@ class Button(Interactive_object):
         # TODO: Add click sound
 
         if self._args != None:
+            self._click_sound.play()
             self._action(self._args)
         else:
+            self._click_sound.play()
             self._action()
 
     def draw(self):

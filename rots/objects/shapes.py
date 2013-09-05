@@ -158,7 +158,7 @@ class Sphere(Shape):
 
         self._rolling_friction = 0.5
 
-        self.set_data('shape', self)
+        self.set_data('object', self)
 
         self._radius = radius
 
@@ -217,7 +217,7 @@ class Box(Shape):
         self._y_size = y_size
         self._z_size = z_size
 
-        self.set_data('shape', self)
+        self.set_data('object', self)
 
         self._texture = texture
         
@@ -286,7 +286,7 @@ class Surface(Shape):
         self._body = None
         self._geom.setBody(self._body)
 
-        self.set_data('shape', self)
+        self.set_data('object', self)
 
         # Calculate the rotation matrix in the first direction needed to align the 
         # bounding box with the surface

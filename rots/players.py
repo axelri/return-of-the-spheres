@@ -9,6 +9,15 @@ from sound import sound_effects
 class Player:
     def __init__(self, shape):
 
+        # TODO: Remove 'double bounce sounds'. Possible solution 
+        # to scale the sound level to the collision velocity in the
+        # normal direction?
+        # TODO: Add collision sounds when colliding with a new
+        # object while resting on another (e.g. colliding with the wall
+        # while rolling on the floor).
+        # TODO: Play collision sounds when other objects collide with
+        # eachother.
+
         self._shape = shape
         self._speed = 5
         self.colliding = False
