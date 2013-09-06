@@ -10,6 +10,9 @@ from math_classes.vectors import Vector
 from graphics import draw, textures
 from sound import sound_effects
 
+# TODO: Make the 'moving time' be a number in seconds
+# instead of frames, for example by using the current fps.
+
 class Moving_scene(object):
     ''' Base class for all objects in the 
         'static' scene that are supposed
@@ -149,9 +152,6 @@ class Sliding_door(Moving_scene):
         ''' Checks if the door should be opening or closing,
             if so do that, otherwise pass. '''
 
-        # TODO: Change the arguments of the cos and sin calls to create smoother movement
-        # (slow start, slow stop)
-
         # Check if it should be toggling
         if self._toggling:
             # Check in which state it is
@@ -194,13 +194,13 @@ class Sliding_door(Moving_scene):
     def open(self):
         ''' Opens the door. If it is already open the call is ignored. '''
 
-        if not self._open:
+        if not self._open and not self._toggling:
             self._toggling = True
 
     def close(self):
         ''' Closes the door. If it is already closed the call is ignored. '''
 
-        if self._open:
+        if self._open and not self._toggling:
             self._toggling = True
 
     def get_sides(self):
@@ -212,3 +212,88 @@ class Sliding_door(Moving_scene):
         draw.box(self)
         glEndList()
         return display_list_index
+
+class Moving_platform(Moving_scene):
+
+    # TODO: There are some odd effects when using the platform:
+    # the player starts bouncing and sliding. Fix this.
+
+    def __init__(self, space, normal = Vector((0.0, 1.0, 0.0)), 
+                forward = Vector((1.0, 0.0, 0.0)),
+                width = 5, length = 5, thickness = 0.5, texture = None,
+                move_time = 480, turning_points = (Vector((0.0, 2.0, 0.0)), Vector((0.0, 10.0, 0.0)))):
+
+        super(Moving_platform, self).__init__()
+
+        # Set ODE properties
+        self._space = space
+        self._geom = ode.GeomBox(self._space, (width, thickness, length))
+        self._body = None
+        self._geom.setBody(self._body)
+
+        self._normal = normal
+        self._forward = forward
+        self._width = width
+        self._thickness = thickness
+        self._length = length
+        self._texture = texture
+        self._move_time = move_time
+        self._counter = 0
+        self._turning_points = turning_points
+        self._move_dist = (turning_points[1] - turning_points[0]).norm() / 2.0
+        self._move_dir = (turning_points[1] - turning_points[0]).normalize()
+        self._middle_point = (turning_points[1] + turning_points[0]) * 0.5
+
+        self._bounce = 0.0
+
+        # Calculate the rotation matrix in the first direction needed to align the 
+        # bounding box with the object
+        axis = Vector([0.0, 1.0, 0.0]).cross(self._normal)
+        if axis.norm() < 0.1:
+            #Parallel
+            axis = Vector([0.0, 0.0, 1.0])
+        angle1 = acos(Vector([0.0, 1.0, 0.0]).dot(self._normal))
+        rotation1 = matrices.generate_rotation_matrix(axis, angle1)
+
+        # Calculate the second rotation matrix
+        angle2 = asin(Vector([0.0, 0.0, 1.0]).cross(self._forward).norm())
+        rotation2 = matrices.generate_rotation_matrix(self._normal, angle2)
+
+        # Combine the two rotations
+        rotation = matrices.OpenGL_to_ODE(matrices.matrix_mult(rotation2, rotation1))
+
+        self._geom.setPosition(self._middle_point.value)
+        self._geom.setRotation(rotation)
+
+        self._ambient = [0.0, 1.0, 0.2, 1.0]
+        self._diffuse = [0.0, 1.0, 0.2, 1.0]
+        self._specular = [1.0, 1.0, 1.0, 1.0]
+        self._shininess = 10
+        self._emissive = [0.0, 0.0, 0.0, 1.0]
+
+        self._display_list_index = self.create_displaylist_index()
+
+        self.set_data('object', self)
+
+    def get_sides(self):
+        return self._width, self._thickness, self._length
+
+    def create_displaylist_index(self):
+        display_list_index = glGenLists(1)
+        glNewList(display_list_index, GL_COMPILE)
+        draw.box(self)
+        glEndList()
+        return display_list_index
+
+    def update(self):
+
+        self._pos = self._middle_point + self._move_dir * \
+                    sin(pi * self._counter / self._move_time) * \
+                    self._move_dist * -1.0
+
+        self._geom.setPosition(self._pos.value)
+
+        self._counter += 1
+
+        if self._counter >= self._move_time * 2:
+            self._counter = 0

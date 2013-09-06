@@ -195,7 +195,7 @@ def init_scene(start_screen):
     # NOTE: It takes A LOT of time to set the colors,
     # since we generate a new display list each time we
     # change color. Better/faster solution?
-    col_no = 24
+    col_no = 26
 
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 0.0/col_no*100))
 
@@ -259,6 +259,11 @@ def init_scene(start_screen):
     fence_3.set_diffuse([0.0, 0.0, 0.2, 1.0])
     start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 24.0/col_no*100))
 
+    balcony.set_ambient([0.0, 0.0, 0.2, 1.0])
+    start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 25.0/col_no*100))
+    balcony.set_diffuse([0.0, 0.0, 0.2, 1.0])
+    start_screen.update('Setting colours: {perc:.0f}%'.format(perc = 26.0/col_no*100))
+
     # Set friction and bounce
     slippy_floor.set_friction(0.1)
     slippy_floor.set_bounce(0.5)
@@ -288,6 +293,10 @@ def init_scene(start_screen):
                             side = 1,
                             action = door.toggle)
 
+    moving_platform = moving_scene.Moving_platform(static_space, normal = Vector((0.0, 1.0, 0.0)),
+                            forward = Vector((0.0, 0.0, 1.0)), width = 5, length = 5,
+                            turning_points = (Vector((-12.5, 1.0, 12.5)), Vector((0.0, 10.0, 12.5))))
+
     # Create lights
     light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
     light2 = lights.Light(GL_LIGHT2, Vector([3.0, 2.0, 3.0]))
@@ -305,7 +314,8 @@ def init_scene(start_screen):
                     floor_slope, roof_slope, slippy_roof,
                     sticky_roof, balcony, fence_1, fence_2, fence_3,
                     world_flipper, gravity_flipper,
-                    door, door_button_1, door_button_2]
+                    door, door_button_1, door_button_2,
+                    moving_platform]
 
     def add_sphere(args):
         object_list, space, world, pos = args
@@ -341,4 +351,4 @@ def init_scene(start_screen):
     # Initialize some constants for the shadow calculations
     init_graphics.init_shadows(game)
 
-    return game  
+    return game

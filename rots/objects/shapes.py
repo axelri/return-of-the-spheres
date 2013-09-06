@@ -325,9 +325,6 @@ class Surface(Shape):
         glEndList()
         return display_list_index
 
-    def get_points(self):
-        return self._points
-
     def get_normal(self, point = Vector()):
         return self._normal
 
@@ -346,27 +343,3 @@ class Surface(Shape):
 
     def get_subdivision_size(self):
         return self._subdivision_size
-
-    # def draw_bounding_box(self):
-
-    #     x = self._x/2.0
-    #     y = self._y/2.0
-    #     z = self._z/2.0
-
-    #     box_points = [[x, -y, -z],  [x, y, -z],
-    #                 [-x, y, z],  [-x, -y, -z],
-    #                 [x, -y, z],   [x, y, z],
-    #                 [-x, -y, z],  [-x, y, z]]
-
-    #     CUBE_EDGES = ((0,1), (0,3), (0,4), (2,1), (2,3), (2,7),
-    #                 (6,3), (6,4), (6,7), (5,1), (5,4), (5,7))
-    #     glPushMatrix()
-    #     glMultMatrixf(matrices.ODE_to_OpenGL(self.rotation))
-
-    #     glColor3f(1.0, 1.0, 1.0)    
-    #     glBegin(GL_LINES)
-    #     for line in CUBE_EDGES:
-    #         for vert in line:
-    #             glVertex3fv(box_points[vert])
-    #     glEnd()
-    #     glPopMatrix()

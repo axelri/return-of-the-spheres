@@ -22,69 +22,6 @@ BOX_NORMALS = ([0.0, 0.0, -1.0], [-1.0, 0.0, 0.0],
 
 BOX_TEX_COORDS = ((0,0), (1,0), (1,1), (0,1))
 
-def cube_points(size):
-    ''' Calculates the vertices of a cube of size size.
-
-    Input:  size: The length of the side of the cube,
-                must be a positive number.
-
-    Output: A list containing the vertices of the cube,
-            represented as lists. '''
-    
-    assert isinstance(size, numbers.Number), 'Input must be a number'
-    assert size > 0, 'Input must be a positive number'
-    
-    h = size/2.0
-    return [[h, -h, -h],  [h, h, -h],
-            [-h, h, -h],  [-h, -h, -h],
-            [h, -h, h],   [h, h, h],
-            [-h, -h, h],  [-h, h, h]]
-
-
-def cube(cube):
-    ''' The drawing routine for a Cube object.
-
-    Input:  cube: A Cube object
-
-    Calls OpenGL to draw the cube. '''
-    
-    assert isinstance(cube, shapes.Cube), \
-           'Input must be a Cube object'
-
-    points = cube_points(cube.get_side())
-    size = cube.get_side()
-
-    ambient, diffuse, specular, shininess, emissive = cube.get_material_properties()
-
-    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient)
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse)
-    glMaterialfv(GL_FRONT, GL_SPECULAR, specular)
-    glMateriali(GL_FRONT, GL_SHININESS, shininess)
-    glMaterialfv(GL_FRONT, GL_EMISSION, emissive)
-
-    if cube.get_texture():
-        glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, cube.get_texture())
-
-    glBegin(GL_QUADS)
-    for face in BOX_QUAD_VERTS:
-        glNormal3fv(BOX_NORMALS[BOX_QUAD_VERTS.index(face)])
-        for vert, i in zip(face, range(4)):
-            tex_coord = BOX_TEX_COORDS[i]
-            glTexCoord2f(tex_coord[0], tex_coord[1])
-            glVertex3fv(points[vert])
-    glEnd()
-
-    # TODO: Use something like "cube.get_line_color()" instead?
-    glColor3f(0.0, 0.0, 0.0)    
-    glBegin(GL_LINES)
-    for line in BOX_EDGES:
-        for vert in line:
-            glVertex3fv(points[vert])
-    glEnd()
-
-    glDisable(GL_TEXTURE_2D)
-
 def box(box):
     ''' Draws a box '''
 

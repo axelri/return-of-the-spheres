@@ -17,6 +17,9 @@ from physics_engine import physics
 from objects import shapes
 from objects.text import TextBox
 
+# TODO: Clean-up everywhere! More logical order of variable definitions,
+# better readability and more detailed func-docs, among other things.
+
 def game_loop(game):
 
     # Take input
@@ -67,6 +70,8 @@ def main():
     toggle_pause = False
 
     # Background music
+    # NOTE: Should this be in init_scene? If we want to have 
+    # different background music in different scenes?
     pygame.mixer.music.load('sound/sound_data/02. II. Molto vivace.ogg')
     pygame.mixer.music.set_volume(0.8)
     pygame.mixer.music.play(-1)
