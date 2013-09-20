@@ -10,6 +10,7 @@ from math_classes import matrices
 from math_classes.vectors import Vector
 from graphics import draw, textures
 from sound import sound_effects
+import shapes
 
 class Power_up(object):
     ''' Base class for all power ups '''
@@ -156,6 +157,11 @@ class Gravity_flipper(Power_up):
         ''' The function that is called whe the player
             collides with the power up '''
 
+        # TODO: There is a bug when using the power up 
+        # causing all AABBs to become white. It is resolved
+        # by pressing the button that creates a new sphere.
+        # What is causing this bug? Fix it.
+
         self._activation_sound.play()
         world = game.get_world()
         camera = game.get_camera()
@@ -177,12 +183,23 @@ class Gravity_flipper(Power_up):
         new_power_up = Gravity_flipper(self._space, new_power_pos)
         object_list.append(new_power_up)
 
+        # Make sure all objects are enabled
+        for item in object_list:
+            if isinstance(item, shapes.Shape) and item.get_body():
+                # It is a Shape object with a body
+                item.get_body().enable()
+
         self.kill(game)
 
 
 class World_flipper(Gravity_flipper):
     ''' A class of power ups that flip the entire world
         upside down '''
+
+        # TODO: There is a bug when using the power up 
+        # causing all AABBs to become white. It is resolved
+        # by pressing the button that creates a new sphere.
+        # What is causing this bug? Fix it.
 
     def __init__(self, space, pos):
 
@@ -215,5 +232,11 @@ class World_flipper(Gravity_flipper):
         new_power_pos = Vector((randrange(-14, 14), 8.0, randrange(-14, 14))) + up * 6.0
         new_power_up = World_flipper(self._space, new_power_pos)
         object_list.append(new_power_up)
+
+        # Make sure all objects are enabled
+        for item in object_list:
+            if isinstance(item, shapes.Shape) and item.get_body():
+                # It is a Shape object with a body
+                item.get_body().enable()
 
         self.kill(game)
