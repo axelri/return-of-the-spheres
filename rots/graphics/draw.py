@@ -10,6 +10,8 @@ from math import radians, tan, pi
 
 import textures
 
+from math_classes.vectors import Vector
+
 BOX_QUAD_VERTS = ((0, 3, 2, 1), (3, 6, 7, 2), (6, 4, 5, 7),
                    (4, 0, 1, 5), (1, 2, 7, 5), (4, 6, 3, 0))
 
@@ -24,8 +26,6 @@ BOX_TEX_COORDS = ((0,0), (1,0), (1,1), (0,1))
 
 def box(box):
     ''' Draws a box '''
-
-    # TODO: Add subdivision
 
     x_size, y_size, z_size = box.get_sides()
     x = x_size/2.0
@@ -50,14 +50,72 @@ def box(box):
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, box.get_texture())
 
+    #glEnable(GL_COLOR_MATERIAL)
+
     glBegin(GL_QUADS)
     for face in BOX_QUAD_VERTS:
-        glNormal3fv(BOX_NORMALS[BOX_QUAD_VERTS.index(face)])
-        for vert, i in zip(face, range(4)):
-            tex_coord = BOX_TEX_COORDS[i]
-            glTexCoord2f(tex_coord[0], tex_coord[1])
-            glVertex3fv(points[vert])
+
+        # Dimensions of the box's surface
+        down_left = points[face[0]]
+        down_right = points[face[1]]
+        up_right = points[face[2]]
+        up_left = points[face[3]]
+        up_left_vec = Vector(up_left)   # Will be used a lot, that's
+                                        # why it's created here
+
+        length = (Vector(up_right) - Vector(down_right)).norm()
+        width = (Vector(up_right) - Vector(up_left)).norm()
+
+        # The directions of the surface
+        down_vec = (Vector(down_right) - Vector(up_right)).normalize()
+        right_vec = (Vector(up_right) - Vector(up_left)).normalize()
+
+        # The wanted subdivision size
+        goal_sub_size = box.get_subdivision_size()
+
+        # Number of subdivisions
+        length_subs = int(length // goal_sub_size) + 1
+        width_subs = int(width // goal_sub_size) + 1
+
+        # Actual size of the subdivisions
+        length_sub_size = length / float(length_subs)
+        width_sub_size = width / float(width_subs)
+
+        # Size as fractions of the whole surface
+        length_sub_frac = 1.0 / length_subs
+        width_sub_frac = 1.0 / width_subs
+
+        # Draw the surface
+        for l in range(length_subs):
+            for w in range(width_subs):
+
+                # To show the subdivisions of the surface, uncomment this, aswell as
+                # glEnable/Disable GL_COLOR_MATERIAL (directly before and after glBegin/End)
+                #random_color = [random.random(), random.random(), random.random()]
+                #glColor3fv(random_color)
+
+                glNormal3fv(BOX_NORMALS[BOX_QUAD_VERTS.index(face)])
+
+                glTexCoord2f(w * width_sub_frac, 1 - l * length_sub_frac)
+                glVertex3fv((up_left_vec + right_vec * w * width_sub_size + \
+                            down_vec * l * length_sub_size).value)
+
+                glTexCoord2f(w * width_sub_frac, 1 - (l + 1) * length_sub_frac)
+                glVertex3fv((up_left_vec + right_vec * w * width_sub_size + \
+                            down_vec * (l + 1) * length_sub_size).value)
+
+                glTexCoord2f((w + 1) * width_sub_frac, 1 - (l + 1) * length_sub_frac)
+                glVertex3fv((up_left_vec + right_vec * (w + 1) * width_sub_size + \
+                            down_vec * (l + 1) * length_sub_size).value)
+
+                glTexCoord2f((w + 1) * width_sub_frac, 1 - l * length_sub_frac)
+                glVertex3fv((up_left_vec + right_vec * (w + 1) * width_sub_size + \
+                            down_vec * l * length_sub_size).value)
+
     glEnd()
+
+    #glDisable(GL_COLOR_MATERIAL)
+
 
     # TODO: Use something like "box.get_line_color()" instead?
     glColor3f(0.0, 0.0, 0.0)    
@@ -130,7 +188,7 @@ def surface(surface):
             glVertex3f(-half_width + w * width_sub_size, 
                         0.0,
                         -half_length + l * length_sub_size)
-            glTexCoord2f(w * width_sub_frac, 1 - (l + 1) *length_sub_frac)
+            glTexCoord2f(w * width_sub_frac, 1 - (l + 1) * length_sub_frac)
             glVertex3f(-half_width + w * width_sub_size, 
                         0.0,
                         -half_length + (l + 1) * length_sub_size)
@@ -195,7 +253,7 @@ def start_screen(start_texture, ratio):
     glEnd()
     glDisable(GL_TEXTURE_2D)
 
-def AABB(aabb):
+def AABB(aabb, color):
     ''' Draws an AABB.
         Input: An AABB as given by ODE (6-tuple:
                 (minx, maxx, miny, maxy, minz, maxz)) '''
@@ -209,8 +267,14 @@ def AABB(aabb):
                 (maxx, miny, maxz), (maxx, maxy, maxz),
                 (minx, miny, maxz), (minx, maxy, maxz))
 
+    glEnable(GL_COLOR_MATERIAL)
+
+    glColor4fv(color)
+
     glBegin(GL_LINES)
     for line in BOX_EDGES:
         for vert in line:
             glVertex3fv(points[vert])
     glEnd()
+
+    glDisable(GL_COLOR_MATERIAL)

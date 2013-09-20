@@ -27,6 +27,7 @@ def init_scene(start_screen):
     world.setGravity( (0,-9.81,0) )
     world.setERP(0.8)
     world.setCFM(1E-5)
+    world.setAutoDisableFlag(True)
 
     # Create space objects, one for spheres, one for other
     # moving objects and one for the static environment
@@ -35,6 +36,7 @@ def init_scene(start_screen):
     static_space = ode.Space(1)
     power_up_space = ode.Space(1)
     interactive_object_space = ode.Space(1)
+    moving_scene_space = ode.Space(1)
 
     # Load textures
     tex_no = 6 # The number of textures (used to show progress in loading)
@@ -79,8 +81,6 @@ def init_scene(start_screen):
     start_screen.update('Creating objects: {perc:.0f}%'.format(perc = 4.0/obj_no*100))
 
     sun.set_emissive([1.0, 1.0, 1.0, 1.0])
-    #sun_light = lights.Light(GL_LIGHT1, sun.get_pos(), ambient = [0.2, 0.2, 0.0, 1.0],
-    #                        diffuse = [1.0, 1.0, 1.0, 1.0], specular = [1.0, 1.0, 1.0, 1.0])
 
     cube = shapes.Cube(world, object_space, pos = Vector([3.0, 5.0, 0.0]), side = 2,
                         texture = puppy_tex)
@@ -274,7 +274,7 @@ def init_scene(start_screen):
     sticky_roof.set_friction(10)
     sticky_roof.set_bounce(0.1)
 
-    door = moving_scene.Sliding_door(static_space, pos = Vector((0.0, 2.0, -15.0)), 
+    door = moving_scene.Sliding_door(moving_scene_space, pos = Vector((0.0, 2.0, -15.0)), 
                             normal = Vector((0.0, 0.0, 1.0)),
                             slide_dir = Vector((1.0, 0.0, 0.0)), slide_size = 6,
                             ort_size = 4)
@@ -293,7 +293,7 @@ def init_scene(start_screen):
                             side = 1,
                             action = door.toggle)
 
-    moving_platform = moving_scene.Moving_platform(static_space, normal = Vector((0.0, 1.0, 0.0)),
+    moving_platform = moving_scene.Moving_platform(moving_scene_space, normal = Vector((0.0, 1.0, 0.0)),
                             forward = Vector((0.0, 0.0, 1.0)), width = 5, length = 5,
                             turning_points = (Vector((-12.5, 1.0, 12.5)), Vector((0.0, 10.0, 12.5))))
 
@@ -343,7 +343,8 @@ def init_scene(start_screen):
     fps = 60
 
     # Create a game object
-    spaces = (sphere_space, object_space, static_space, power_up_space, interactive_object_space)
+    spaces = (sphere_space, object_space, static_space, power_up_space, interactive_object_space,
+            moving_scene_space)
 
     game = games.Game(world, spaces, player, object_list, 
                     light_list, camera, clock, contact_group, fps)

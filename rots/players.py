@@ -71,6 +71,10 @@ class Player:
         # (currrently 10) to get good movement
         # TODO: Fix so you can't move faster than intended just by 
         # moving the mouse back and forth.
+
+        # Make sure the player is able to move
+        if not self._shape._body.isEnabled():
+            self._shape._body.enable()
         
         left_vector = up_vector.cross(forward_vector)
 

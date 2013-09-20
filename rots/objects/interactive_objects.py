@@ -33,6 +33,8 @@ class Interactive_object(object):
 
         self._display_list_index = None
 
+        self._AABB_color = (1.0, 1.0, 0.0, 1.0)
+
     def get_texture(self):
         return self._texture
 
@@ -46,6 +48,12 @@ class Interactive_object(object):
     def get_material_properties(self):
         return self._ambient, self._diffuse, self._specular,\
                self._shininess, self._emissive
+
+    def get_AABB_color(self):
+        return self._AABB_color
+
+    def set_AABB_color(self, color):
+        self._AABB_color = color
 
     def draw(self):
         pos = self.get_pos().value
@@ -61,7 +69,8 @@ class Interactive_object(object):
 
     def draw_AABB(self):
         aabb = self._geom.getAABB()
-        draw.AABB(aabb)
+        color = self._AABB_color
+        draw.AABB(aabb, color)
 
     def collide_func(self):
         ''' The function that is called when the interactive 
@@ -74,7 +83,8 @@ class Button(Interactive_object):
         when pressed (e.g. open a door) '''
 
     def __init__(self, space, pos, normal, forward, side = 2, thickness = 0.1,
-                texture = None, action = do_nothing, args = None):
+                texture = None, action = do_nothing, args = None,
+                subdivision_size = 1):
 
         super(Button, self).__init__()
         self._x_size = side
@@ -93,6 +103,7 @@ class Button(Interactive_object):
         self._geom.setBody(self._body)
 
         self.set_data('object', self)
+        self._subdivision_size = subdivision_size
 
         self._pressed = False
         self._pressed_last_frame = False
@@ -141,6 +152,9 @@ class Button(Interactive_object):
     def get_sides(self):
         return self._x_size, self._y_size, self._z_size
 
+    def get_subdivision_size(self):
+        return self._subdivision_size
+
     def set_pressed(self, pressed):
         self._pressed = pressed
 
@@ -157,7 +171,6 @@ class Button(Interactive_object):
         ''' The function that is called when the button is pressed '''
 
         # TODO: Make it get pressed and unpressed slowly with an animation.
-        # TODO: Add click sound
 
         if self._args != None:
             self._click_sound.play()

@@ -16,7 +16,8 @@ class Game():
                 object_list, light_list, camera, clock, 
                 contact_group, fps, debug_state = 0):
         
-        sphere_space, object_space, static_space, power_up_space, interactive_object_space = spaces
+        sphere_space, object_space, static_space, power_up_space, \
+                interactive_object_space, moving_scene_space = spaces
 
         self._world = world
         self._sphere_space = sphere_space
@@ -24,6 +25,7 @@ class Game():
         self._static_space = static_space
         self._power_up_space = power_up_space
         self._interactive_object_space = interactive_object_space
+        self._moving_scene_space = moving_scene_space
         self._player = player
         self._object_list = object_list
         self._light_list = light_list
@@ -105,6 +107,9 @@ class Game():
 
     def get_interactive_object_space(self):
         return self._interactive_object_space
+
+    def get_moving_scene_space(self):
+        return self._moving_scene_space
 
     def get_player(self):
         return self._player

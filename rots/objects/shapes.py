@@ -40,6 +40,8 @@ class Shape(object):
         self._display_list_index = None
         self._texture = None
 
+        self._AABB_color = (1.0, 0.0, 0.0, 1.0)
+
         # Explanations of the material properties:
         #   * Ambient and diffuse "define the color" of the material,
         #     the ambient part is spread over the entire shape
@@ -87,6 +89,12 @@ class Shape(object):
     def get_bounce(self):
         return self._bounce
 
+    def get_AABB_color(self):
+        return self._AABB_color
+
+    def set_AABB_color(self, color):
+        self._AABB_color = color
+
     def set_friction(self, friction):
         self._friction = friction
 
@@ -131,16 +139,13 @@ class Shape(object):
         glCallList(self._display_list_index)
 
     def draw_AABB(self):
-        # aabb = self._geom.getAABB()
-        # x_size = (aabb[1] - aabb[0])/2.0
-        # y_size = (aabb[3] - aabb[2])/2.0
-        # z_size = (aabb[5] - aabb[4])/2.0
-        # pos = self.get_pos().value
-        # glTranslatef(pos[0], pos[1], pos[2])
-        # draw.AABB(x_size, y_size, z_size)
 
         aabb = self._geom.getAABB()
-        draw.AABB(aabb)
+        if self._body == None or self._body.isEnabled():
+            color = self._AABB_color
+        else:
+            color = (1.0, 1.0, 1.0, 1.0)
+        draw.AABB(aabb, color)
 
 class Sphere(Shape):
 
@@ -202,7 +207,8 @@ class Sphere(Shape):
 class Box(Shape):
 
     def __init__(self, world, space, pos = Vector(), x_size = 1,
-                y_size = 1, z_size = 1, mass = 1, texture = None):
+                y_size = 1, z_size = 1, mass = 1, texture = None,
+                subdivision_size = 1):
         super(Box, self).__init__(world)
 
         # Set ODE properties
@@ -220,6 +226,7 @@ class Box(Shape):
         self.set_data('object', self)
 
         self._texture = texture
+        self._subdivision_size = subdivision_size
         
         # Material properties
         self._ambient = [1.0, 1.0, 1.0, 1.0]
@@ -232,6 +239,9 @@ class Box(Shape):
 
     def get_sides(self):
         return self._x_size, self._y_size, self._z_size
+
+    def get_subdivision_size(self):
+        return self._subdivision_size
 
     def create_displaylist_index(self):
         display_list_index = glGenLists(1)

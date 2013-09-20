@@ -35,8 +35,12 @@ class Moving_scene(object):
 
         self._display_list_index = None
 
+        self._AABB_color = (0.0, 0.0, 1.0, 1.0)
+
         self._friction = 1
         self._bounce = 0.2
+
+        self._velocity = Vector()
 
     def get_texture(self):
         return self._texture
@@ -57,6 +61,15 @@ class Moving_scene(object):
 
     def get_bounce(self):
         return self._bounce
+
+    def get_velocity(self):
+        return self._velocity
+
+    def get_AABB_color(self):
+        return self._AABB_color
+
+    def set_AABB_color(self, color):
+        self._AABB_color = color
 
     def set_friction(self, friction):
         self._friction = friction
@@ -79,7 +92,8 @@ class Moving_scene(object):
 
     def draw_AABB(self):
         aabb = self._geom.getAABB()
-        draw.AABB(aabb)
+        color = self._AABB_color
+        draw.AABB(aabb, color)
 
     def update(self):
         pass
@@ -90,7 +104,7 @@ class Sliding_door(Moving_scene):
     def __init__(self, space, pos = Vector(), normal = Vector((0.0, 1.0, 0.0)), 
                 slide_dir = Vector((1.0, 0.0, 0.0)), slide_size = 5,
                 ort_size = 5, thickness = 0.5, texture = None,
-                opening_time = 30):
+                opening_time = 30, subdivision_size = 1):
 
         super(Sliding_door, self).__init__()
         
@@ -114,6 +128,7 @@ class Sliding_door(Moving_scene):
                                 self._thickness, self._slide_size))
         self._body = None
         self._geom.setBody(self._body)
+        self._subdivision_size = subdivision_size
 
         self.set_data('object', self)
         self._slide_sound = sound_effects.load_sound('slide_2.wav')
@@ -162,6 +177,10 @@ class Sliding_door(Moving_scene):
                             (1 + cos(pi * (float(self._opening_counter)/self._opening_time))) \
                             * self._slide_size * 0.5
 
+                self._velocity = self._slide_dir * \
+                        -sin(pi * (float(self._opening_counter)/self._opening_time)) * \
+                                self._slide_size * 0.5
+
                 # Check if it is closed
                 if self._opening_counter == self._opening_time:
                     self._opening_counter = 0
@@ -175,11 +194,18 @@ class Sliding_door(Moving_scene):
                             (1 + sin(pi * (((float(self._opening_counter)/self._opening_time)) - 0.5))) \
                             * self._slide_size * 0.5
 
+                self._velocity = self._slide_dir * \
+                    cos(pi * (((float(self._opening_counter)/self._opening_time)) - 0.5)) * \
+                        self._slide_size * 0.5
+
                 # Check if it is open
                 if self._opening_counter == self._opening_time:
                     self._opening_counter = 0
                     self._toggling = False
                     self._open = True
+        else:
+            # Isn't toggling, therefore not moving
+            self._velocity = Vector()
 
         self._geom.setPosition(self._pos.value)
 
@@ -206,6 +232,9 @@ class Sliding_door(Moving_scene):
     def get_sides(self):
         return self._ort_size, self._thickness, self._slide_size
 
+    def get_subdivision_size(self):
+        return self._subdivision_size
+
     def create_displaylist_index(self):
         display_list_index = glGenLists(1)
         glNewList(display_list_index, GL_COMPILE)
@@ -221,7 +250,8 @@ class Moving_platform(Moving_scene):
     def __init__(self, space, normal = Vector((0.0, 1.0, 0.0)), 
                 forward = Vector((1.0, 0.0, 0.0)),
                 width = 5, length = 5, thickness = 0.5, texture = None,
-                move_time = 480, turning_points = (Vector((0.0, 2.0, 0.0)), Vector((0.0, 10.0, 0.0)))):
+                move_time = 480, turning_points = (Vector((0.0, 2.0, 0.0)), Vector((0.0, 10.0, 0.0))),
+                subdivision_size = 1):
 
         super(Moving_platform, self).__init__()
 
@@ -243,6 +273,8 @@ class Moving_platform(Moving_scene):
         self._move_dist = (turning_points[1] - turning_points[0]).norm() / 2.0
         self._move_dir = (turning_points[1] - turning_points[0]).normalize()
         self._middle_point = (turning_points[1] + turning_points[0]) * 0.5
+        self._pos = self._middle_point
+        self._subdivision_size = subdivision_size
 
         self._bounce = 0.0
 
@@ -278,6 +310,9 @@ class Moving_platform(Moving_scene):
     def get_sides(self):
         return self._width, self._thickness, self._length
 
+    def get_subdivision_size(self):
+        return self._subdivision_size
+
     def create_displaylist_index(self):
         display_list_index = glGenLists(1)
         glNewList(display_list_index, GL_COMPILE)
@@ -287,9 +322,32 @@ class Moving_platform(Moving_scene):
 
     def update(self):
 
+        old_pos = self._pos
+
         self._pos = self._middle_point + self._move_dir * \
                     sin(pi * self._counter / self._move_time) * \
                     self._move_dist * -1.0
+
+        # NOTE: Something wrong here...
+        #self._velocity =  self._move_dir * \
+        #        cos(pi * self._counter / self._move_time) * \
+        #                    self._move_dist * -1.0
+
+        #curr_vel = (self._pos - old_pos) * 60
+
+        self._velocity = (self._pos - old_pos) * 60
+
+        # try:
+        #     error_factor = self._velocity.norm()/curr_vel.norm()
+        # except ZeroDivisionError:
+        #     print 'Division by zero'
+        #     error_factor = None
+
+        # print 'Pos: ', self._pos
+        # print 'Vel: ', self._velocity
+        # print 'Vel (should be): ', curr_vel
+        # print 'Error factor: ', error_factor
+        # print
 
         self._geom.setPosition(self._pos.value)
 

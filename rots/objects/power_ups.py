@@ -33,6 +33,8 @@ class Power_up(object):
         self._collided = False
         self._activation_sound = None
 
+        self._AABB_color = (0.0, 1.0, 0.0, 1.0)
+
     def get_texture(self):
         return self._texture
 
@@ -49,6 +51,12 @@ class Power_up(object):
 
     def get_collided(self):
         return self._collided
+
+    def get_AABB_color(self):
+        return self._AABB_color
+
+    def set_AABB_color(self, color):
+        self._AABB_color = color
 
     def set_collided(self, collided):
         self._collided = collided
@@ -78,7 +86,8 @@ class Power_up(object):
 
     def draw_AABB(self):
         aabb = self._geom.getAABB()
-        draw.AABB(aabb)
+        color = self._AABB_color
+        draw.AABB(aabb, color)
 
 class Gravity_flipper(Power_up):
     ''' A class of power ups that flip the world's
