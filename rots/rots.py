@@ -7,6 +7,7 @@ import ode
 
 import traceback
 import sys
+import warnings
 
 import scenes
 import games
@@ -29,6 +30,7 @@ def game_loop(game):
     clock = game.get_clock()
     fps = game.get_fps()
 
+    # NOTE: Move this to game.take_input()?
     if toggle_debug:
         game.toggle_debug()
 
@@ -75,6 +77,12 @@ def main():
     pygame.mixer.music.load('sound/sound_data/02. II. Molto vivace.ogg')
     pygame.mixer.music.set_volume(0.8)
     pygame.mixer.music.play(-1)
+
+    # An attempt to suppress warnings from ODE saying that two geoms are intersecting
+    # (it is a common error that we can simply ignore). 
+    # NOTE: Why doesn't it work? Is it not a warning? Not even 
+    # "warnings.simplefilter('ignore')", that should suppress all warnings, seems to work...
+    warnings.filterwarnings('ignore', 'ODE Message 3: LCP internal error, s <= 0')
 
     while run:
 

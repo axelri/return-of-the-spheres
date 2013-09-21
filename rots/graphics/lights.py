@@ -32,7 +32,27 @@ class Light:
 
         # TODO: Add spotlight properties like cutoff etc.
 
-    # Getters
+    def move(self):
+        ''' Moves the light to its current position '''
+        # The last part (+[float(not self._is_spotlight)])
+        # is there because the fourth element in the position
+        # is used by OpenGL to define if it is a spotlight
+        # or not: 1.0 means no spotlight, 0.0 means spotlight.
+        glLightfv(self._light_index, GL_POSITION,
+                  self._pos.value+tuple([float(not self._is_spotlight)]))
+
+    def _setup(self):
+        ''' Sets the wanted properties of the light in OpenGL '''
+        glLightfv(self._light_index, GL_AMBIENT, self._ambient)
+        glLightfv(self._light_index, GL_DIFFUSE, self._diffuse)
+        glLightfv(self._light_index, GL_SPECULAR, self._specular)
+        self.move()
+
+    def disable(self):
+        ''' Disables the light '''
+        glDisable(self._light_index)
+
+    ### Getters
 
     def get_light_index(self):
         return self._light_index
@@ -52,7 +72,7 @@ class Light:
     def is_spotlight(self):
         return self._is_spotlight
 
-    #Setters
+    ### Setters
 
     def set_pos(self, pos):
         self._pos = pos
@@ -73,25 +93,3 @@ class Light:
     def set_specular(self, specular):
         self._specular = specular
         self._setup()
-
-
-
-    def move(self):
-        ''' Moves the light to its current position '''
-        # The last part (+[float(not self._is_spotlight)])
-        # is there because the fourth element in the position
-        # is used by OpenGL to define if it is a spotlight
-        # or not: 1.0 means no spotlight, 0.0 means spotlight.
-        glLightfv(self._light_index, GL_POSITION,
-                  self._pos.value+tuple([float(not self._is_spotlight)]))
-
-    def _setup(self):
-        ''' Sets the wanted properties of the light in OpenGL '''
-        glLightfv(self._light_index, GL_AMBIENT, self._ambient)
-        glLightfv(self._light_index, GL_DIFFUSE, self._diffuse)
-        glLightfv(self._light_index, GL_SPECULAR, self._specular)
-        self.move()
-
-    def disable(self):
-        ''' Disables the light '''
-        glDisable(self._light_index)

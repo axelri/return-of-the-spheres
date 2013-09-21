@@ -70,12 +70,22 @@ class Game():
         self._object_list += self._debug_list
 
     def toggle_debug(self):
+        ''' Toggle the debug state. There are three debug states:
+            0, 1 and 2. This function toggles from the current
+            state to the next (0 -> 1, 1 -> 2, 2 -> 0).
+            0 means 'no debug', 1 means 'only debug screen'
+            and 2 means 'both debug screen and drawn AABBs' '''
+
         self._debug_state = (self._debug_state + 1) % 3
         if self._debug_state == 0 or self._debug_state == 1:
             for item in self._debug_list:
                 item.toggle()
 
     def update_debug_screen(self):
+        ''' Updates the debug screen. Gets the data to be 
+            displayed on the debug screen and adds that data 
+            to the textboxes in the debug screen. '''
+
         # Performance
 
         self._debug_fps.set_string("FPS: %0.2f" % self._clock.get_fps())
@@ -86,9 +96,87 @@ class Game():
         self._debug_player_vel.set_string("Player vel: [%0.2f, %0.2f, %0.2f]" % self._player.get_vel().value)
         self._debug_player_colliding.set_string("Player colliding: %s" % self._player.colliding)
 
-    #def get_objects(self):
-    #    return self._world, self._space, self._player, self._object_list, \
-    #           self._light_list, self._camera
+
+
+    def take_input(self):
+        ''' Take input from the keyboard and translates
+            that to "game commands".
+
+            Output:
+                * run:  
+                    A boolean telling whether the game should
+                    keep running or be shut down. 
+                    - True = keep running, False = shut down
+                * direction: 
+                    A unit Vector describing the direction that 
+                    the player should move in, given in 
+                    coordinates relative the player.
+                * jump:
+                    A boolean telling whether or not the player
+                    should jump.
+                    - True = jump, False = don't jump
+                * toggle_debug:
+                    A boolean telling whether or not to toggle
+                    the debug state.
+                    - True = toggle, False = don't toggle
+                * toggle_pause:
+                    A boolean telling whether or not to toggle
+                    the pause state.
+                    - True = toggle, False = don't toggle '''
+
+        # Take input from the keyboard
+        self._keys_pressed = pygame.key.get_pressed()
+
+        # Cache current events, empty event queue
+        current_events = pygame.event.get()
+
+        # To run, or not to run...
+        run = True
+
+        for event in current_events:
+            if event.type == QUIT:
+                run = False
+
+        if self._keys_pressed[K_ESCAPE]:
+            run = False
+
+        # The direction
+
+        xDir = self._keys_pressed[K_d] - self._keys_pressed[K_a]
+        zDir = self._keys_pressed[K_w] - self._keys_pressed[K_s]
+
+        direction = Vector([xDir, 0.0, zDir]).normalize()
+        if not direction:
+            direction = Vector()
+
+        # Jumping
+
+        if self._keys_pressed[K_SPACE] and self._player.colliding and not self._keys_pressed_last_frame[K_SPACE]:
+            jump = True
+        else:
+            jump = False
+
+        # Toggle debug
+        # NOTE: Move game.toggle_debug() here from rots/game_loop()?
+
+        if self._keys_pressed[K_q] and not self._keys_pressed_last_frame[K_q]:
+            toggle_debug = True
+        else:
+            toggle_debug = False
+
+        # Toggle pause
+
+        if self._keys_pressed[K_p] and not self._keys_pressed_last_frame[K_p]:
+            toggle_pause = True
+        else:
+            toggle_pause = False
+
+
+        self._keys_pressed_last_frame = self._keys_pressed
+
+        return run, direction, jump, toggle_debug, toggle_pause
+
+    ### Getters
 
     def get_world(self):
         return self._world
@@ -141,53 +229,11 @@ class Game():
     def get_debug_state(self):
         return self._debug_state
 
+    ### Setters
+
     def add_constant(self, key, value):
         self._constants[key] = value
 
     def set_fps(self, fps):
         self._fps = fps
         self._dt = 1/float(fps)
-
-    def take_input(self):
-        current_events = pygame.event.get() # cache current events
-        run = True
-        for event in current_events:
-            if event.type == QUIT or \
-            (event.type == KEYDOWN and event.key == K_ESCAPE):
-                run = False
-        self._keys_pressed = pygame.key.get_pressed()
-
-        # The direction
-
-        xDir = self._keys_pressed[K_d] - self._keys_pressed[K_a]
-        zDir = self._keys_pressed[K_s] - self._keys_pressed[K_w]
-
-        direction = Vector([xDir, 0.0, zDir]).normalize()
-        if not direction:
-            direction = Vector()
-
-        # Jumping
-
-        if self._keys_pressed[K_SPACE] and self._player.colliding and not self._keys_pressed_last_frame[K_SPACE]:
-            jump = True
-        else:
-            jump = False
-
-        # Toggle debug
-
-        if self._keys_pressed[K_q] and not self._keys_pressed_last_frame[K_q]:
-            toggle_debug = True
-        else:
-            toggle_debug = False
-
-        # Toggle pause
-
-        if self._keys_pressed[K_p] and not self._keys_pressed_last_frame[K_p]:
-            toggle_pause = True
-        else:
-            toggle_pause = False
-
-
-        self._keys_pressed_last_frame = self._keys_pressed
-
-        return run, direction, jump, toggle_debug, toggle_pause

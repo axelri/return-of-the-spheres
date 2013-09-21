@@ -254,7 +254,8 @@ def sphere_moving_scene_callback(game, sphere, scene):
     sphere_body = sphere.getBody()
     scene_body = scene.getBody()
 
-    scene_vel = scene_shape.get_velocity()
+    #scene_vel = scene_shape.get_velocity()
+    vel = scene_shape.get_velocity()
 
     # Check if the objects do collide
     contacts = ode.collide(sphere, scene)
@@ -267,9 +268,9 @@ def sphere_moving_scene_callback(game, sphere, scene):
         c.setBounce(bounce)
         c.setMu(friction)
 
-        # Hack to add friction (kind of...)
+        ### Hack to add friction (kind of...)
         # Doesn't work as it should at all yet, very buggy...
-        pos, normal, depth, geom1, geom2 = c.getContactGeomParams()
+        #pos, normal, depth, geom1, geom2 = c.getContactGeomParams()
 
         #sphere_vel = sphere_shape.get_vel()
         #rel_vel = scene_vel - sphere_vel
@@ -283,16 +284,18 @@ def sphere_moving_scene_callback(game, sphere, scene):
 
         #sphere_body.addForceAtRelPos((rel_vel * 5).value, pos.value)
         
-        # # Adjust the velocity of the contact
-        # pos, normal, depth, geom1, geom2 = c.getContactGeomParams()
-        # normal = Vector(normal)
-        # dir_1 = Vector((1.0, 0.0, 0.0)).cross(normal)
-        # if dir_1.norm() < 0.1:
-        #     dir_1 = Vector((0.0, 0.0, 1.0)).cross(normal)
-        # dir_1 = dir_1.normalize()
-        # dir_2 = normal.cross(dir_1)
 
-        # c.setFDir1(dir_1.value)
+
+        ### Adjust the velocity of the contact
+        pos, normal, depth, geom1, geom2 = c.getContactGeomParams()
+        normal = Vector(normal)
+        dir_1 = Vector((1.0, 0.0, 0.0)).cross(normal)
+        if dir_1.norm() < 0.1:
+            dir_1 = Vector((0.0, 0.0, 1.0)).cross(normal)
+        dir_1 = dir_1.normalize()
+        dir_2 = normal.cross(dir_1)
+
+        c.setFDir1(dir_1.value)
 
         # #print 'Number of contacts: ', len(contacts)
 
@@ -300,8 +303,8 @@ def sphere_moving_scene_callback(game, sphere, scene):
         # print 'dir_1: ', dir_1
         # print 'dir_2: ', dir_2
 
-        # vel_1 = vel.dot(dir_1)
-        # vel_2 = vel.dot(dir_2)
+        vel_1 = vel.dot(dir_1)
+        vel_2 = vel.dot(dir_2)
 
         # print 'vel: ', vel
 
@@ -309,8 +312,8 @@ def sphere_moving_scene_callback(game, sphere, scene):
         # print 'vel_2 before: ', c.getMotion2()
 
         # # Don't seem to do anything... What's wrong?
-        # c.setMotion1(vel_1)
-        # c.setMotion2(vel_2)
+        c.setMotion1(vel_1)
+        c.setMotion2(vel_2)
 
         # print 'vel_1 after: ', c.getMotion1()
         # print 'vel_2 after: ', c.getMotion2()

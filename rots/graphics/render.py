@@ -42,6 +42,7 @@ def render(game):
 
 
 def draw_scene(object_list, game):
+    ''' Draws the scene. '''
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 

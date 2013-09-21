@@ -14,11 +14,17 @@ def init_window(window_name, start_image, HAVE_FULLSCREEN = True):
     ''' Initiates pygame, creates and sets up the window,
     sets up OpenGL.
 
-    Input:  windowName: The desired name of the window;
-                what the caption of the window will be
-                set to, a string.
-            HAVE_FULLSCREEN: Whether or not the window
-                should be fullscreen, a boolean. '''
+    Input:  
+        * window_name: 
+            The desired name of the window;
+            what the caption of the window will be
+            set to, a string.
+        * start_image:
+            A string with the name of an image to be 
+            used as start screen.
+        * HAVE_FULLSCREEN:
+            Whether or not the window
+            should be fullscreen, a boolean. '''
 
     # Initialize a pygame window
     pygame.mixer.pre_init(44100, -16, 2, 1024) # setup mixer to avoid sound lag
@@ -156,7 +162,8 @@ def init_shadows(game):
     game.add_constant('light_view_matrix_list', light_view_matrix_list)
     game.add_constant('bias_matrix', bias_matrix)
 
-# TODO: Create a 'Loading-screen' class instead
+
+# TODO: Make this a 'Loading-screen' class instead
 
 class Start_screen:
     ''' A class for the start screen. Is used to show

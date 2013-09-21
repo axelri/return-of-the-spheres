@@ -129,10 +129,7 @@ def box(box):
 
 def surface(surface):
     ''' The drawing routine for a Surface object.
-
-    Input:  surface: A Surface object
-
-    Calls OpenGL to draw the surface. '''
+        Calls OpenGL to draw the surface. '''
 
     # TODO: Tesselate the surface for better lighting effects
 
@@ -209,10 +206,7 @@ def surface(surface):
 
 def sphere(sphere):
     ''' The drawing routine for a Sphere object.
-
-    Input:  surface: A Sphere object
-
-    Calls OpenGL to draw the sphere. '''
+        Calls OpenGL to draw the sphere. '''
     
     ambient, diffuse, specular, \
              shininess, emissive = sphere.get_material_properties()
@@ -255,10 +249,13 @@ def start_screen(start_texture, ratio):
 
 def AABB(aabb, color):
     ''' Draws an AABB.
-        Input: An AABB as given by ODE (6-tuple:
-                (minx, maxx, miny, maxy, minz, maxz)) '''
-    
-    # TODO: Add possibility to change color?
+        Input: 
+            * aabb:
+                An AABB as given by ODE (6-tuple:
+                (minx, maxx, miny, maxy, minz, maxz))
+            * color:
+                A 4-tuple describing the wanted color
+                of the AABB, given in RGBA. '''
 
     minx, maxx, miny, maxy, minz, maxz = aabb
 

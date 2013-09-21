@@ -38,9 +38,6 @@ class Camera:
         self._flip_axis = None
         self._mouse_sensitivity = 0.3
 
-    def get_up(self):
-        return self._up
-
     def view(self, player):
         ''' Calculates a translation/rotation matrix
         to move the camera to the right position and
@@ -122,6 +119,8 @@ class Camera:
         return self._direction, self._up
 
     def flip_up_vector(self):
+        ''' Flip the camera upside down '''
+
         self._flipping = True
         self._new_up = self._up * -1.0
         self._y_dist *= -1.0
@@ -129,4 +128,14 @@ class Camera:
         self._flip_axis = self._direction
 
     def flip_y_dist(self):
+        ''' Flip the distance from the player 
+            in the y-direction (if the player
+            is viewed from above, view it 
+            from below instead, and vice versa) '''
+
         self._y_dist *= -1.0
+
+    ### Getters
+
+    def get_up(self):
+        return self._up
