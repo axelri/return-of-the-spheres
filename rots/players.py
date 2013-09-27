@@ -71,7 +71,7 @@ class Player:
         left_vector = up_vector.cross(forward_vector)
 
         x_movement = left_vector * -direction.value[0]
-        z_movement = forward_vector * -direction.value[2]
+        z_movement = forward_vector * direction.value[2]
         direction = x_movement + z_movement
 
         current_vel = Vector(list(self._shape.get_body().getLinearVel()))

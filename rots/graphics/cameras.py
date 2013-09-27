@@ -58,7 +58,7 @@ class Camera:
                   pos[0], pos[1], pos[2],
                   up[0], up[1], up[2])
 
-    def _move(self, player):
+    def _move(self, player, mouse_movement):
         ''' Sets the position and orientation of
         the camera according to the position of
         the player and the movement of the mouse.
@@ -66,7 +66,7 @@ class Camera:
         Input:  player: A Player object '''
         
         pos = player.get_pos().value
-        mouseX, mouseY = pygame.mouse.get_rel()
+        mouseX, mouseY = mouse_movement
 
         self._xAngle -= mouseX * pi / 180.0 * self._mouse_sensitivity
 
@@ -81,7 +81,7 @@ class Camera:
         self._xPos = pos[0] + sin(self._xAngle) * self._z_dist
         self._zPos = pos[2] + cos(self._xAngle) * self._z_dist
 
-    def update(self, player):
+    def update(self, player, mouse_movement):
         ''' Updates the camera object: Calls self.move()
         to set the position and orientation of the camera,
         and then calculates a vector pointing from the
@@ -95,7 +95,7 @@ class Camera:
         
         pos = player.get_pos().value
         
-        self._move(player)
+        self._move(player, mouse_movement)
 
         self._direction = Vector([pos[0] - self._xPos,
                                     pos[1] - self._yPos,

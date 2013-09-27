@@ -24,31 +24,26 @@ from objects.text import TextBox
 def game_loop(game):
 
     # Take input
-    run, direction, jump, toggle_debug, toggle_pause = game.take_input()
+    run, direction, jump, toggle_pause, mouse_movement = game.take_input()
     player = game.get_player()
     camera = game.get_camera()
     clock = game.get_clock()
     fps = game.get_fps()
 
-    # NOTE: Move this to game.take_input()?
-    if toggle_debug:
-        game.toggle_debug()
-
     # Simulate
     physics.update_physics(game)
 
     # Move
-    forward_vector, up_vector = camera.update(player)
+    forward_vector, up_vector = camera.update(player, mouse_movement)
     player.move(direction, forward_vector, up_vector, jump)
 
     # Render
-
     render.render(game)
     clock.tick(fps)
     return run, toggle_pause
 
 def pause_loop(game):
-    run, direction, jump, toggle_debug, toggle_pause = game.take_input()
+    run, direction, jump, toggle_pause, mouse_movement = game.take_input()
     clock = game.get_clock()
     fps = game.get_fps()
     

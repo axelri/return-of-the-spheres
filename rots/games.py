@@ -149,6 +149,9 @@ class Game():
         if not direction:
             direction = Vector()
 
+        # Mouse movement
+        mouse_movement = pygame.mouse.get_rel()
+
         # Jumping
 
         if self._keys_pressed[K_SPACE] and self._player.colliding and not self._keys_pressed_last_frame[K_SPACE]:
@@ -156,13 +159,10 @@ class Game():
         else:
             jump = False
 
-        # Toggle debug
-        # NOTE: Move game.toggle_debug() here from rots/game_loop()?
+        # Toggle debug state
 
         if self._keys_pressed[K_q] and not self._keys_pressed_last_frame[K_q]:
-            toggle_debug = True
-        else:
-            toggle_debug = False
+            self.toggle_debug()
 
         # Toggle pause
 
@@ -174,7 +174,7 @@ class Game():
 
         self._keys_pressed_last_frame = self._keys_pressed
 
-        return run, direction, jump, toggle_debug, toggle_pause
+        return run, direction, jump, toggle_pause, mouse_movement
 
     ### Getters
 
