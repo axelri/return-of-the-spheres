@@ -53,7 +53,9 @@ def draw_scene(object_list, game):
 
     if game.get_debug_state() == 2:
         for item in object_list:
+            glPushMatrix()
             item.draw_AABB()
+            glPopMatrix()
 
 def draw_scene_with_shadows(game, object_list):
 

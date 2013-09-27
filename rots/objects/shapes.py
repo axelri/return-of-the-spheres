@@ -41,6 +41,9 @@ class Shape(object):
         self._texture = None
 
         self._AABB_color = (1.0, 0.0, 0.0, 1.0)
+        self._sleeping_AABB_color = (0.8, 0.8, 0.8, 1.0)
+        self._AABB_display_list_index = self.create_AABB_display_list_index()
+        self._sleeping_AABB_DLI = self.create_sleeping_AABB_DLI()
 
         # Explanations of the material properties:
         #   * Ambient and diffuse "define the color" of the material,
@@ -128,8 +131,33 @@ class Shape(object):
     def get_data(self, name):
         return self._geom.__getattribute__(name)
 
+    def is_enabled(self):
+        if self._body == None:
+            # Objects without body can't be disabled
+            return True
+        elif self._body.isEnabled():
+            # It is enabled
+            return True
+        else:
+            # It's disabled
+            return False
+
     def create_displaylist_index(self):
         return None
+
+    def create_AABB_display_list_index(self):
+        AABB_display_list_index = glGenLists(1)
+        glNewList(AABB_display_list_index, GL_COMPILE)
+        draw.AABB((-0.5, 0.5, -0.5, 0.5, -0.5, 0.5), self._AABB_color)
+        glEndList()
+        return AABB_display_list_index
+
+    def create_sleeping_AABB_DLI(self):
+        AABB_display_list_index = glGenLists(1)
+        glNewList(AABB_display_list_index, GL_COMPILE)
+        draw.AABB((-0.5, 0.5, -0.5, 0.5, -0.5, 0.5), self._sleeping_AABB_color)
+        glEndList()
+        return AABB_display_list_index
 
     def draw(self):
         pos = self.get_pos().value
@@ -141,11 +169,18 @@ class Shape(object):
     def draw_AABB(self):
 
         aabb = self._geom.getAABB()
-        if self._body == None or self._body.isEnabled():
-            color = self._AABB_color
+        x_size = aabb[1] - aabb[0]
+        y_size = aabb[3] - aabb[2]
+        z_size = aabb[5] - aabb[4]
+
+        pos = self.get_pos().value
+        glTranslatef(pos[0], pos[1], pos[2])
+        glScale(x_size, y_size, z_size)
+
+        if self.is_enabled():
+            glCallList(self._AABB_display_list_index)
         else:
-            color = (1.0, 1.0, 1.0, 1.0)
-        draw.AABB(aabb, color)
+            glCallList(self._sleeping_AABB_DLI)
 
 class Sphere(Shape):
 

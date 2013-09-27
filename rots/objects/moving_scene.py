@@ -36,6 +36,7 @@ class Moving_scene(object):
         self._display_list_index = None
 
         self._AABB_color = (0.0, 0.0, 1.0, 1.0)
+        self._AABB_display_list_index = self.create_AABB_display_list_index()
 
         self._friction = 1
         self._bounce = 0.2
@@ -77,6 +78,13 @@ class Moving_scene(object):
     def set_bounce(self, bounce):
         self._bounce = bounce
 
+    def create_AABB_display_list_index(self):
+        AABB_display_list_index = glGenLists(1)
+        glNewList(AABB_display_list_index, GL_COMPILE)
+        draw.AABB((-0.5, 0.5, -0.5, 0.5, -0.5, 0.5), self._AABB_color)
+        glEndList()
+        return AABB_display_list_index
+
     def draw(self):
         self.update()
         pos = self.get_pos().value
@@ -92,8 +100,15 @@ class Moving_scene(object):
 
     def draw_AABB(self):
         aabb = self._geom.getAABB()
-        color = self._AABB_color
-        draw.AABB(aabb, color)
+        x_size = aabb[1] - aabb[0]
+        y_size = aabb[3] - aabb[2]
+        z_size = aabb[5] - aabb[4]
+
+        pos = self.get_pos().value
+        glTranslatef(pos[0], pos[1], pos[2])
+        glScale(x_size, y_size, z_size)
+
+        glCallList(self._AABB_display_list_index)
 
     def update(self):
         pass
