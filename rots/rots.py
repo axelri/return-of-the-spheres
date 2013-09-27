@@ -24,7 +24,7 @@ from objects.text import TextBox
 def game_loop(game):
 
     # Take input
-    run, direction, jump, toggle_pause, mouse_movement = game.take_input()
+    run, direction, jump, toggle_pause, mouse_movement, scroll_direction = game.take_input()
     player = game.get_player()
     camera = game.get_camera()
     clock = game.get_clock()
@@ -34,7 +34,7 @@ def game_loop(game):
     physics.update_physics(game)
 
     # Move
-    forward_vector, up_vector = camera.update(player, mouse_movement)
+    forward_vector, up_vector = camera.update(player, mouse_movement, scroll_direction)
     player.move(direction, forward_vector, up_vector, jump)
 
     # Render
@@ -43,11 +43,13 @@ def game_loop(game):
     return run, toggle_pause
 
 def pause_loop(game):
-    run, direction, jump, toggle_pause, mouse_movement = game.take_input()
+    game_input = game.take_input()
     clock = game.get_clock()
     fps = game.get_fps()
     
     clock.tick(fps)
+    run = game_input[0]
+    toggle_pause = game_input[3]
     return run, toggle_pause
 
 def main():

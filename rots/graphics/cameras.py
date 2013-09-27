@@ -20,7 +20,12 @@ class Camera:
         # The distance from the camera to the player
         self._x_dist = 0.0
         self._y_dist = 4.0
-        self._z_dist = 10.0
+        self._z_dist = 8.0
+
+        # The limits of the above distance
+        self._x_dist_limits = (0.0, 0.0)
+        self._y_dist_limits = (1.0, 8.0)
+        self._z_dist_limits = (2.0, 16.0)
 
         # The position of the camera
         self._xPos = self._x_dist
@@ -37,6 +42,7 @@ class Camera:
         self._flipping = False
         self._flip_axis = None
         self._mouse_sensitivity = 0.3
+        self._zoom_sensitivity = 0.05
 
     def view(self, player):
         ''' Calculates a translation/rotation matrix
@@ -81,7 +87,7 @@ class Camera:
         self._xPos = pos[0] + sin(self._xAngle) * self._z_dist
         self._zPos = pos[2] + cos(self._xAngle) * self._z_dist
 
-    def update(self, player, mouse_movement):
+    def update(self, player, mouse_movement, scroll_direction):
         ''' Updates the camera object: Calls self.move()
         to set the position and orientation of the camera,
         and then calculates a vector pointing from the
@@ -94,6 +100,22 @@ class Camera:
                     on the xz-plane and normalized.'''
         
         pos = player.get_pos().value
+
+        # TODO: Make zooming smoother
+        # Zoom
+        self._y_dist += self._y_dist * scroll_direction * self._zoom_sensitivity
+        self._z_dist += self._z_dist * scroll_direction * self._zoom_sensitivity
+
+        # Make sure we don't zoom too far
+        if abs(self._y_dist) <= self._y_dist_limits[0]:
+            self._y_dist = self._y_dist_limits[0]
+        elif abs(self._y_dist) >= self._y_dist_limits[1]:
+            self._y_dist = self._y_dist_limits[1]
+
+        if abs(self._z_dist) <= self._z_dist_limits[0]:
+            self._z_dist = self._z_dist_limits[0]
+        elif abs(self._z_dist) >= self._z_dist_limits[1]:
+            self._z_dist = self._z_dist_limits[1]
         
         self._move(player, mouse_movement)
 

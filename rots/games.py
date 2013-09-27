@@ -132,10 +132,26 @@ class Game():
 
         # To run, or not to run...
         run = True
+        scroll_direction = 0
 
+        # Check for non-keyboard events
+        # (Keyboard events can be found here too,
+        # but are more easily found with keys_pressed)
+        
         for event in current_events:
+            
+            # Check if the window is closed
             if event.type == QUIT:
                 run = False
+
+            # Check for scrolling
+            if event.type == MOUSEBUTTONDOWN:
+                if event.dict['button'] == 4:
+                    # Scrolling up
+                    scroll_direction = -1
+                elif event.dict['button'] == 5:
+                    # Scrolling down
+                    scroll_direction = 1
 
         if self._keys_pressed[K_ESCAPE]:
             run = False
@@ -174,7 +190,7 @@ class Game():
 
         self._keys_pressed_last_frame = self._keys_pressed
 
-        return run, direction, jump, toggle_pause, mouse_movement
+        return run, direction, jump, toggle_pause, mouse_movement, scroll_direction
 
     ### Getters
 
