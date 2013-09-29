@@ -158,8 +158,9 @@ class Game():
 
         # The direction
 
-        xDir = self._keys_pressed[K_d] - self._keys_pressed[K_a]
-        zDir = self._keys_pressed[K_w] - self._keys_pressed[K_s]
+        # TODO: Change this to a more general model
+        xDir = self.dir([(K_d, K_a), (K_RIGHT, K_LEFT)])
+        zDir = self.dir([(K_w, K_s), (K_UP, K_DOWN)])
 
         direction = Vector([xDir, 0.0, zDir]).normalize()
         if not direction:
@@ -253,3 +254,17 @@ class Game():
     def set_fps(self, fps):
         self._fps = fps
         self._dt = 1/float(fps)
+
+    def dir(self, key_pairs):
+        ''' Outputs the direction when given pairs 
+        of movement keys (pygame constants) of the form: 
+
+        [(right_1,left_1), ...]        for x axis dirs
+        [(forward_1, backward_1), ...] for z axis dirs'''
+
+        for pairs in key_pairs:
+            k1 = self._keys_pressed[pairs[0]]
+            k2 = self._keys_pressed[pairs[1]]
+            if k1 or k2:
+                return k1 - k2
+        return 0;
