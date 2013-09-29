@@ -4,7 +4,7 @@ from pygame.locals import *
 from OpenGL.GLU import *
 
 from math_classes.vectors import Vector
-from math import cos, sin, pi
+from math import cos, sin, pi, copysign
 import players
 
 class Camera:
@@ -29,11 +29,13 @@ class Camera:
         self._z_dist_limits = (2.0, 16.0)
 
         # The position of the camera
-        self._xPos = 0.0
-        self._yPos = self._y_dist
-        self._zPos = self._z_dist
+        self._x_pos = 0.0
+        self._y_pos = self._y_dist
+        self._z_pos = self._z_dist
 
-        self._xAngle = 0.0
+        # Starting angles
+        self._x_angle = 0.0
+        self._y_angle = 0.35
 
         # The up vector for the camera
         self._up = Vector([0.0, 1.0, 0.0])
@@ -42,7 +44,7 @@ class Camera:
 
         self._flipping = False
         self._flip_axis = None
-        self._mouse_sensitivity = 0.3
+        self._mouse_sensitivity = 0.005
         self._zoom_sensitivity = 0.05
 
     def view(self, player):
@@ -63,7 +65,7 @@ class Camera:
         pos = player.get_pos().value
         up = self._up.value
         
-        gluLookAt(self._xPos, self._yPos, self._zPos,
+        gluLookAt(self._x_pos, self._y_pos, self._z_pos,
                   pos[0], pos[1], pos[2],
                   up[0], up[1], up[2])
 
@@ -81,29 +83,41 @@ class Camera:
                 in pixels (?), as (x, y) '''
         
         pos = player.get_pos().value
-        mouseX, mouseY = mouse_movement
+        mouse_x, mouse_y = mouse_movement
 
-        self._xAngle -= mouseX * pi / 180.0 * self._mouse_sensitivity
+        self._x_angle -= mouse_x * self._mouse_sensitivity
+        self._y_angle += mouse_y * self._mouse_sensitivity
 
-        y_dist = self._yPos - pos[1]
+        if self._x_angle >= 2 * pi:
+            self._x_angle -= 2 * pi
+        elif self._x_angle <= -2 * pi:
+            self._x_angle += 2 * pi
+
+        if self._y_angle >= 0.49 * pi:
+            self._y_angle = 0.49 * pi
+        elif self._y_angle <= 0:
+            self._y_angle = 0
+
+        y_dist = self._y_pos - pos[1]
         y_diff = self._y_dist - y_dist
 
-        direction = Vector((pos[0] - self._xPos,
-                            pos[1] - self._yPos,
-                            pos[2] - self._zPos))
-        direction = direction.projected(Vector((1.0, 0.0, 0.0)),
-                                        Vector((0.0, 0.0, 1.0)))
+        direction = Vector((pos[0] - self._x_pos,
+                            pos[1] - self._y_pos,
+                            pos[2] - self._z_pos))
+        #direction = direction.projected(Vector((1.0, 0.0, 0.0)),
+        #                                Vector((0.0, 0.0, 1.0)))
         z_dist = direction.norm()
         z_diff = self._z_dist - z_dist
 
-        if abs(y_diff) > 0.01 and not player.is_jumping():
-            self._yPos += y_diff * 0.1
+#        if abs(y_diff) > 0.01 and not player.is_jumping():
+#            self._y_pos += y_diff * 0.1
 
         if abs(z_diff) > 0.01:
             self._real_z_dist += z_diff * 0.1
 
-        self._xPos = pos[0] + sin(self._xAngle) * self._real_z_dist
-        self._zPos = pos[2] + cos(self._xAngle) * self._real_z_dist
+        self._x_pos = pos[0] + cos(self._y_angle) * sin(self._x_angle) * self._real_z_dist
+        self._y_pos = pos[1] + sin(self._y_angle) * self._real_z_dist * copysign(1, self._y_dist)
+        self._z_pos = pos[2] + cos(self._y_angle) * cos(self._x_angle) * self._real_z_dist
 
     def update(self, player, mouse_movement, scroll_direction):
         ''' Updates the camera object: Calls self._move()
@@ -150,9 +164,9 @@ class Camera:
         
         self._move(player, mouse_movement)
 
-        self._direction = Vector([pos[0] - self._xPos,
-                                    pos[1] - self._yPos,
-                                    pos[2] - self._zPos])
+        self._direction = Vector([pos[0] - self._x_pos,
+                                    pos[1] - self._y_pos,
+                                    pos[2] - self._z_pos])
         self._direction = self._direction.projected(Vector([1.0, 0.0, 0.0]),
                                         Vector([0.0, 0.0, 1.0]))
         self._direction = self._direction.normalize()

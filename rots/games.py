@@ -63,9 +63,12 @@ class Game():
         self._debug_player_vel = TextBox('test.ttf', 14, 100, 300, [1,0,0], enabled = False)
         self._debug_player_colliding = TextBox('test.ttf', 14, 100, 250, [1,0,0], enabled = False)
 
+        # Misc
+        self._debug_object_count = TextBox('test.ttf', 14, 100, 450, [1,0,0], enabled = False)
+
 
         self._debug_list = [self._debug_fps, self._debug_time_used, self._debug_player_pos, self._debug_player_vel,
-                            self._debug_player_colliding]
+                            self._debug_player_colliding, self._debug_object_count]
 
         self._object_list += self._debug_list
 
@@ -87,7 +90,6 @@ class Game():
             to the textboxes in the debug screen. '''
 
         # Performance
-
         self._debug_fps.set_string("FPS: %0.2f" % self._clock.get_fps())
         self._debug_time_used.set_string("Time used last frame [ms]: %d" % self._clock.get_rawtime())
         
@@ -96,7 +98,9 @@ class Game():
         self._debug_player_vel.set_string("Player vel: [%0.2f, %0.2f, %0.2f]" % self._player.get_vel().value)
         self._debug_player_colliding.set_string("Player colliding: %s" % self._player.colliding)
 
-
+        # Misc
+        self._debug_object_count.set_string("Number of objects: %d" % (len(self._object_list) - \
+                                                                    len(self._debug_list)))
 
     def take_input(self):
         ''' Take input from the keyboard, mouse, etc., and translates
