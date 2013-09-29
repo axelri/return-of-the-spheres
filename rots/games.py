@@ -99,7 +99,7 @@ class Game():
 
 
     def take_input(self):
-        ''' Take input from the keyboard and translates
+        ''' Take input from the keyboard, mouse, etc., and translates
             that to "game commands".
 
             Output:
@@ -115,14 +115,16 @@ class Game():
                     A boolean telling whether or not the player
                     should jump.
                     - True = jump, False = don't jump
-                * toggle_debug:
-                    A boolean telling whether or not to toggle
-                    the debug state.
-                    - True = toggle, False = don't toggle
                 * toggle_pause:
                     A boolean telling whether or not to toggle
                     the pause state.
-                    - True = toggle, False = don't toggle '''
+                    - True = toggle, False = don't toggle
+                * scroll_direction:
+                    An integer describing the current scrolling
+                    direction of the scrolling wheel
+                        -1 = scrolling up
+                        0 = not scrolling
+                        1 = scrolling down '''
 
         # Take input from the keyboard
         self._keys_pressed = pygame.key.get_pressed()

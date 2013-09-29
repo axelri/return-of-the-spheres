@@ -285,24 +285,7 @@ class Box(Shape):
         glEndList()
         return display_list_index
 
-# NOTE: Necessary? We can delete this class and just use Box instead.
-class Cube(Box):
-
-    def __init__(self, world, space, pos = Vector(), side = 1,
-                 mass = 1, texture = None):
-        super(Cube, self).__init__(world, space, pos = pos, x_size = side,
-                y_size = side, z_size = side, mass = mass, texture = texture)
-
-        self._side = side
-
-    def get_side(self):
-        return self._side
-
-
 class Surface(Shape):
-    # TODO: Better way of defining the surface. The points at 
-    # the corners is not a very good solution. Used as they are
-    # right now, it's hard to decide which side is up.
 
     def __init__(self, world, space, pos = Vector(),
                 normal = Vector([0.0, 1.0, 0.0]), 

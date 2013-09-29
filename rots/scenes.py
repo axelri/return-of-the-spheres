@@ -82,8 +82,8 @@ def init_scene(start_screen):
 
     sun.set_emissive([1.0, 1.0, 1.0, 1.0])
 
-    cube = shapes.Cube(world, object_space, pos = Vector([3.0, 5.0, 0.0]), side = 2,
-                        texture = puppy_tex)
+    box = shapes.Box(world, object_space, pos = Vector([3.0, 5.0, 0.0]), x_size = 2,
+                        y_size = 3, z_size = 1.5, texture = puppy_tex)
     start_screen.update('Creating objects: {perc:.0f}%'.format(perc = 5.0/obj_no*100))
 
     # Create power ups
@@ -308,7 +308,7 @@ def init_scene(start_screen):
     player = players.Player(earth)
 
     # Add all objects that should be drawn to a list
-    object_list = [player.get_shape(), sun, moon, mars, cube, 
+    object_list = [player.get_shape(), sun, moon, mars, box, 
                     sticky_floor, slippy_floor, wall1, wall2, 
                     door_wall_1, door_wall_2, door_wall_3, 
                     floor_slope, roof_slope, slippy_roof,
