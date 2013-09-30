@@ -128,7 +128,12 @@ class Game():
                     direction of the scrolling wheel
                         -1 = scrolling up
                         0 = not scrolling
-                        1 = scrolling down '''
+                        1 = scrolling down
+                * camera_mode:
+                    An integer describing the camera mode to
+                    be used (how the camera should be set up)
+                        0 = third person
+                        1 = first person '''
 
         # Take input from the keyboard
         self._keys_pressed = pygame.key.get_pressed()
@@ -194,10 +199,17 @@ class Game():
         else:
             toggle_pause = False
 
+        # Camera mode
+
+        if self._keys_pressed[K_LSHIFT]:
+            camera_mode = 1
+        else:
+            camera_mode = 0
+
 
         self._keys_pressed_last_frame = self._keys_pressed
 
-        return run, direction, jump, toggle_pause, mouse_movement, scroll_direction
+        return run, direction, jump, toggle_pause, mouse_movement, scroll_direction, camera_mode
 
     ### Getters
 
