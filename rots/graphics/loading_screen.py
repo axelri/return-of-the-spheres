@@ -33,6 +33,7 @@ class Loading_screen:
 
         self._textboxes = []
         self._progress_bars = []
+        self._ratio
 
     def add_textbox(self, font, size, x_pos, y_pos, color):
         ''' Add a textbox '''
@@ -41,9 +42,15 @@ class Loading_screen:
         self._textboxes.append(text_box)
 
     def add_progress_bar(self, heigth, width, x_pos, y_pos, color):
-        ''' Add a progress bar '''
+        ''' Add a progress bar 
+            heigth: heigth of the progress bar in fractions of window heigth
+            width: width of the progress bar in fractions of window width
+            x_pos, y_pos: position of the center of the progress bar in
+                    screen coordinates: 0,0 = lower left, 1,1 = upper rigth
+            color: color of the progress bar as RGBA'''
 
-        progress_bar = Progress_bar(heigth, width, x_pos, y_pos, color)
+        progress_bar = Progress_bar(heigth, width, x_pos, y_pos, color, 
+                                    self._ratio, self._distance)
         self._progress_bars.append(progress_bar)
 
     def get_textboxes(self):
@@ -72,11 +79,11 @@ class Loading_screen:
         
         glCallList(self._display_list_index)
 
-        for text_box in self._textboxes:
-            text_box.draw()
-
         for progress_bar in self._progress_bars:
             progress_bar.draw()
+
+        for text_box in self._textboxes:
+            text_box.draw()
 
         glPopMatrix()
         pygame.display.flip()
@@ -84,14 +91,16 @@ class Loading_screen:
 
 class Progress_bar:
 
-    def __init__(self, heigth, width, x_pos, y_pos, color):
+    def __init__(self, heigth, width, x_pos, y_pos, color,
+                window_ratio, window_distance):
 
-        self._heigth = heigth/100.0
-        self._width = width/100.0
-        self._x_pos = x_pos
-        self._y_pos = y_pos
+        self._heigth = heigth * 2
+        self._width = width * 2 * window_ratio
+        self._x_pos = (x_pos - 0.5) * 2 * window_ratio
+        self._y_pos = (y_pos - 0.5) * 2
         self._color = color
         self._fraction = 0
+        self._distance = window_distance - 0.001
 
         display_list_index = glGenLists(1)
         glNewList(display_list_index, GL_COMPILE)
@@ -113,40 +122,15 @@ class Progress_bar:
     def draw(self):
 
         glPushMatrix()
-        #glLoadIdentity()
-        #pushScreenCoordinateMatrix()
+        glLoadIdentity()
 
-        #glTranslatef(self._x_pos - self._width * (1 - self._fraction) * 0.5,
-        #            self._y_pos, 1)
-        glTranslate(0.0, 0.0, 0.1)
+        glTranslate(self._x_pos - self._width * 0.5 * (1 - self._fraction), 
+                    self._y_pos, - self._distance)
+
         glScale(self._width * self._fraction, self._heigth, 1)
+        glCallList(self._display_list_index)
 
-        #print 'scale factor: ', (self._width * self._fraction, self._heigth, 1)
-
-        #pop_projection_matrix()
         glPopMatrix()
 
     def set_fraction(self, fraction):
         self._fraction = fraction
-
-# A fairly straight forward function that pushes
-# a projection matrix that will make object world 
-# coordinates identical to window coordinates.
-def pushScreenCoordinateMatrix():
-    glPushAttrib(GL_TRANSFORM_BIT)
-    viewport = glGetIntegerv(GL_VIEWPORT)
-    glMatrixMode(GL_PROJECTION)
-    glPushMatrix()
-    glLoadIdentity()
-    gluOrtho2D(viewport[0],viewport[2],viewport[1],viewport[3])
-    glPopAttrib()
-    return
-
-# Pops the projection matrix without changing the current
-# MatrixMode.
-def pop_projection_matrix():
-    glPushAttrib(GL_TRANSFORM_BIT)
-    glMatrixMode(GL_PROJECTION)
-    glPopMatrix()
-    glPopAttrib()
-    return
