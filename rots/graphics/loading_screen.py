@@ -37,6 +37,7 @@ class Loading_screen:
 
     def add_textbox(self, font, size, x_pos, y_pos, color):
         ''' Add a textbox '''
+        # TODO: Make this screen-relative too
         
         text_box = TextBox(font, size, x_pos, y_pos, color)
         self._textboxes.append(text_box)
@@ -59,7 +60,8 @@ class Loading_screen:
     def update(self, textbox_indices = [], messages = [],
                     progress_bar_indices = [], fractions = []):
         ''' Draws the loading screen '''
-        # TODO: Better API for this function?
+        # TODO: Better API for this function? Can be hard to remember 
+        # which textbox/progress bar corresponds to which index.
 
         for i in textbox_indices:
             self._textboxes[i].set_string(messages[i])
