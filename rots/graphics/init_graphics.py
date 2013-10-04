@@ -10,7 +10,7 @@ from math import tan, pi, radians
 from graphics import textures, draw
 from objects.text import TextBox
 
-def init_window(window_name, start_image, HAVE_FULLSCREEN = True):
+def init_window(window_name, HAVE_FULLSCREEN = True):
     ''' Initiates pygame, creates and sets up the window,
     sets up OpenGL.
 
@@ -19,9 +19,6 @@ def init_window(window_name, start_image, HAVE_FULLSCREEN = True):
             The desired name of the window;
             what the caption of the window will be
             set to, a string.
-        * start_image:
-            A string with the name of an image to be 
-            used as start screen.
         * HAVE_FULLSCREEN:
             Whether or not the window
             should be fullscreen, a boolean. '''
@@ -68,11 +65,6 @@ def init_window(window_name, start_image, HAVE_FULLSCREEN = True):
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_TEXTURE_2D)
 
-    # TODO: Move this to init_scene instead
-    # Create the start screen
-    start_screen = Start_screen(start_image, width, height, aspect_angle)
-    start_screen.update('Initializing OpenGL')
-
     # Enable and set up alpha blending
     glEnable (GL_BLEND)
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -92,7 +84,7 @@ def init_window(window_name, start_image, HAVE_FULLSCREEN = True):
     glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
 
-    return width, height, start_screen
+    return width, height, aspect_angle
 
 def init_shadows(game):
     ''' Sets the necessary constants for shadow mapping. '''

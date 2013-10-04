@@ -228,12 +228,12 @@ def sphere(sphere):
 
     glDisable(GL_TEXTURE_2D)
 
-def start_screen(start_texture, ratio):
-    ''' Draws a start screen. It draws a Quad that
-        fills the screen, textured with 'start_screen_texture' '''
+def loading_screen(texture, ratio):
+    ''' Draws a loading screen. It draws a Quad that
+        fills the screen, textured with 'texture' '''
 
     glEnable(GL_TEXTURE_2D)
-    glBindTexture(GL_TEXTURE_2D, start_texture)
+    glBindTexture(GL_TEXTURE_2D, texture)
     glColor4f(1.0, 1.0, 1.0, 1.0)
     glBegin(GL_QUADS)
     glTexCoord2f(0,0)
