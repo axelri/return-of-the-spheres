@@ -22,6 +22,8 @@ def init_scene(loading_screen_data):
     # TODO: Move things to better order, update start screen messages.
 
     # Create a loading screen
+    # NOTE: It can be hard to remember which textbox/progress bar 
+    # corresponds to which index, is there any better solution?
     width, heigth, aspect_angle, loading_image = loading_screen_data
     start_screen = loading_screen.Loading_screen(loading_image, width, heigth, aspect_angle)
     start_screen.add_textbox('test.ttf', 40, width/2.0 - 200, heigth/2.0 - 20, [1,0,0])
@@ -484,8 +486,14 @@ def init_scene(loading_screen_data):
                             turning_points = (Vector((-12.5, 1.0, 12.5)), Vector((0.0, 10.0, 12.5))))
 
     # Create lights
-    light1 = lights.Light(GL_LIGHT0, Vector([0.0, 5.0, 4.0]))
-    light2 = lights.Light(GL_LIGHT2, Vector([3.0, 2.0, 3.0]))
+    light1 = lights.Light(GL_LIGHT0, Vector((0.0, 5.0, 0.0)),
+                        ambient = [0.1, 0.1, 0.1, 1.0],
+                        diffuse = [1.0, 1.0, 1.0, 1.0],
+                        specular = [1.0, 1.0, 1.0, 1.0])
+    light2 = lights.Light(GL_LIGHT2, Vector((8.0, 5.0, 3.0)),
+                        ambient = [0.0, 0.0, 0.0, 1.0],
+                        diffuse = [0.3, 0.0, 0.0, 1.0],
+                        specular = [0.3, 0.0, 0.0, 1.0])
     camera = cameras.Camera()
 
     start_screen.update(textbox_indices = [0], progress_bar_indices = [0],

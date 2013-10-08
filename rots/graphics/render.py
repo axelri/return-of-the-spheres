@@ -23,20 +23,30 @@ def render(game):
     camera = game.get_camera()
     player = game.get_player()
     object_list = game.get_object_list()
+    light_list = game.get_light_list()
 
 
     glLoadIdentity()
 
     camera.view(player)
-    camera_view_matrix = glGetFloatv(GL_MODELVIEW_MATRIX)
-    game.add_constant('camera_view_matrix', camera_view_matrix)
+    #camera_view_matrix = glGetFloatv(GL_MODELVIEW_MATRIX)
+    #game.add_constant('camera_view_matrix', camera_view_matrix)
+
 
     if game.get_debug_state():
         game.update_debug_screen()
 
+    # Update the light positions
+
+    for light in light_list:
+        pos = light.get_pos()
+        light.set_pos(pos)
+
     draw_scene(object_list, game)
     #draw_scene_with_shadows(game, object_list)
 
+    if game.get_debug_state() == 2:
+        draw_debug_objects(object_list, light_list)
 
     pygame.display.flip()
 
@@ -51,11 +61,18 @@ def draw_scene(object_list, game):
         item.draw()
         glPopMatrix()
 
-    if game.get_debug_state() == 2:
-        for item in object_list:
-            glPushMatrix()
-            item.draw_AABB()
-            glPopMatrix()
+def draw_debug_objects(object_list, light_list):
+    ''' Draw AABBs and the position of the lights '''
+
+    for item in object_list:
+        glPushMatrix()
+        item.draw_AABB()
+        glPopMatrix()
+
+    for light in light_list:
+        glPushMatrix()
+        light.draw_pos()
+        glPopMatrix()
 
 def draw_scene_with_shadows(game, object_list):
 

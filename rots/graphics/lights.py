@@ -52,6 +52,34 @@ class Light:
         ''' Disables the light '''
         glDisable(self._light_index)
 
+    def draw_pos(self):
+        ''' Shows the position and color of the light by drawing 
+            a small point. '''
+
+        # Check if they are enabled now in order to
+        # be able to restore everything to the previous state
+        lighting_enabled = glGetBooleanv(GL_LIGHTING)
+        texturing_enabled = glGetBooleanv(GL_TEXTURE_2D)
+        current_color = glGetFloatv(GL_CURRENT_COLOR)
+
+        glDisable(GL_LIGHTING)
+        glDisable(GL_TEXTURE_2D)
+
+        # Draw a point at the light's position
+        # TODO: Make smaller when looking from a distance.
+        glPointSize(10)
+        glColor4fv(self._diffuse)
+        glBegin(GL_POINTS)
+        glVertex3f(*self._pos.value)   #pos[0], pos[1], pos[2])
+        glEnd()
+
+        # Restore everything we changed
+        if lighting_enabled:
+            glEnable(GL_LIGHTING)
+        if texturing_enabled:
+            glEnable(GL_TEXTURE_2D)
+        glColor4fv(current_color)
+
     ### Getters
 
     def get_light_index(self):
