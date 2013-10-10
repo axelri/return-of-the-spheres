@@ -22,18 +22,20 @@ def init_scene(loading_screen_data):
     # TODO: Move things to better order, update start screen messages.
 
     # Create a loading screen
-    # NOTE: It can be hard to remember which textbox/progress bar 
-    # corresponds to which index, is there any better solution?
     width, heigth, aspect_angle, loading_image = loading_screen_data
     start_screen = loading_screen.Loading_screen(loading_image, width, heigth, aspect_angle)
-    start_screen.add_textbox('test.ttf', 40, width/2.0 - 200, heigth/2.0 - 20, [1,0,0])
-    start_screen.add_textbox('test.ttf', 40, width/2.0 - 200, heigth/2.0 - 150, [0,1,0])
-    start_screen.add_progress_bar(0.02, 0.2, 0.5, 0.45, [1.0, 0.0, 0.0, 1.0])
-    start_screen.add_progress_bar(0.02, 0.2, 0.5, 0.35, [0.0, 1.0, 0.0, 1.0])
 
-    start_screen.update(textbox_indices = [0],
-                        messages = ['Creating world'])
-    
+    # TODO: Place them better
+    module_textbox = start_screen.add_textbox('test.ttf', 0.035, 0.35, 0.5, [1,0,0])
+    total_textbox = start_screen.add_textbox('test.ttf', 0.035, 0.35, 0.38, [0,1,0])
+    module_progress_bar = start_screen.add_progress_bar(0.02, 0.2, 0.5, 0.45, [1,0,0,1])
+    total_progress_bar = start_screen.add_progress_bar(0.02, 0.2, 0.5, 0.35, [0,1,0,1])
+
+    module_textbox.set_message('Creating world', 'plain text')
+    module_progress_bar.disable()
+    total_textbox.set_message('Total', 'percentage', denominator = 53)
+    total_progress_bar.set_denominator(53)
+    start_screen.update()
 
     # Create a world object
 
@@ -52,94 +54,58 @@ def init_scene(loading_screen_data):
     interactive_object_space = ode.Space(1)
     moving_scene_space = ode.Space(1)
 
-    total_no = 53
-
     # Load textures
-    tex_no = 6 # The number of textures (used to show progress in loading)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Loading textures: {perc:.0f}%'.format(perc = 0.0/tex_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 0.0/total_no*100)],
-                        fractions = [0.0/tex_no, 0.0/total_no])
+    module_textbox.set_message('Loading textures', 'percentage', denominator = 6)
+    module_progress_bar.enable()
+    module_progress_bar.set_denominator(6)
+    start_screen.update()
 
     earth_tex = textures.load_texture('celestial_bodies/earth_big.jpg')
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Loading textures: {perc:.0f}%'.format(perc = 1.0/tex_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 1.0/total_no*100)],
-                        fractions = [1.0/tex_no, 1.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     moon_tex = textures.load_texture('celestial_bodies/moon-4k.png')
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Loading textures: {perc:.0f}%'.format(perc = 2.0/tex_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 2.0/total_no*100)],
-                        fractions = [2.0/tex_no, 2.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     stars_tex = textures.load_texture('stars_big.jpg')
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Loading textures: {perc:.0f}%'.format(perc = 3.0/tex_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 3.0/total_no*100)],
-                        fractions = [3.0/tex_no, 3.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     sun_tex = textures.load_texture('celestial_bodies/th_sun.png')
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Loading textures: {perc:.0f}%'.format(perc = 4.0/tex_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 4.0/total_no*100)],
-                        fractions = [4.0/tex_no, 4.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     mars_tex = textures.load_texture('celestial_bodies/Mars_2k-050104.png')
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Loading textures: {perc:.0f}%'.format(perc = 5.0/tex_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 5.0/total_no*100)],
-                        fractions = [5.0/tex_no, 5.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     puppy_tex = textures.load_texture('puppy.jpeg')
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Loading textures: {perc:.0f}%'.format(perc = 6.0/tex_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 6.0/total_no*100)],
-                        fractions = [6.0/tex_no, 6.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     # Create shapes
-    obj_no = 6
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating objects: {perc:.0f}%'.format(perc = 0.0/obj_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 6.0/total_no*100)],
-                        fractions = [0.0/obj_no, 6.0/total_no])
+    module_textbox.set_message('Creating objects', 'percentage', denominator = 6)
+    module_textbox.reset_counter()
+    module_progress_bar.reset_counter()
+    module_progress_bar.set_denominator(6)
+    start_screen.update()
 
     earth = shapes.Sphere(world, sphere_space, pos = Vector([0.0, 5.0, 0.0]), 
                             radius = 1.0, texture = earth_tex)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating objects: {perc:.0f}%'.format(perc = 1.0/obj_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 7.0/total_no*100)],
-                        fractions = [1.0/obj_no, 7.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     moon = shapes.Sphere(world, sphere_space, pos = Vector([-3.0, 5.0, -3.0]),
                             radius = 0.27, mass = 0.5, texture = moon_tex)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating objects: {perc:.0f}%'.format(perc = 2.0/obj_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 8.0/total_no*100)],
-                        fractions = [2.0/obj_no, 8.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     sun = shapes.Sphere(world, sphere_space, pos = Vector([5.0, 5.0, 5.0]), 
                             radius = 1.5, texture = sun_tex, mass = 5)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating objects: {perc:.0f}%'.format(perc = 3.0/obj_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 9.0/total_no*100)],
-                        fractions = [3.0/obj_no, 9.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     mars = shapes.Sphere(world, sphere_space, pos = Vector([-3.0, 5.0, 3.0]),
                             radius = 0.53, mass = 1, texture = mars_tex)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating objects: {perc:.0f}%'.format(perc = 4.0/obj_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 10.0/total_no*100)],
-                        fractions = [4.0/obj_no, 10.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     sun.set_emissive([1.0, 1.0, 1.0, 1.0])
 
     box = shapes.Box(world, object_space, pos = Vector([3.0, 5.0, 0.0]), x_size = 2,
-                        y_size = 3, z_size = 1.5, texture = puppy_tex)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating objects: {perc:.0f}%'.format(perc = 5.0/obj_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 11.0/total_no*100)],
-                        fractions = [5.0/obj_no, 11.0/total_no])
+                        y_size = 3, z_size = 1.5, texture = puppy_tex, mass = 2)
+    start_screen.update(counter_increase = 1)
 
     # Create power ups
     world_flipper = power_ups.World_flipper(power_up_space, 
@@ -147,310 +113,184 @@ def init_scene(loading_screen_data):
     gravity_flipper = power_ups.Gravity_flipper(power_up_space, 
                                                 Vector([10.0, 2.0, -10.0]))
 
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating objects: {perc:.0f}%'.format(perc = 6.0/obj_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 12.0/total_no*100)],
-                        fractions = [6.0/obj_no, 12.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     # Create surfaces
-    scene_no = 15
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 0.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 12.0/total_no*100)],
-                        fractions = [0.0/scene_no, 12.0/total_no])
+    module_textbox.set_message('Creating scene', 'percentage', denominator = 15)
+    module_textbox.reset_counter()
+    module_progress_bar.reset_counter()
+    module_progress_bar.set_denominator(15)
+    start_screen.update()
 
     sticky_floor = shapes.Surface(world, static_space, pos = Vector((0.0, 0.0, 7.5)), 
                             normal = Vector([0.0, 1.0, 0.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 30.0, width = 15.0,
                             texture = stars_tex)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 1.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 13.0/total_no*100)],
-                        fractions = [1.0/scene_no, 13.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     slippy_floor = shapes.Surface(world, static_space, pos = Vector((0.0, 0.0, -7.5)), 
                             normal = Vector([0.0, 1.0, 0.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 30.0, width = 15.0)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 2.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 14.0/total_no*100)],
-                        fractions = [2.0/scene_no, 14.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     wall1 = shapes.Surface(world, static_space, pos = Vector([-15.0, 8.0, 0.0]), 
                             normal = Vector([1.0, 0.0, 0.0]),
                             forward = Vector([0.0, 0.0, 1.0]),
                             length = 30.0, width = 16.0)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 3.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 15.0/total_no*100)],
-                        fractions = [3.0/scene_no, 15.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     wall2 = shapes.Surface(world, static_space, pos = Vector([10.0, 8.0, 15.0]), 
                             normal = Vector([0.0, 0.0, -1.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 50.0, width = 16.0)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 4.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 16.0/total_no*100)],
-                        fractions = [4.0/scene_no, 16.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     door_wall_1 = shapes.Surface(world, static_space, pos = Vector([-9.0, 8.0, -15.0]), 
                             normal = Vector([0.0, 0.0, 1.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 12.0, width = 16.0)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 5.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 17.0/total_no*100)],
-                        fractions = [5.0/scene_no, 17.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     door_wall_2 = shapes.Surface(world, static_space, pos = Vector([0.0, 11.0, -15.0]), 
                             normal = Vector([0.0, 0.0, 1.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 6.0, width = 14.0)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 6.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 18.0/total_no*100)],
-                        fractions = [6.0/scene_no, 18.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     door_wall_3 = shapes.Surface(world, static_space, pos = Vector([19.0, 8.0, -15.0]), 
                             normal = Vector([0.0, 0.0, 1.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 32.0, width = 16.0)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 7.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 19.0/total_no*100)],
-                        fractions = [7.0/scene_no, 19.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     floor_slope = shapes.Surface(world, static_space, pos = Vector([25.0, 4.0, 0.0]), 
                             normal = Vector([-8.0, 20.0, 0.0]).normalize(),
                             forward = Vector([20.0, 8.0, 0.0]).normalize(),
                             length = Vector([20.0, 8.0, 0.0]).norm(), width = 30.0)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 8.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 20.0/total_no*100)],
-                        fractions = [8.0/scene_no, 20.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     roof_slope = shapes.Surface(world, static_space, pos = Vector([25.0, 12.0, 0.0]),
                             normal = Vector([-8.0, -20.0, 0.0]).normalize(),
                             forward = Vector([20.0, -8.0, 0.0]).normalize(),
                             length = Vector([20.0, -8.0, 0.0]).norm(), width = 30.0)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 9.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 21.0/total_no*100)],
-                        fractions = [9.0/scene_no, 21.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     sticky_roof = shapes.Surface(world, static_space, pos = Vector((0.0, 16.0, 7.5)), 
                             normal = Vector([0.0, -1.0, 0.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 30.0, width = 15.0,
                             texture = stars_tex)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 10.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 22.0/total_no*100)],
-                        fractions = [10.0/scene_no, 22.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     slippy_roof = shapes.Surface(world, static_space, pos = Vector((0.0, 16.0, -7.5)), 
                             normal = Vector([0.0, -1.0, 0.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 30.0, width = 15.0)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 11.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 23.0/total_no*100)],
-                        fractions = [11.0/scene_no, 23.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     balcony = shapes.Surface(world, static_space, pos = Vector((0.0, 0.0, -20.0)), 
                             normal = Vector([0.0, 1.0, 0.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 12.0, width = 10.0)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 12.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 24.0/total_no*100)],
-                        fractions = [12.0/scene_no, 24.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     fence_1 = shapes.Surface(world, static_space, pos = Vector((-6.0, 0.75, -20.0)), 
                             normal = Vector([1.0, 0.0, 0.0]),
                             forward = Vector([0.0, 0.0, 1.0]),
                             length = 10.0, width = 1.5)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 13.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 25.0/total_no*100)],
-                        fractions = [13.0/scene_no, 25.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     fence_2 = shapes.Surface(world, static_space, pos = Vector((6.0, 0.75, -20.0)), 
                             normal = Vector([-1.0, 0.0, 0.0]),
                             forward = Vector([0.0, 0.0, -1.0]),
                             length = 10.0, width = 1.5)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 14.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 26.0/total_no*100)],
-                        fractions = [14.0/scene_no, 26.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     fence_3 = shapes.Surface(world, static_space, pos = Vector((0.0, 0.75, -25.0)), 
                             normal = Vector([0.0, 0.0, 1.0]),
                             forward = Vector([1.0, 0.0, 0.0]),
                             length = 12.0, width = 1.5)
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Creating scene: {perc:.0f}%'.format(perc = 15.0/scene_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 27.0/total_no*100)],
-                        fractions = [15.0/scene_no, 27.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     # Set the color of the surfaces
 
     # NOTE: It takes A LOT of time to set the colors,
     # since we generate a new display list each time we
     # change color. Better/faster solution?
-    col_no = 26
 
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 0.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 27.0/total_no*100)],
-                        fractions = [0.0/col_no, 27.0/total_no])
+    module_textbox.set_message('Setting colours', 'percentage', denominator = 26)
+    module_textbox.reset_counter()
+    module_progress_bar.reset_counter()
+    module_progress_bar.set_denominator(26)
+    start_screen.update()
 
     slippy_floor.set_ambient([0.5, 0.5, 0.8, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 1.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 28.0/total_no*100)],
-                        fractions = [1.0/col_no, 28.0/total_no])
+    start_screen.update(counter_increase = 1)
     slippy_floor.set_diffuse([0.5, 0.5, 0.8, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 2.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 29.0/total_no*100)],
-                        fractions = [2.0/col_no, 29.0/total_no])
+    start_screen.update(counter_increase = 1)
     
 
     slippy_roof.set_ambient([0.8, 0.5, 0.5, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 3.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 30.0/total_no*100)],
-                        fractions = [3.0/col_no, 30.0/total_no])
+    start_screen.update(counter_increase = 1)
     slippy_roof.set_diffuse([0.8, 0.5, 0.5, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 4.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 31.0/total_no*100)],
-                        fractions = [4.0/col_no, 31.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     wall1.set_ambient([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 5.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 32.0/total_no*100)],
-                        fractions = [5.0/col_no, 32.0/total_no])
+    start_screen.update(counter_increase = 1)
     wall1.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 6.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 33.0/total_no*100)],
-                        fractions = [6.0/col_no, 33.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     wall2.set_ambient([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 7.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 34.0/total_no*100)],
-                        fractions = [7.0/col_no, 34.0/total_no])
+    start_screen.update(counter_increase = 1)
     wall2.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 8.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 35.0/total_no*100)],
-                        fractions = [8.0/col_no, 35.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     door_wall_1.set_ambient([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 9.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 36.0/total_no*100)],
-                        fractions = [9.0/col_no, 36.0/total_no])
+    start_screen.update(counter_increase = 1)
     door_wall_1.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 10.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 37.0/total_no*100)],
-                        fractions = [10.0/col_no, 37.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     door_wall_2.set_ambient([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 11.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 38.0/total_no*100)],
-                        fractions = [11.0/col_no, 38.0/total_no])
+    start_screen.update(counter_increase = 1)
     door_wall_2.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 12.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 39.0/total_no*100)],
-                        fractions = [12.0/col_no, 39.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     door_wall_3.set_ambient([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 13.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 40.0/total_no*100)],
-                        fractions = [13.0/col_no, 40.0/total_no])
+    start_screen.update(counter_increase = 1)
     door_wall_3.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 14.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 41.0/total_no*100)],
-                        fractions = [14.0/col_no, 41.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     floor_slope.set_ambient([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 15.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 42.0/total_no*100)],
-                        fractions = [15.0/col_no, 42.0/total_no])
+    start_screen.update(counter_increase = 1)
     floor_slope.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 16.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 43.0/total_no*100)],
-                        fractions = [16.0/col_no, 43.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     roof_slope.set_ambient([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 17.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 44.0/total_no*100)],
-                        fractions = [17.0/col_no, 44.0/total_no])
+    start_screen.update(counter_increase = 1)
     roof_slope.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 18.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 45.0/total_no*100)],
-                        fractions = [18.0/col_no, 45.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     fence_1.set_ambient([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 19.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 46.0/total_no*100)],
-                        fractions = [19.0/col_no, 46.0/total_no])
+    start_screen.update(counter_increase = 1)
     fence_1.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 20.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 47.0/total_no*100)],
-                        fractions = [20.0/col_no, 47.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     fence_2.set_ambient([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 21.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 48.0/total_no*100)],
-                        fractions = [21.0/col_no, 48.0/total_no])
+    start_screen.update(counter_increase = 1)
     fence_2.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 22.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 49.0/total_no*100)],
-                        fractions = [22.0/col_no, 49.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     fence_3.set_ambient([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 23.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 50.0/total_no*100)],
-                        fractions = [23.0/col_no, 50.0/total_no])
+    start_screen.update(counter_increase = 1)
     fence_3.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 24.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 51.0/total_no*100)],
-                        fractions = [24.0/col_no, 51.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     balcony.set_ambient([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 25.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 52.0/total_no*100)],
-                        fractions = [25.0/col_no, 52.0/total_no])
+    start_screen.update(counter_increase = 1)
     balcony.set_diffuse([0.0, 0.0, 0.2, 1.0])
-    start_screen.update(textbox_indices = [0, 1], progress_bar_indices = [0, 1],
-                        messages = ['Setting colours: {perc:.0f}%'.format(perc = 26.0/col_no*100),
-                                    'Total: {perc:.0f}%'.format(perc = 53.0/total_no*100)],
-                        fractions = [26.0/col_no, 53.0/total_no])
+    start_screen.update(counter_increase = 1)
 
     # Set friction and bounce
     slippy_floor.set_friction(0.1)
@@ -496,8 +336,9 @@ def init_scene(loading_screen_data):
                         specular = [0.3, 0.0, 0.0, 1.0])
     camera = cameras.Camera()
 
-    start_screen.update(textbox_indices = [0], progress_bar_indices = [0],
-                        messages = ['Organizing'], fractions = [0.0])
+    module_textbox.set_message('Organizing', 'plain text')
+    module_progress_bar.disable()
+    start_screen.update()
 
     # Create player
     player = players.Player(earth)
