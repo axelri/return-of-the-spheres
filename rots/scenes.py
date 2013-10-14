@@ -22,7 +22,10 @@ def init_scene(loading_screen_data):
     # TODO: Move things to better order, update start screen messages.
 
     # Create a loading screen
-    width, heigth, aspect_angle, loading_image = loading_screen_data
+    view, loading_image = loading_screen_data
+    width = view.get_width()
+    heigth = view.get_heigth()
+    aspect_angle = view.get_aspect_angle()
     start_screen = loading_screen.Loading_screen(loading_image, width, heigth, aspect_angle)
 
     # TODO: Place them better
@@ -383,7 +386,7 @@ def init_scene(loading_screen_data):
             moving_scene_space)
 
     game = games.Game(world, spaces, player, object_list, 
-                    light_list, camera, clock, contact_group, fps)
+                    light_list, camera, clock, contact_group, fps, view)
 
     # Initialize some constants for the shadow calculations
     #init_graphics.init_shadows(game)

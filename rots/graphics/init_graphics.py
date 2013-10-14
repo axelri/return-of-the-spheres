@@ -7,7 +7,7 @@ from OpenGL.GLUT import *
 import itertools
 from math import tan, pi, radians
 
-from graphics import textures, draw
+from graphics import textures, draw, views
 from objects.text import TextBox
 
 def init_window(window_name, HAVE_FULLSCREEN = True):
@@ -42,6 +42,7 @@ def init_window(window_name, HAVE_FULLSCREEN = True):
 
     width = pygame.display.Info().current_w
     height = pygame.display.Info().current_h
+    aspect_angle = 45.0
 
     # Hide cursor, move to center of screen
     pygame.mouse.set_visible(0)
@@ -51,12 +52,8 @@ def init_window(window_name, HAVE_FULLSCREEN = True):
     ### Initialize OpenGL
 
     # Set up the projection and modelview matrices
-    glMatrixMode(GL_PROJECTION)
-    aspect_angle = 45.0
-    gluPerspective(aspect_angle, float(width)/float(height), 0.1, 100.0)
-
-    glMatrixMode(GL_MODELVIEW)
-    glLoadIdentity()
+    view = views.View(width, height, aspect_angle)
+    view.setup()
 
     # Set clearing color
     glClearColor(0.0, 0.0, 0.0, 0.0)
@@ -85,4 +82,4 @@ def init_window(window_name, HAVE_FULLSCREEN = True):
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
 
-    return width, height, aspect_angle
+    return view

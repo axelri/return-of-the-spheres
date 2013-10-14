@@ -14,7 +14,7 @@ class Game():
     ''' A class containing all the objects in the game '''
     def __init__(self, world, spaces, player, 
                 object_list, light_list, camera, clock, 
-                contact_group, fps, debug_state = 0):
+                contact_group, fps, view, debug_state = 0):
         
         sphere_space, object_space, static_space, power_up_space, \
                 interactive_object_space, moving_scene_space = spaces
@@ -34,6 +34,7 @@ class Game():
         self._contact_group = contact_group
         self._fps = fps
         self._dt = 1/float(fps)
+        self._view = view
         self._debug_state = debug_state
 
         self._keys_pressed = None
@@ -261,6 +262,9 @@ class Game():
     def get_dt(self):
         return self._dt
 
+    def get_view(self):
+        return self._view
+
     def get_debug_state(self):
         return self._debug_state
 
@@ -272,6 +276,9 @@ class Game():
     def set_fps(self, fps):
         self._fps = fps
         self._dt = 1/float(fps)
+
+    def set_view(self, view):
+        self._view = view
 
     def dir(self, key_pairs):
         ''' Outputs the direction when given pairs 
