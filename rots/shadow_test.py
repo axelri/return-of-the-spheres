@@ -39,7 +39,7 @@ def game_loop(game):
     player.move(direction, forward_vector, up_vector, jump)
 
     # Render
-    render.render(game)
+    render.render_with_shadows(game)
     clock.tick(fps)
     return run, toggle_pause
 
@@ -56,9 +56,9 @@ def pause_loop(game):
 def main():
     ''' Main routine of the game.'''
 
-    view = init_graphics.init_window('Return of the Spheres', HAVE_FULLSCREEN = True)
+    view = init_graphics.init_window('Shadow test', HAVE_FULLSCREEN = True)
 
-    game = scenes.init_scene((view, 'stars-5.jpg'))
+    game = scenes.init_scene_2(view)
 
     player = game.get_player()
     camera = game.get_camera()

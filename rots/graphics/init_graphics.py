@@ -10,6 +10,8 @@ from math import tan, pi, radians
 from graphics import textures, draw, views
 from objects.text import TextBox
 
+from shadows import glLibShadowInit
+
 def init_window(window_name, HAVE_FULLSCREEN = True):
     ''' Initiates pygame, creates and sets up the window,
     sets up OpenGL.
@@ -81,5 +83,9 @@ def init_window(window_name, HAVE_FULLSCREEN = True):
     glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+
+    # Initialize shadows
+    shadowmap_size = 512
+    glLibShadowInit([[shadowmap_size, 5]])
 
     return view

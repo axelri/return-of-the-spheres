@@ -337,6 +337,8 @@ def init_scene(loading_screen_data):
                         ambient = [0.0, 0.0, 0.0, 1.0],
                         diffuse = [0.3, 0.0, 0.0, 1.0],
                         specular = [0.3, 0.0, 0.0, 1.0])
+
+    # Create a camera
     camera = cameras.Camera()
 
     module_textbox.set_message('Organizing', 'plain text')
@@ -388,7 +390,85 @@ def init_scene(loading_screen_data):
     game = games.Game(world, spaces, player, object_list, 
                     light_list, camera, clock, contact_group, fps, view)
 
-    # Initialize some constants for the shadow calculations
-    #init_graphics.init_shadows(game)
+    return game
+
+def init_scene_2(view):
+    ''' Another, simpler scene for shadow tests '''
+
+    # Create a world object
+
+    world = ode.World()
+    world.setGravity( (0,-9.81,0) )
+    world.setERP(0.8)
+    world.setCFM(1E-5)
+    world.setAutoDisableFlag(True)
+
+    # Create space objects, one for spheres, one for other
+    # moving objects and one for the static environment
+    sphere_space = ode.Space(1)
+    object_space = ode.Space(1)
+    static_space = ode.Space(1)
+    power_up_space = ode.Space(1)
+    interactive_object_space = ode.Space(1)
+    moving_scene_space = ode.Space(1)
+
+    # Create player
+    earth_tex = textures.load_texture('celestial_bodies/earth_big.jpg')
+    earth = shapes.Sphere(world, sphere_space, pos = Vector([0.0, 2.0, 0.0]), 
+                            radius = 1.0, texture = earth_tex)
+    player = players.Player(earth)
+
+    # Create scene
+    floor = shapes.Surface(world, static_space, pos = Vector((0.0, 0.0, 0.0)), 
+                            normal = Vector((0.0, 1.0, 0.0)),
+                            forward = Vector((1.0, 0.0, 0.0)),
+                            length = 30.0, width = 30.0)
+
+    wall_1 = shapes.Surface(world, static_space, pos = Vector((-15.0, 1.0, 0.0)), 
+                            normal = Vector((1.0, 0.0, 0.0)),
+                            forward = Vector((0.0, 0.0, 1.0)),
+                            length = 30.0, width = 2.0)
+
+    wall_2 = shapes.Surface(world, static_space, pos = Vector((15.0, 1.0, 0.0)), 
+                            normal = Vector((-1.0, 0.0, 0.0)),
+                            forward = Vector((0.0, 0.0, 1.0)),
+                            length = 30.0, width = 2.0)
+
+    wall_3 = shapes.Surface(world, static_space, pos = Vector((0.0, 1.0, 15.0)), 
+                            normal = Vector((0.0, 0.0, -1.0)),
+                            forward = Vector((1.0, 0.0, 0.0)),
+                            length = 30.0, width = 2.0)
+
+    wall_4 = shapes.Surface(world, static_space, pos = Vector((0.0, 1.0, -15.0)), 
+                            normal = Vector((0.0, 0.0, 1.0)),
+                            forward = Vector((1.0, 0.0, 0.0)),
+                            length = 30.0, width = 2.0)
+
+    # Create lights
+    light1 = lights.Light(GL_LIGHT0, Vector((0.0, 5.0, 0.0)),
+                        ambient = [0.1, 0.1, 0.1, 1.0],
+                        diffuse = [1.0, 1.0, 1.0, 1.0],
+                        specular = [1.0, 1.0, 1.0, 1.0])
+
+    object_list = [player.get_shape(), floor, wall_1, wall_2, wall_3, wall_4]
+    light_list = [light1]
+
+    # Create a camera
+    camera = cameras.Camera()
+
+    # Create a clock object for timing
+    clock = pygame.time.Clock()
+
+    # Create group for contact joints
+    contact_group = ode.JointGroup()
+
+    fps = 60
+
+    # Create a game object
+    spaces = (sphere_space, object_space, static_space, power_up_space, interactive_object_space,
+            moving_scene_space)
+
+    game = games.Game(world, spaces, player, object_list, 
+                    light_list, camera, clock, contact_group, fps, view)
 
     return game

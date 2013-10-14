@@ -127,3 +127,15 @@ class Light:
     def set_specular(self, specular):
         self._specular = specular
         self._setup()
+
+################################################################
+
+    def change_diffuse_color(self, newcolor):
+        self.diffuse_color = newcolor
+        glLightfv(self._light_index, GL_AMBIENT, [0.0, 0.0, 0.0, 1.0])
+        glLightfv(self._light_index, GL_DIFFUSE, [self.diffuse_color[0], 
+                    self.diffuse_color[1], self.diffuse_color[2], 1.0])
+
+    def change_color(self, newcolor):
+        self.color = newcolor
+        glLightfv(self._light_index, GL_SPECULAR, [self.color[0], self.color[1], self.color[2], 1.0])
