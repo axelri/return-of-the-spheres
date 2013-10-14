@@ -56,7 +56,7 @@ def pause_loop(game):
 def main():
     ''' Main routine of the game.'''
 
-    width, height, aspect_angle = init_graphics.init_window('testODE 2')
+    width, height, aspect_angle = init_graphics.init_window('testODE 2', HAVE_FULLSCREEN = True)
 
     game = scenes.init_scene((width, height, aspect_angle, 'stars-5.jpg'))
 

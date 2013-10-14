@@ -370,13 +370,6 @@ def init_scene(loading_screen_data):
     # Add all lights to a list
     light_list = [light1, light2]
 
-    # Initialize shadows
-    shadow_map_size = 512
-    shadowmaps = []
-    for i in light_list:
-        shadowmaps.append([shadow_map_size, 5])
-    lights.init_shadows(shadowmaps)
-
     # Create a clock object for timing
     clock = pygame.time.Clock()
 
