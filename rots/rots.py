@@ -58,7 +58,7 @@ def main():
 
     view = init_graphics.init_window('Return of the Spheres', HAVE_FULLSCREEN = True)
 
-    game = scenes.init_scene((view, 'stars-5.jpg'))
+    game = scenes.init_scene_3((view, 'stars-5.jpg'))
 
     player = game.get_player()
     camera = game.get_camera()

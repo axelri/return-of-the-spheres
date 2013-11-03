@@ -275,3 +275,14 @@ def AABB(aabb, color):
     glEnd()
 
     glDisable(GL_COLOR_MATERIAL)
+
+def draw2D_box(color, width, height):
+    glColor4fv(color)
+    glBegin(GL_QUADS)
+
+    glVertex3f(-width/2, -height/2, 0.0)
+    glVertex3f(width/2, -height/2, 0.0)
+    glVertex3f(width/2, height/2, 0.0)
+    glVertex3f(-width/2, height/2, 0.0)
+
+    glEnd()
