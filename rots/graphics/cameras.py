@@ -49,17 +49,13 @@ class Camera:
         self._mouse_sensitivity = 0.005
         self._zoom_sensitivity = 0.05
 
-    def view(self, player):
+    def view(self):
         ''' Calculates a translation/rotation matrix
         to move the camera to the right position and
         multiplies it with the current matrix used by
         OpenGL. Sets the position of the camera to
         self._pos, directs it towards the player and
         sets the "up-direction" to self._up.
-
-        Input:  
-            * player: 
-                A Player object
 
         Calls gluLookAt() with the right input to
         achieve the aforementioned result. '''

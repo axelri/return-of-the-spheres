@@ -16,7 +16,7 @@ class Player:
         # object while resting on another (e.g. colliding with the wall
         # while rolling on the floor).
         # TODO: Play collision sounds when other objects collide with
-        # eachother.
+        # each other.
 
         self._shape = shape
         self._speed = 5
@@ -46,21 +46,21 @@ class Player:
                     absolute coordinates. This vector 
                     is the absolute representation of the
                     "(0.0, 0.0, 1.0)"-vector in coordinates
-                    reltaive the player.
+                    relative the player.
                 * up_vector:
                     A unit Vector describing the upwards
                     direction for the player, given in 
                     absolute coordinates. This vector 
                     is the absolute representation of the
                     "(0.0, 1.0, 0.0)"-vector in coordinates
-                    reltaive the player. 
+                    relative the player. 
                 * jump:
                     A boolean telling whether or not the 
                     player should be jumping.
                     - True = jump, False = don't jump '''
 
         # TODO: Tweak with self._speed and the coefficient in addForce 
-        # (currrently 10) to get good movement
+        # (currently 10) to get good movement
         # TODO: Fix so you can't move faster than intended just by 
         # moving the mouse back and forth.
 

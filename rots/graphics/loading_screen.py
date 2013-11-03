@@ -13,14 +13,14 @@ class Loading_screen:
     ''' A class for the loading screen. Is used to show
         an image and messages during the loading of the game. '''
 
-    def __init__(self, image, width, heigth, aspect_angle):
+    def __init__(self, image, width, height, aspect_angle):
         ''' Initializes the loading screen. Creates a quad
             to show the background image on. '''
 
         # Set up the perspective
         self._width = width
-        self._heigth = heigth
-        self._ratio = float(width)/float(heigth)
+        self._height = height
+        self._ratio = float(width)/float(height)
         self._distance = tan(radians(90 - aspect_angle/2.0 ))
 
         # Create a display list for the start screen image
@@ -40,19 +40,19 @@ class Loading_screen:
         ''' Add a textbox '''
         
         textbox = _Loading_screen_textbox(font, size, x_pos, y_pos, color,
-                                            self._width, self._heigth)
+                                            self._width, self._height)
         self._textboxes.append(textbox)
         return textbox
 
-    def add_progress_bar(self, heigth, width, x_pos, y_pos, color):
+    def add_progress_bar(self, height, width, x_pos, y_pos, color):
         ''' Add a progress bar 
-            heigth: heigth of the progress bar in fractions of window heigth
+            height: height of the progress bar in fractions of window height
             width: width of the progress bar in fractions of window width
             x_pos, y_pos: position of the center of the progress bar in
-                    screen coordinates: 0,0 = lower left, 1,1 = upper rigth
+                    screen coordinates: 0,0 = lower left, 1,1 = upper right
             color: color of the progress bar as RGBA'''
 
-        progress_bar = Progress_bar(heigth, width, x_pos, y_pos, color, 
+        progress_bar = Progress_bar(height, width, x_pos, y_pos, color, 
                                     self._ratio, self._distance)
         self._progress_bars.append(progress_bar)
 
@@ -107,7 +107,7 @@ class Loading_screen:
 
 class Progress_bar:
 
-    def __init__(self, heigth, width, x_pos, y_pos, color,
+    def __init__(self, height, width, x_pos, y_pos, color,
                 window_ratio, window_distance):
 
         # The factor 2 is there since the coordinates
@@ -115,7 +115,7 @@ class Progress_bar:
         # (x and y is in the range [0, 1]), whereas in the loading
         # screen we have OpenGLs coordinates (x is in the range [-1, 1]
         # and y is in the range [-window_ratio, window_ratio])
-        self._heigth = heigth * 2
+        self._height = height * 2
         self._width = width * 2 * window_ratio
         self._x_pos = (x_pos - 0.5) * 2 * window_ratio
         self._y_pos = (y_pos - 0.5) * 2
@@ -154,7 +154,7 @@ class Progress_bar:
             glTranslate(self._x_pos - self._width * 0.5 * (1 - fraction), 
                         self._y_pos, - self._distance)
 
-            glScale(self._width * fraction, self._heigth, 1)
+            glScale(self._width * fraction, self._height, 1)
             glCallList(self._display_list_index)
 
             glPopMatrix()
@@ -183,11 +183,11 @@ class Progress_bar:
 class _Loading_screen_textbox:
 
     def __init__(self, font, size, x_pos, y_pos, color,
-                window_width, window_heigth):
+                window_width, window_height):
 
-        size = int(window_heigth * size)
+        size = int(window_height * size)
         x_pos = int(window_width * x_pos)
-        y_pos = int(window_heigth * y_pos)
+        y_pos = int(window_height * y_pos)
 
         self._textbox = TextBox(font, size, x_pos, y_pos, color)
 

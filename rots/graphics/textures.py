@@ -53,7 +53,7 @@ def load_texture(image_file):
                     the image you want to load. It can be
                     of most of the normal formats (jpg etc).
     * width:        The width of the image, in pixels.
-    * heigth:       The heigth of the image, in pixels.
+    * height:       The height of the image, in pixels.
 
     Output:
     * tex:          The OpenGL index of the generated texture.
@@ -62,7 +62,7 @@ def load_texture(image_file):
     # Create image string
     image_str, image_size = load_image(image_file)
 
-    width, heigth = image_size
+    width, height = image_size
 
     # Create a texture object
     tex = glGenTextures(1)
@@ -79,7 +79,7 @@ def load_texture(image_file):
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
                     GL_LINEAR)
 
-    gluBuild2DMipmaps( GL_TEXTURE_2D, GL_RGBA, width, heigth, 
+    gluBuild2DMipmaps( GL_TEXTURE_2D, GL_RGBA, width, height, 
                      GL_RGB, GL_UNSIGNED_BYTE, image_str )
 
     # get the largest anisotropy supported by the graphics card

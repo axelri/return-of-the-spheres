@@ -35,7 +35,7 @@ def render(game):
 
     glLoadIdentity()
 
-    camera.view(player)
+    camera.view()
 
     if game.get_debug_state():
         game.update_debug_screen()

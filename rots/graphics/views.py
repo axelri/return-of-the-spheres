@@ -3,17 +3,17 @@ from OpenGL.GLU import *
 
 class View:
 
-	def __init__(self, width, heigth, aspect_angle, near = 0.1, far = 100.0):
+	def __init__(self, width, height, aspect_angle, near = 0.1, far = 100.0):
 		self._width = width
-		self._heigth = heigth
+		self._height = height
 		self._aspect_angle = aspect_angle
 		self._near = near
 		self._far = far
-		self._ratio = float(width)/float(heigth)
+		self._ratio = float(width)/float(height)
 
 	def setup(self):
 		''' Set up the viewport and perspective '''
-		glViewport(0, 0, self._width, self._heigth)
+		glViewport(0, 0, self._width, self._height)
 		glMatrixMode(GL_PROJECTION)
 		glLoadIdentity()
 		gluPerspective(self._aspect_angle, self._ratio, self._near, self._far)
@@ -28,8 +28,8 @@ class View:
 	def get_width(self):
 		return self._width
 
-	def get_heigth(self):
-		return self._heigth
+	def get_height(self):
+		return self._height
 
 	def get_near(self):
 		return self._near
@@ -44,11 +44,11 @@ class View:
 
 	def set_width(self, width):
 		self._width = width
-		self._ratio = float(width)/float(heigth)
+		self._ratio = float(width)/float(height)
 
-	def set_heigth(self, heigth):
-		self._heigth = heigth
-		self._ratio = float(width)/float(heigth)
+	def set_height(self, height):
+		self._height = height
+		self._ratio = float(width)/float(height)
 
 	def set_near(self, near):
 		self._near = near

@@ -24,9 +24,9 @@ def init_scene(loading_screen_data):
     # Create a loading screen
     view, loading_image = loading_screen_data
     width = view.get_width()
-    heigth = view.get_heigth()
+    height = view.get_height()
     aspect_angle = view.get_aspect_angle()
-    start_screen = loading_screen.Loading_screen(loading_image, width, heigth, aspect_angle)
+    start_screen = loading_screen.Loading_screen(loading_image, width, height, aspect_angle)
 
     # TODO: Place them better
     module_textbox = start_screen.add_textbox('test.ttf', 0.035, 0.35, 0.5, [1,0,0])
