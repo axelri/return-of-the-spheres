@@ -1,20 +1,26 @@
 A new version of the already old fluffy spheres codebase. More to come!
 
-# Some things to work on
-* Menus!
-* Tesselation of big planes (to get correct lightning)
-	- (In progress)
-* Shadows
-* Work out the level file format, should be human readable (YAML?)
-* Try to work on a world editor
-    - Keyboard, mouse support? Use rays in that case
-    - Maybe able to load textures and apply those
-    - Set starting position
-* The _meaning_? Goals, event system etc
-* (Check up on the math code, maybe switch to NumPy)
-* Music and sound effects (should be handled by pygame)
-	- (In progress)
-* Switch to OpenGL 3/4 ?
+# TODO
+
+## Additions
+* Graphics
+	- Shadows
+	- Switch to OpenGL 3?
+* Features
+	- Menus
+	- World editor
+	- Make a real game of this
+* Sound
+	- Switch background music
+	- Better sound effects
+
+## Known bugs
+* Graphics
+	- AABB:s turning white when using power-ups
+	- Strange light effects on some surfaces
+	- Some objects rendering in front of debug text
+* Physics
+	- "Unphysical" interactions with moving platforms
 
 # Plot
 The world has been taken over by squares! It's now up to Mr Sphereston and his assistant to save the world and bring back the smooth corners.
