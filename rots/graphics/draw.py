@@ -247,6 +247,30 @@ def loading_screen(texture, ratio):
     glEnd()
     glDisable(GL_TEXTURE_2D)
 
+def progress_bar(p_bar):
+    ''' Draw a progress bar '''
+
+    fraction = p_bar.get_counter() / float(p_bar.get_denominator())
+    half_width = p_bar.get_width() * fraction * 0.5
+    half_height = p_bar.get_height() * 0.5
+
+    if p_bar.get_texture():
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, p_bar.get_texture())
+
+    glColor4fv(p_bar.get_color())
+    glBegin(GL_QUADS)
+    glTexCoord2f(0,0)
+    glVertex3f(-half_width, -half_height, 0)
+    glTexCoord2f(fraction,0)
+    glVertex3f(half_width, -half_height, 0)
+    glTexCoord2f(fraction,1)
+    glVertex3f(half_width, half_height, 0)
+    glTexCoord2f(0,1)
+    glVertex3f(-half_width, half_height, 0)
+    glEnd()
+    glDisable(GL_TEXTURE_2D)
+
 def AABB(aabb, color):
     ''' Draws an AABB.
         Input: 

@@ -29,11 +29,16 @@ def init_scene(loading_screen_data):
     start_screen = loading_screen.Loading_screen(loading_image, width, height, aspect_angle)
 
     # TODO: Place them better
+    progress_texture_1 = textures.load_texture('number_bar.png')
+    progress_texture_2 = textures.load_texture('striped_bar.png')
+
     module_textbox = start_screen.add_textbox('test.ttf', 0.035, 0.35, 0.5, [1,0,0])
     total_textbox = start_screen.add_textbox('test.ttf', 0.035, 0.35, 0.38, [0,1,0])
-    module_progress_bar = start_screen.add_progress_bar(0.02, 0.2, 0.5, 0.45, [1,0,0,1])
-    total_progress_bar = start_screen.add_progress_bar(0.02, 0.2, 0.5, 0.35, [0,1,0,1])
-
+    module_progress_bar = start_screen.add_progress_bar(0.02, 0.2, 0.5, 0.45, 
+                                                        [1,1,1,1], progress_texture_1)
+    total_progress_bar = start_screen.add_progress_bar(0.02, 0.2, 0.5, 0.35, 
+                                                        [1,1,1,1], progress_texture_2)
+    
     module_textbox.set_message('Creating world', 'plain text')
     module_progress_bar.disable()
     total_textbox.set_message('Total', 'percentage', denominator = 53)
@@ -78,7 +83,7 @@ def init_scene(loading_screen_data):
     mars_tex = textures.load_texture('celestial_bodies/Mars_2k-050104.png')
     start_screen.update(counter_increase = 1)
 
-    puppy_tex = textures.load_texture('puppy.jpeg')
+    puppy_tex = textures.load_texture('frida_valp.jpg')
     start_screen.update(counter_increase = 1)
 
     # Create shapes

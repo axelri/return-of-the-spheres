@@ -44,7 +44,7 @@ class Loading_screen:
         self._textboxes.append(textbox)
         return textbox
 
-    def add_progress_bar(self, height, width, x_pos, y_pos, color):
+    def add_progress_bar(self, height, width, x_pos, y_pos, color, texture = None):
         ''' Add a progress bar 
             height: height of the progress bar in fractions of window height
             width: width of the progress bar in fractions of window width
@@ -53,7 +53,7 @@ class Loading_screen:
             color: color of the progress bar as RGBA'''
 
         progress_bar = Progress_bar(height, width, x_pos, y_pos, color, 
-                                    self._ratio, self._distance)
+                                    self._ratio, self._distance, texture)
         self._progress_bars.append(progress_bar)
 
         return progress_bar
@@ -108,40 +108,27 @@ class Loading_screen:
 class Progress_bar:
 
     def __init__(self, height, width, x_pos, y_pos, color,
-                window_ratio, window_distance):
+                window_ratio, window_distance, texture = None):
 
         # The factor 2 is there since the coordinates
         # and sizes are given in window-relative coordinates
         # (x and y is in the range [0, 1]), whereas in the loading
-        # screen we have OpenGLs coordinates (x is in the range [-1, 1]
-        # and y is in the range [-window_ratio, window_ratio])
+        # screen we have OpenGLs coordinates (y is in the range [-1, 1]
+        # and x is in the range [-window_ratio, window_ratio])
         self._height = height * 2
         self._width = width * 2 * window_ratio
         self._x_pos = (x_pos - 0.5) * 2 * window_ratio
         self._y_pos = (y_pos - 0.5) * 2
         self._z_pos = 0.001
-        self._color = color
+        self._texture = texture
+        if texture == None:
+            self._color = color
+        else:
+            self._color = (1.0, 1.0, 1.0, 1.0)
         self._counter = 0
         self._denominator = 1
 
         self._active = True
-
-        display_list_index = glGenLists(1)
-        glNewList(display_list_index, GL_COMPILE)
-
-        glColor4fv(color)
-        glBegin(GL_QUADS)
-
-        glVertex3f(-0.5, -0.5, 0.0)
-        glVertex3f(0.5, -0.5, 0.0)
-        glVertex3f(0.5, 0.5, 0.0)
-        glVertex3f(-0.5, 0.5, 0.0)
-
-        glEnd()
-
-        glEndList()
-
-        self._display_list_index = display_list_index
 
     def draw(self):
 
@@ -153,9 +140,8 @@ class Progress_bar:
 
             glTranslate(self._x_pos - self._width * 0.5 * (1 - fraction), 
                         self._y_pos, self._z_pos)
-
-            glScale(self._width * fraction, self._height, 1)
-            glCallList(self._display_list_index)
+            
+            draw.progress_bar(self)
 
             glPopMatrix()
 
@@ -179,6 +165,24 @@ class Progress_bar:
 
     def disable(self):
         self._active = False
+
+    def get_counter(self):
+        return self._counter
+
+    def get_denominator(self):
+        return self._denominator
+
+    def get_width(self):
+        return self._width
+
+    def get_height(self):
+        return self._height
+
+    def get_texture(self):
+        return self._texture
+
+    def get_color(self):
+        return self._color
 
 class _Loading_screen_textbox:
 
