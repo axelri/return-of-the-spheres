@@ -119,10 +119,11 @@ class Progress_bar:
         self._width = width * 2 * window_ratio
         self._x_pos = (x_pos - 0.5) * 2 * window_ratio
         self._y_pos = (y_pos - 0.5) * 2
+        self._z_pos = 0.001
         self._color = color
         self._counter = 0
         self._denominator = 1
-        self._distance = window_distance - 0.001
+
         self._active = True
 
         display_list_index = glGenLists(1)
@@ -147,12 +148,11 @@ class Progress_bar:
         if self._active:
 
             glPushMatrix()
-            glLoadIdentity()
 
             fraction = self._counter / float(self._denominator)
 
             glTranslate(self._x_pos - self._width * 0.5 * (1 - fraction), 
-                        self._y_pos, - self._distance)
+                        self._y_pos, self._z_pos)
 
             glScale(self._width * fraction, self._height, 1)
             glCallList(self._display_list_index)
